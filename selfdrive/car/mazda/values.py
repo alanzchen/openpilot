@@ -66,6 +66,7 @@ class MazdaFlags(IntFlag):
   RADAR_INTERCEPTOR = 8
   NO_FSC = 16
   NO_MRCC = 32
+  MANUAL_TRANSMISSION = 64
 
 @dataclass
 class MazdaPlatformConfig(PlatformConfig):

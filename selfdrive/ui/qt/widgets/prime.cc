@@ -38,7 +38,7 @@ void PairingQRWidget::refresh() {
   QString pairToken = CommaApi::create_jwt({{"pair", true}});
   QString qrString = "https://connect.comma.ai/?pair=" + pairToken;
   if (getenv("API_HOST") != nullptr) {
-    qrString = "https://portal.springerelectronics.com/?pair=" + pairToken;
+    qrString = "https://stable.konik.ai/?pair=" + pairToken;
   }
   this->updateQrCode(qrString);
   update();

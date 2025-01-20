@@ -85,6 +85,12 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "../assets/offroad/icon_openpilot.png",
     },
     {
+      "ManualTransmission",
+      tr("Manual Transmission"),
+      tr("Enable if your is a manual."),
+      "../assets/offroad/icon_openpilot.png",
+    },
+    {
       "DisengageOnAccelerator",
       tr("Disengage on Accelerator Pedal"),
       tr("When enabled, pressing the accelerator pedal will disengage openpilot."),
@@ -103,7 +109,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       "../assets/offroad/icon_monitoring.png",
     },
     {
-      "RecordBack",
+      "RecordRoad",
       tr("Record and Upload Road Cameras"),
       tr("Upload data from the road cameras."),
       "../assets/offroad/icon_monitoring.png",

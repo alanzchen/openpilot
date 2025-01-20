@@ -64,7 +64,7 @@ def auth_redirect_link(method):
   }[method]
 
   params = {
-    'redirect_uri': f"https://api.springerelectronics.com/v2/auth/{provider_id}/redirect/",
+    'redirect_uri': f"https://api.konik.ai/v2/auth/{provider_id}/redirect/",
     'state': f'service,localhost:{PORT}',
   }
 

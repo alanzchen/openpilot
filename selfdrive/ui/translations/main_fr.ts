@@ -1140,10 +1140,6 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <source>Visuals</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Controls</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Setup</name>
@@ -1694,6 +1690,30 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
     </message>
     <message>
         <source>Upload data from the road cameras.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Longitudinal Auto-Tune (Beta)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable the longitudinal auto-tuning feature. Slowly adjusts the acceleration gain to minimize error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blended Acc (Experimental)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blend stock MRCC and Experimental Mode longitudinal control.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manual Transmission</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable if your is a manual.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
