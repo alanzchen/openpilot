@@ -2074,8 +2074,8 @@
       {
         "key": "SpeedLimitController",
         "label": "Speed Limit Controller",
-        "description": "Limit openpilot's maximum driving speed to the current speed limit from configured map, dashboard, and optional vision sources.",
-        "picker_description": "Limits speed using map, dashboard, or vision data.",
+        "description": "Limit openpilot's maximum driving speed using configured map, dashboard, and optional vision sources. Press + above a limit for a persistent override; hold the gas pedal for a temporary override.",
+        "picker_description": "Press + above a limit for a persistent override; hold the gas pedal for a temporary override.",
         "data_type": "bool",
         "ui_type": "toggle",
         "is_parent_toggle": true,
@@ -2163,30 +2163,6 @@
           {
             "value": 2,
             "label": "Previous Limit"
-          }
-        ],
-        "parent_key": "SpeedLimitController",
-        "settings_tier": "advanced"
-      },
-      {
-        "key": "SLCOverride",
-        "label": "Override Speed",
-        "description": "Choose how SLC behaves after you manually drive faster than the posted speed limit.",
-        "picker_description": "Chooses how SLC responds after you exceed the limit.",
-        "data_type": "int",
-        "ui_type": "dropdown",
-        "options": [
-          {
-            "value": 0,
-            "label": "None"
-          },
-          {
-            "value": 1,
-            "label": "Set With Gas Pedal"
-          },
-          {
-            "value": 2,
-            "label": "Max Set Speed"
           }
         ],
         "parent_key": "SpeedLimitController",
@@ -4653,6 +4629,17 @@
         "settings_tier": "simple"
       },
       {
+        "key": "AggressiveCoolingEnabled",
+        "label": "C3/C3X Aggressive Cooling",
+        "description": "Runs the fan on a lower, more aggressive temperature curve: the fan ramps up sooner and reacts faster to rising temperature, keeping the device meaningfully cooler on hot days at the cost of more fan noise.",
+        "picker_description": "Cooler-running, louder fan curve for comma 3/3X.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "parent_key": "DeviceManagement",
+        "settings_tier": "simple",
+        "requires_capability": "IsTiciOrTizi"
+      },
+      {
         "key": "UseKonikServer",
         "label": "Use Konik Server",
         "description": "Upload driving data to \"stable.konik.ai\" instead of \"connect.comma.ai\".",
@@ -4675,22 +4662,30 @@
       {
         "key": "ScreenBrightness",
         "label": "Screen Brightness (Offroad)",
-        "description": "The screen brightness while not driving.",
+        "description": "Use automatic brightness with an adjustable offset, or Manual to set a fixed brightness while parked.",
         "data_type": "int",
         "ui_type": "numeric",
-        "step": 1.0,
+        "galaxy_ui_type": "brightness",
+        "step": 1,
         "parent_key": "ScreenManagement",
-        "settings_tier": "simple"
+        "settings_tier": "advanced",
+        "default": 101,
+        "min": 0,
+        "max": 101
       },
       {
         "key": "ScreenBrightnessOnroad",
         "label": "Screen Brightness (Onroad)",
-        "description": "The screen brightness while driving.",
+        "description": "Choose Auto to follow ambient light with an adjustable offset, or Manual to set a fixed brightness while driving.",
         "data_type": "int",
         "ui_type": "numeric",
-        "step": 1.0,
+        "galaxy_ui_type": "brightness",
+        "step": 1,
         "parent_key": "ScreenManagement",
-        "settings_tier": "simple"
+        "settings_tier": "advanced",
+        "default": 101,
+        "min": 0,
+        "max": 101
       },
       {
         "key": "ScreenRecorder",
@@ -4705,36 +4700,141 @@
       {
         "key": "ScreenTimeout",
         "label": "Screen Timeout (Offroad)",
-        "description": "How long the screen stays on after being tapped while not driving.",
+        "description": "How long the parked screen stays awake after a touch.",
         "data_type": "int",
         "ui_type": "numeric",
         "min": 5.0,
         "max": 60.0,
         "step": 5.0,
         "parent_key": "ScreenManagement",
-        "settings_tier": "simple"
+        "settings_tier": "simple",
+        "unit": " seconds"
       },
       {
         "key": "ScreenTimeoutOnroad",
         "label": "Screen Timeout (Onroad)",
-        "description": "How long the screen stays on after being tapped while driving.",
+        "description": "How long the driving screen stays awake before Standby Mode turns it off.",
         "data_type": "int",
         "ui_type": "numeric",
         "min": 5.0,
         "max": 60.0,
         "step": 5.0,
-        "parent_key": "ScreenManagement",
-        "settings_tier": "simple"
+        "parent_key": "StandbyMode",
+        "settings_tier": "simple",
+        "unit": " seconds",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ]
       },
       {
         "key": "StandbyMode",
         "label": "Standby Mode",
-        "description": "Turn the screen off while driving and automatically wake it up for alerts or engagement state changes.",
-        "picker_description": "Turns the screen off while driving and wakes for alerts.",
+        "description": "Turn off the screen after the onroad timeout. Touch and ignition changes always wake it. Choose additional wake events below.",
+        "picker_description": "Turn off the driving screen after inactivity and choose additional wake events.",
         "data_type": "bool",
         "ui_type": "toggle",
         "parent_key": "ScreenManagement",
-        "settings_tier": "simple"
+        "settings_tier": "simple",
+        "is_parent_toggle": true
+      },
+      {
+        "key": "StandbyWakeEngage",
+        "label": "Engagement",
+        "description": "Wake the screen from Standby when driving assistance engages.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": true,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
+      },
+      {
+        "key": "StandbyWakeDisengage",
+        "label": "Disengagement",
+        "description": "Wake the screen from Standby when driving assistance disengages.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": true,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
+      },
+      {
+        "key": "StandbyWakeInfoAlert",
+        "label": "Informational alerts",
+        "description": "Wake the screen from Standby and keep it awake while an informational alert is displayed.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": true,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
+      },
+      {
+        "key": "StandbyWakeWarningAlert",
+        "label": "Warning alerts",
+        "description": "Wake the screen from Standby and keep it awake while a warning alert is displayed.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": true,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
+      },
+      {
+        "key": "StandbyWakeCriticalAlert",
+        "label": "Critical / takeover alerts",
+        "description": "Wake the screen from Standby and keep it awake while a critical or takeover alert is displayed.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": true,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
+      },
+      {
+        "key": "StandbyWakeTurnSignal",
+        "label": "Turn signals",
+        "description": "Wake the screen from Standby when a turn signal is activated.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": false,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
+      },
+      {
+        "key": "StandbyWakeButton",
+        "label": "Bluetooth or steering wheel button",
+        "description": "Wake the screen from Standby when a recognised Bluetooth, controller or steering wheel button is pressed, including buttons without an assigned action.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": false,
+        "parent_key": "StandbyMode",
+        "visible_when_all_true": [
+          "ScreenManagement",
+          "StandbyMode"
+        ],
+        "settings_tier": "advanced"
       }
     ]
   },

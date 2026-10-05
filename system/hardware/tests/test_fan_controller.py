@@ -4,6 +4,22 @@ from openpilot.system.hardware.fan_controller import TiciFanController
 
 ALL_CONTROLLERS = [TiciFanController]
 
+
+def test_aggressive_cooling_is_optional_and_keeps_offroad_limit(mocker):
+  mocker.patch("openpilot.system.hardware.fan_controller.IS_MICI", False)
+  stock = patched_controller(mocker, TiciFanController)
+  aggressive = patched_controller(mocker, TiciFanController)
+  assert aggressive.update(75, True, True) > stock.update(75, True)
+  assert aggressive.update(100, False, True) <= 30
+  assert aggressive.update(75, True, False) == TiciFanController().update(75, True)
+
+
+def test_mici_ignores_aggressive_cooling(mocker):
+  mocker.patch("openpilot.system.hardware.fan_controller.IS_MICI", True)
+  stock = patched_controller(mocker, TiciFanController)
+  aggressive = patched_controller(mocker, TiciFanController)
+  assert aggressive.update(75, True, True) == stock.update(75, True)
+
 def patched_controller(mocker, controller_class):
   mocker.patch("os.system", new=mocker.Mock())
   return controller_class()

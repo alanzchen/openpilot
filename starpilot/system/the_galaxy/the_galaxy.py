@@ -75,6 +75,7 @@ from openpilot.starpilot.common.model_lab import (
 )
 from openpilot.starpilot.assets.theme_manager import HOLIDAY_THEME_PATH, THEME_COMPONENT_PARAMS
 from openpilot.starpilot.common import param_profiles
+from openpilot.starpilot.system.the_galaxy import version_history, version_install
 from openpilot.starpilot.common.accel_profile import (
   CUSTOM_ACCEL_PROFILE_BREAKPOINT_PARAM_KEYS,
   CUSTOM_ACCEL_PROFILE_BREAKPOINTS_INITIALIZED_KEY,
@@ -2975,6 +2976,66 @@ def _collect_fast_update_info(include_remote=True):
     **rollback_data,
   }
 
+def _version_install_worker(branch, selection):
+  """Resolve, back up and install one immutable revision after explicit confirmation."""
+  repo_path = str(_get_openpilot_root())
+  installed = None
+  try:
+    version_install.require_parked()
+    if selection == "latest":
+      # Preserve the existing branch updater, including boot-time AGNOS handling.
+      # Historical compatibility and GitHub-history restrictions apply only to
+      # exact revisions, never to an ordinary update to the latest branch head.
+      _branch_switch_worker(branch)
+      return
+    _set_fast_update_progress(1, "Resolving selected version", 10.0, branch)
+    target = version_history.resolve_version(repo_path, branch, selection)
+    version_install.require_parked()
+    # The normal updater owns staging for its whole lifetime. Pause only that
+    # daemon and its children, then refuse any still-held Git locks.
+    with version_install.suspend_updater() as updater:
+      version_install.require_parked()
+      version_install.check_repository_idle(repo_path)
+      rc, detail = _run_git_with_progress(
+        repo_path, _build_shallow_fetch_commit_args(target["commit"]),
+        timeout=240, step=1, label="Fetching selected version",
+      )
+      if rc:
+        raise version_install.InstallError(detail or "Unable to fetch the selected revision")
+      if _git_stdout(repo_path, ["rev-parse", "FETCH_HEAD^{commit}"]) != target["commit"]:
+        raise version_install.InstallError("Fetched revision does not match the selected version")
+      version_install.require_parked()
+      previous_branch = _git_stdout(repo_path, ["branch", "--show-current"])
+      previous_commit = _git_stdout(repo_path, ["rev-parse", "HEAD"])
+      result = version_install.install(
+        repo_path, target, check_parked=version_install.require_parked,
+        progress=_set_fast_update_progress,
+      )
+      installed = result
+      updater.restart_after_install()
+      _save_rollback_target(repo_path, previous_branch, previous_commit)
+      update_starpilot_toggles()
+      version_install.require_parked()
+      _set_fast_update_progress(5, "Rebooting device", 100.0, "Selected revision installed. Automatic updates remain paused.")
+      # Keep the action locked until shutdown. Another request must not start
+      # during the reboot notice, or if the hardware reboot call returns.
+      _set_fast_update_state(
+        running=True, stage="rebooting", finishedAt=time.time(),
+        message=f"Installed {branch} @ {target['commit'][:10]}. Rebooting now.",
+        recoveryBackup=result["backup"],
+      )
+      time.sleep(_FAST_UPDATE_REBOOT_NOTICE_SECONDS)
+      version_install.require_parked()
+      HARDWARE.reboot()
+  except Exception as exception:
+    if installed is not None:
+      _set_fast_update_error_state(
+        "The selected version is installed, but the device could not finish restarting. Park and reboot to activate it.", exception,
+      )
+      _set_fast_update_state(recoveryBackup=installed["backup"])
+    else:
+      _set_fast_update_error_state("Selected version installation failed.", exception)
+
 def _fast_update_worker():
   started_at = time.time()
   repo_path = str(_get_openpilot_root())
@@ -3073,6 +3134,7 @@ def _branch_switch_worker(target_branch):
     _set_fast_update_progress(3, "Switching branch", 100.0, f"Now on '{target_branch}'.")
 
     _run_submodule_update_if_needed(repo_path, step=4)
+    version_install.clear_pin()
     _finish_update_and_reboot(
       f"Switched to '{target_branch}'. Device is rebooting now. Please wait for reconnection."
     )
@@ -3142,6 +3204,7 @@ def _rollback_worker():
     _set_fast_update_progress(3, "Applying rollback target", 100.0, f"Now on {target_branch} @ {short_commit}.")
 
     _run_submodule_update_if_needed(repo_path, step=4)
+    version_install.clear_pin()
     try:
       _clear_rollback_target(repo_path)
     except Exception as exception:
@@ -3374,6 +3437,12 @@ def _get_param_type_info():
         types[k] = float if dt == "float" else int
       elif k in types and dt == "bool":
         types[k] = bool
+
+    # Zero-valued offsets must stay numeric; legacy inference treats "0" as bool.
+    from openpilot.starpilot.common.screen_settings import SCREEN_INT_KEYS
+    for k in SCREEN_INT_KEYS:
+      if k in _cached_allowed_keys:
+        types[k] = int
 
     for k in GALAXY_MANUAL_BOOL_PARAM_KEYS:
       if k in _cached_allowed_keys:
@@ -4146,6 +4215,9 @@ def _get_vehicle_parked():
     return park_value is not None and getattr(sm["carState"], "gearShifter", None) == park_value
   except Exception:
     return False
+
+def _get_is_tici_or_tizi():
+  return HARDWARE.get_device_type() in ("tici", "tizi")
 
 def _get_alpha_longitudinal_available():
   cp_bytes = _safe_params_get_live_raw("CarParamsPersistent")
@@ -5022,6 +5094,7 @@ def setup(app):
       "/assets/components/home/home.js",
       "/assets/components/home/home.css",
       "/assets/mobile/js/params.js",
+      "/assets/mobile/js/components/ScreenBrightnessControl.js",
       "/assets/components/tools/device_settings.js",
       "/assets/components/tools/device_settings.css",
       "/assets/components/tools/device_settings_layout.json",
@@ -5684,6 +5757,18 @@ def setup(app):
         return jsonify({"error": "Missing 'key' or 'value' in request body."}), 400
 
       key = str(data["key"]).strip()
+      if key.startswith(("ScreenBrightness", "StandbyWake")):
+        from openpilot.common.params import UnknownKeyName
+        from openpilot.starpilot.common.screen_settings import write_screen_setting
+        try:
+          updated = write_screen_setting(params, key, data["value"])
+        except ValueError as error:
+          return jsonify({"error": str(error)}), 400
+        except (OSError, KeyError, UnknownKeyName):
+          return jsonify({"error": "Screen setting could not be saved."}), 503
+        update_starpilot_toggles()
+        return jsonify({"updated": updated, "message": "Screen setting saved."}), 200
+
       if key.lower() == FAVORITE_SLOTS_PARAM.lower():
         key = FAVORITE_SLOTS_PARAM
         raw_slots = data["value"]
@@ -6212,6 +6297,7 @@ def setup(app):
     result["VehicleParked"] = _get_vehicle_parked()
     result["AlphaLongitudinalAvailable"] = _get_alpha_longitudinal_available()
     result["HasRivianAngleHarness"] = _get_has_rivian_angle_harness()
+    result["IsTiciOrTizi"] = _get_is_tici_or_tizi()
 
     for key in ("CalibratedLateralAcceleration", "CalibrationProgress"):
       try:
@@ -8111,6 +8197,7 @@ def setup(app):
       **git_data,
       "isOnroad": _safe_params_get_bool("IsOnroad"),
       "automaticUpdates": _safe_params_get_bool("AutomaticUpdates"),
+      "versionPin": version_install.read_pin(repo_path),
       "interruptedUpdateRecovery": _get_interrupted_update_recovery(repo_path, state_data),
       "warning": "Fast update skips backup creation and finalization safeguards.",
     }), 200
@@ -8178,6 +8265,61 @@ def setup(app):
       "running": state_data.get("running", False),
     }), 200
 
+  @app.route("/api/update/versions", methods=["GET"])
+  def get_update_versions():
+    branch = request.args.get("branch", "")
+    repo_path = str(_get_openpilot_root())
+    if not branch or len(branch) > 255 or not _is_valid_git_branch_name(repo_path, branch):
+      return jsonify({"error": "Choose a valid branch to browse its versions."}), 400
+    try:
+      page = int(request.args.get("page", "1"))
+    except (TypeError, ValueError):
+      return jsonify({"error": "Invalid history page."}), 400
+    head = request.args.get("head") or None
+    if page < 1 or (head is not None and not re.fullmatch(r"[0-9a-f]{40}", head)) or (page > 1 and head is None):
+      return jsonify({"error": "Invalid history page or history revision."}), 400
+    if not _remote_git_check_allowed():
+      return jsonify({"error": "Version history will be available once the device clock is synchronized."}), 503
+    try:
+      return jsonify(version_history.list_versions(repo_path, branch, page=page, head=head)), 200
+    except version_history.VersionHistoryError as exception:
+      return jsonify({"error": str(exception)}), 422
+    except Exception:
+      return jsonify({"error": "Unable to load version history. Please try again."}), 503
+
+  @app.route("/api/update/version", methods=["POST"])
+  def run_version_install():
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or payload.get("confirmed") is not True:
+      return jsonify({"error": "Confirm the selected version before installing."}), 400
+    branch, commit = payload.get("branch"), payload.get("commit")
+    repo_path = str(_get_openpilot_root())
+    if not isinstance(branch, str) or not branch or len(branch) > 255 or not _is_valid_git_branch_name(repo_path, branch):
+      return jsonify({"error": "Invalid branch name."}), 400
+    if not isinstance(commit, str) or (commit != "latest" and not re.fullmatch(r"[0-9a-f]{40}", commit)):
+      return jsonify({"error": "Choose Latest or an exact version from this branch's history."}), 400
+    try:
+      version_install.require_parked()
+    except version_install.InstallError as exception:
+      return jsonify({"error": str(exception)}), 409
+    with _fast_update_lock:
+      if _fast_update_state.get("running"):
+        return jsonify({"error": "Another update action is already in progress."}), 409
+      _fast_update_state.update({
+        "running": True, "stage": "starting", "message": "Preparing selected version...",
+        "lastError": "", "lastBranch": branch, "lastMode": "version-install",
+        "startedAt": time.time(), "finishedAt": 0.0,
+        "progressStep": 1, "progressTotalSteps": _FAST_UPDATE_TOTAL_STEPS,
+        "progressStepPercent": 0.0, "progressPercent": 0.0,
+        "progressLabel": "Preparing selected version", "progressDetail": "Checking branch history and compatibility...",
+      })
+    try:
+      threading.Thread(target=_version_install_worker, args=(branch, commit), daemon=True).start()
+    except Exception as exception:
+      _set_fast_update_error_state("Unable to start version installation.", exception)
+      return jsonify({"error": "Unable to start version installation."}), 503
+    return jsonify({"message": "Version installation started. The device will reboot when complete."}), 202
+
   @app.route("/api/update/agnos_status", methods=["GET"])
   def get_agnos_update_status():
     state_data = _get_fast_update_state()
@@ -8227,6 +8369,8 @@ def setup(app):
   def run_fast_update():
     if params.get_bool("IsOnroad"):
       return jsonify({"error": "Cannot run a fast update while driving."}), 409
+    if version_install.read_pin(str(_get_openpilot_root())):
+      return jsonify({"error": "A historical version is installed. Choose Latest in the version selector to update."}), 409
 
     with _fast_update_lock:
       if _fast_update_state.get("running"):

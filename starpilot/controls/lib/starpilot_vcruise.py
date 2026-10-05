@@ -5,11 +5,12 @@ import math
 from openpilot.common.constants import CV
 from openpilot.common.realtime import DT_MDL
 
-from openpilot.starpilot.common.starpilot_variables import CITY_SPEED_LIMIT, CRUISING_SPEED
+from openpilot.starpilot.common.starpilot_variables import CRUISING_SPEED
 from openpilot.starpilot.controls.lib.curve_speed_controller import (
   CSC_ACTIVE_OFF_DELTA,
   CSC_GLOW_HOLD_TIME,
   CSC_GLOW_ON_DELTA,
+  CSC_MIN_SPEED,
   CurveSpeedController,
   is_manual_speed_control,
 )
@@ -21,7 +22,6 @@ from openpilot.selfdrive.controls.lib.longitudinal_vehicle_tunes import (
   get_force_stop_reanchor_speed_tolerance,
 )
 
-CSC_MIN_SPEED = CITY_SPEED_LIMIT * CV.MPH_TO_MS
 OVERRIDE_FORCE_STOP_TIMER = 10
 STANDSTILL_FORCE_STOP_CLEAR_TIME = 0.75
 # Open-loop — green is undetectable at standstill, so this only needs to cover the
@@ -752,8 +752,7 @@ class StarPilotVCruise:
         self.slc_offset,
         self.slc.overridden_speed,
         v_ego_diff,
-        allow_lower_override=(getattr(starpilot_toggles, "redneck_cruise", False) and
-                              getattr(starpilot_toggles, "speed_limit_controller_override_set_speed", False)),
+        allow_lower_override=getattr(starpilot_toggles, "redneck_cruise", False),
       )
       slc_control_target = get_slc_lead_drop_relaxed_target(
         slc_control_target,
@@ -765,7 +764,7 @@ class StarPilotVCruise:
         getattr(self.slc, "source", "None"),
       )
       self._applied_slc_control_target = slc_control_target if slc_control_target > 0.0 else 0.0
-      if slc_control_target >= CSC_MIN_SPEED:
+      if slc_control_target > 0.0:
         targets.append(slc_control_target)
       if self.nav_turn_target > 0.0:
         targets.append(self.nav_turn_target)

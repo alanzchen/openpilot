@@ -21,7 +21,7 @@ export const GalaxyModal = {
         <transition name="gx-slide" appear>
           <div class="gx-sheet" role="dialog" :aria-label="title">
             <h3 class="gx-sheet__title">{{ title }}</h3>
-            <p v-if="message" style="color: var(--text-muted); line-height: 1.5;">{{ message }}</p>
+            <p v-if="message" style="color: var(--text-muted); line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere;">{{ message }}</p>
             <div class="gx-dialog__actions">
               <button type="button" class="gx-btn gx-btn--text" @click="cancel">{{ cancelLabel }}</button>
               <button type="button" class="gx-btn" :style="danger ? 'background: var(--error); color: var(--on-error);' : ''" @click="confirm">{{ confirmLabel }}</button>
