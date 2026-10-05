@@ -142,7 +142,8 @@ createApp({components:{SettingTree},setup:()=>({values}),
 
     const standbyNode=page.locator('.gx-tree-node').filter({has:page.getByText('Standby Mode',{exact:true})})
     const standby=standbyNode.locator('.gx-switch input')
-    const wakeRow=key=>page.locator('.gx-row').filter({has:page.getByText(section.params.find(p=>p.key===key).label,{exact:true})})
+    // The Mazda base retains an inline Advanced badge in these labels.
+    const wakeRow=key=>page.locator('.gx-row').filter({has:page.locator('.gx-row__label').filter({hasText:new RegExp('^\\s*'+section.params.find(p=>p.key===key).label+'(?:\\s+Advanced)?\\s*$')})})
     assert.equal(await wakeRow(wakes[0]).count(),0)
     assert.equal(await standbyNode.getByRole('button',{name:'Manage',exact:true}).count(),0)
     await standby.check()

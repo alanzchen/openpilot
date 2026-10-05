@@ -174,7 +174,7 @@ export const GalaxyToggleCard = {
   },
   template: `
     <ScreenBrightnessControl v-if="param.ui_type === 'brightness'" :param="param" :value="value" :values="values"
-      :locked="locked" :lock-message="lockMessage" @change="$emit('change', $event)" />
+      :locked="locked" @change="$emit('change', $event)" />
     <div v-else>
       <div class="gx-row" :class="{ disabled: locked, 'gx-row--favorites': isFavorites, 'gx-row--stack': isSlider || isSelect }">
         <div class="gx-row__info">

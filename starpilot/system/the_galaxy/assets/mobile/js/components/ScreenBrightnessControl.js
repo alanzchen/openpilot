@@ -1,5 +1,4 @@
 import { api, showSnackbar } from "../api.js"
-import { t } from "../i18n.js"
 
 function boundedInt(value, min, max, fallback) {
   if (value === undefined || value === null || value === "") return fallback
@@ -54,7 +53,7 @@ export const ScreenBrightnessControl = {
     },
   },
   methods: {
-    tr(key) { return t(key, key) },
+    tr(key) { return key },
     async commit(key, value) {
       if (this.locked || this.updating) return
       const previous = { brightness: this.brightness, manual: this.manual, offset: this.offset }
