@@ -1,0 +1,4 @@
+{
+ "panda/board/obj/gitversion.h": "extern const uint8_t gitversion[19];\nconst uint8_t gitversion[19] = \"DEV-{sha8}-DEBUG\";\n",
+ "panda/board/obj/version": "DEV-{sha8}-DEBUG"
+}

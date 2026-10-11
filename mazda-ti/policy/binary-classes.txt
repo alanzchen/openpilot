@@ -1,0 +1,36 @@
+# Tracked binaries that the tici build does not produce, by trusted class (class<TAB>glob<TAB>reason).
+# A tracked binary that is neither built on the device (stamp) nor matched here makes a candidate NOT_READY.
+asset	*.png	images and icons
+asset	*.jpg	images
+asset	*.jpeg	images
+asset	*.gif	animations
+asset	*.wav	sounds
+asset	*.mp4	videos
+asset	*.ttf	fonts
+asset	*.otf	fonts
+asset	*.woff	fonts
+asset	*.woff2	fonts
+asset	*.eot	fonts
+asset	*.ico	icons
+asset	*.qm	compiled UI translations shipped in the repo
+asset	*.pdf	documents
+vendored-third-party	third_party/*	vendored prebuilt libraries and tools
+vendored-third-party	*/third_party/*	vendored prebuilt libraries and tools
+vendored-third-party	tinygrad_repo/*	vendored tinygrad (examples, datasets)
+vendored-third-party	starpilot/system/galaxy/bin/frpc_*	vendored frp client binaries
+vendored-third-party	starpilot/navigation/mapd	vendored mapd binary
+vendored-third-party	system/hardware/tici/updater_*	AGNOS updater binaries
+model-artifact	selfdrive/modeld/models/*.pkl*	driving/DM model artifacts (compiled only with SP_* opt-in)
+model-artifact	selfdrive/modeld/models/*.chunk*	driving model chunks
+model-artifact	selfdrive/modeld/models/*.onnx	model sources
+model-artifact	starpilot/assets/vision_models/*	speed-limit vision models
+model-artifact	yolo11n-cls.pt	vision classifier weights
+non-scons-firmware-blob	selfdrive/modeld/firmware/amdgpu/*	external GPU firmware
+non-scons-firmware-blob	selfdrive/pandad/rivian_long_fw.bin.signed	Rivian bridge firmware (not built from panda sources)
+non-scons-firmware-blob	system/hardware/chestnut/firmware_wrapped.bin	chestnut firmware
+data-blob	rednose_repo/rednose/helpers/chi2_lookup_table.npy	lookup table
+data-blob	starpilot/system/environment_variables	StarPilot environment blob
+data-blob	starpilot/system/environment_variables.backup	StarPilot environment blob
+test-fixture	*/tests/*	test fixtures
+test-fixture	*/test/*	test fixtures
+legacy-object	panda/board/obj/startup_*.o	legacy startup objects tracked upstream, not produced by current sources

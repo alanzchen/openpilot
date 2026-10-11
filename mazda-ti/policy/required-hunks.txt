@@ -1,0 +1,10 @@
+# path<TAB>fixed string that must be present in the candidate (adaptation hunks inside upstream-shared files)
+common/params_keys.h	{"TorqueInterceptorEnabled", {PERSISTENT, BOOL, "1", "1"}},
+common/params_keys.h	{"BlendedACC", {PERSISTENT, BOOL, "1", "1"}},
+common/params_keys.h	{"NoMRCC", {PERSISTENT, BOOL}},
+panda/board/drivers/can_common.h	if ((msg->addr == 0x274) && (len == 8)) {
+panda/board/main.c	case SAFETY_MAZDA:
+opendbc_repo/opendbc/can/dbc.py	elif dbc_name.startswith("mazda_2019"):
+selfdrive/controls/lib/longcontrol.py	BlendedACC
+selfdrive/pandad/pandad.py	def tici_internal_panda_ready() -> bool:
+opendbc_repo/opendbc/safety/tests/common.py	if attr.startswith('TestMazda') and current_test.startswith('TestMazda'):

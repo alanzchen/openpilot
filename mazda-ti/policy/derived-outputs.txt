@@ -1,0 +1,18 @@
+# Only conflicts in these rebuildable scons outputs may keep the stamped build during an upstream merge.
+panda/board/obj/*
+common/*.so
+common/*.a
+cereal/*.a
+cereal/*.so
+cereal/messaging/bridge
+msgq_repo/*.so
+selfdrive/pandad/pandad
+selfdrive/pandad/*.so
+system/loggerd/loggerd
+system/loggerd/encoderd
+system/loggerd/bootlog
+system/camerad/camerad
+selfdrive/locationd/models/generated/*
+rednose_repo/*.so
+selfdrive/controls/lib/*/c_generated_code/*
+selfdrive/modeld/models/*.so
