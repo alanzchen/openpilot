@@ -1,0 +1,83 @@
+name: Mazda StarPilot upstream sync
+run-name: "mazda-sync ${{ inputs.mode || 'production' }} ${{ inputs.rehearsal_name || '-' }} ${{ inputs.nonce || 'scheduled' }}"
+
+# Trusted orchestration lives on the default branch only and runs at the exact workflow SHA.
+# Production refs come from .github/mazda-sync/config.env (no free-form inputs). Candidates are
+# computed at git-object level and never executed; they stay UNTRUSTED until the Mac trusted
+# AGNOS-root build posts `mac-trusted-build: success` on the exact head. No builds run here or on the Comma.
+on:
+  schedule:
+    - cron: "23 9 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "production (config.env refs), rehearsal (mac-ci/rehearsal/<name>/* refs only) or production-noop (read-only token, no writes)"
+        type: choice
+        options: [production, rehearsal, production-noop]
+        default: production
+      rehearsal_name:
+        description: "Rehearsal name ([a-z0-9-], rehearsal mode only)"
+        default: ""
+      nonce:
+        description: "Correlation id shown in the run name only (not used by the script)"
+        default: ""
+      dry_run:
+        description: "Compute only; do not push / open PR"
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: mazda-starpilot-sync-${{ inputs.mode || 'production' }}-${{ inputs.rehearsal_name || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && inputs.mode != 'production-noop'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - name: Checkout trusted sync script (exact workflow SHA)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github/mazda-sync
+          sparse-checkout-cone-mode: false
+          path: trusted
+      - name: Sync
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SYNC_MODE: ${{ inputs.mode || 'production' }}
+          REHEARSAL_NAME: ${{ inputs.rehearsal_name || '' }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
+        run: bash trusted/.github/mazda-sync/sync.sh
+  production-noop:
+    # read-only verification run: the token cannot write refs, statuses or PRs
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && inputs.mode == 'production-noop'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout trusted sync script (exact workflow SHA)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github/mazda-sync
+          sparse-checkout-cone-mode: false
+          path: trusted
+      - name: Verify production configuration (no writes)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SYNC_MODE: production-noop
+          DRY_RUN: "true"
+        run: bash trusted/.github/mazda-sync/sync.sh
