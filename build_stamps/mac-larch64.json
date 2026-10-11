@@ -1,0 +1,1067 @@
+{
+ "agnos": {
+  "AGNOS_SYSTEM_HASH": "d744641104991cdf13e1294aeb9b2628656cab46ed7f234f0f04092a9a5ead8d",
+  "AGNOS_SYSTEM_HASH_RAW": "2516390281514cde7a9ea8cea5f88035cc55a5124aa23626d12ff1f82554c0e8",
+  "AGNOS_VERSION": "19.6.20"
+ },
+ "attempt": "mazda-ti-d31709287fdb-20261011T110627Z",
+ "build_flags": {
+  "arm_toolchain": "/usr/local/venv/lib/python3.12/site-packages/gcc_arm_none_eabi/toolchain/bin",
+  "device_eigen": "/usr/local/venv/lib/python3.12/site-packages/eigen/install"
+ },
+ "built_at": "2026-10-11T11:09:08.816721+00:00",
+ "gates": {
+  "acceptance-tests": {
+   "evidence": "tests.json",
+   "evidence_sha256": "da5dd4b61497e5b7863d30082723e02b3ae880fc3cc1bbe9f6ef314baacabc47",
+   "verdict": "PASS"
+  },
+  "build-graph-b1": {
+   "evidence": "graph-gate-b1.json",
+   "evidence_sha256": "961dd00fc3d85be189f79f27148d400044a6ad7a0b1c299988517ae4ed20f492",
+   "verdict": "PASS"
+  },
+  "build-graph-b2": {
+   "evidence": "graph-gate-b2.json",
+   "evidence_sha256": "2f58a63506b0049894422c41c2f608dc1e6c7a7143cbff8f17595311021b9c94",
+   "verdict": "PASS"
+  },
+  "candidate-precheck": {
+   "evidence": "precheck.json",
+   "evidence_sha256": "6a56fd639172fd0423c59e6bf41e5ee6212236675fdcbe5186ec0339e95df77f",
+   "verdict": "PASS"
+  },
+  "changed-source-inventory": {
+   "detail": {
+    "changed_files": 49
+   },
+   "evidence": "changed-source-inventory.json",
+   "evidence_sha256": "370b1480a961e4eab4ab12803d53bcae95fee0b032215739faa35dc74a58a223",
+   "verdict": "PASS"
+  },
+  "elf-abi-device-closure": {
+   "evidence": "elf-gate.json",
+   "evidence_sha256": "1114418ad2b88015712f8a8ccb53fd02834af0be0ad5d918ce775565de8ea3b3",
+   "verdict": "PASS"
+  },
+  "firmware-selection": {
+   "evidence": "firmware-selection.json",
+   "evidence_sha256": "d6e823ad6859a127b4294481442d897d938e0369ea724ccc539fb6d3b71a3b06",
+   "verdict": "PASS"
+  },
+  "incremental-idempotence-b1": {
+   "evidence": "idempotence-b1.json",
+   "evidence_sha256": "8574caa88630508d147720dff5b79c49129c8b34b946ec2256872c63becdaa3f",
+   "verdict": "PASS"
+  },
+  "incremental-idempotence-b2": {
+   "evidence": "idempotence-b2.json",
+   "evidence_sha256": "8574caa88630508d147720dff5b79c49129c8b34b946ec2256872c63becdaa3f",
+   "verdict": "PASS"
+  },
+  "independent-rebuild-identical": {
+   "evidence": "reproducibility.json",
+   "evidence_sha256": "912580be44d474f443b430cb4a5abeb0d9c4c36a8917e14511e5c5530db20813",
+   "verdict": "PASS"
+  },
+  "panda-firmware": {
+   "evidence": "panda-gate.json",
+   "evidence_sha256": "3fbda95392a13193fccff88a7e34f811d746f4a5db5159dbda5df02267635e44",
+   "verdict": "PASS"
+  },
+  "params-registry": {
+   "evidence": "params-gate.json",
+   "evidence_sha256": "6369abaee412a65c6403782edd837c8efb05cd46d7c83271d03d0b5525d558a4",
+   "verdict": "PASS"
+  },
+  "source-immutability-b1": {
+   "evidence": "source-immutability-b1.json",
+   "evidence_sha256": "6fcbfd91690a351419a9f88b1fc850b37975a5a0433bf5345c50f65c61701d0e",
+   "verdict": "PASS"
+  },
+  "source-immutability-b2": {
+   "evidence": "source-immutability-b2.json",
+   "evidence_sha256": "6fcbfd91690a351419a9f88b1fc850b37975a5a0433bf5345c50f65c61701d0e",
+   "verdict": "PASS"
+  },
+  "venv-pins": {
+   "detail": {
+    "installed_without_build": [],
+    "sdist_not_allowed": []
+   },
+   "evidence": "venv-gate.json",
+   "evidence_sha256": "2c1993527e3eb8bf5d1468be9e8df89956232ca87a2d4bde98280c6f3a5a69b0",
+   "verdict": "PASS"
+  }
+ },
+ "host": {
+  "build_root": "AGNOS rootfs container (Mac-hosted, not on-device)",
+  "kind": "Mac Studio (Apple Silicon) / OrbStack linux/arm64 native"
+ },
+ "images": {
+  "agnos_rootfs": "sha256:c8dc7377b05f2aae5a0bd09f69a09cb97537f251c4c403aafe7d477380a1ae6f",
+  "builder": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136"
+ },
+ "label": "mazda-ti",
+ "missing_gates": [],
+ "mode": "production",
+ "not_covered": [
+  "Qualcomm GPU/OpenCL runtime",
+  "camera/modeld on hardware",
+  "panda flash on hardware",
+  "vehicle behaviour"
+ ],
+ "package_inventory": {
+  "cereal/libcereal.a": {
+   "mode": "100644",
+   "sha256": "2f0f4c2b401edd4d6693e60a8347e4fa6de1ebd3ac1aa0c37cc7f8661dfbd456"
+  },
+  "cereal/libsocketmaster.a": {
+   "mode": "100644",
+   "sha256": "8d4110b5163bbdc1bf31c0be60422822fe8feef5b94c040ea5ff573687ecd033"
+  },
+  "cereal/messaging/bridge": {
+   "mode": "100755",
+   "sha256": "925af22178c04238d09d1bd5d138d894afa6e92e21572b7707bc9d7a70ac707d"
+  },
+  "cereal/services.h": {
+   "mode": "100644",
+   "sha256": "16ca6064f47cf547cf1c11f3d8f228d04ce1b5ade502721a03f4bc651a308515"
+  },
+  "common/libcommon.a": {
+   "mode": "100644",
+   "sha256": "f6f31255aa6807cdcd9f1b465bced3da741dfc7cd8940cf337a408aec5bb9a54"
+  },
+  "common/params_pyx.cpp": {
+   "mode": "100644",
+   "sha256": "4882fbe3745fcf20d5cf5a646026357365c8a042a53a50d24cfe43e808ec2c3b"
+  },
+  "common/params_pyx.so": {
+   "mode": "100755",
+   "sha256": "2f0a31c9f271eae391ef5afdc72f6563cdaf022f91c0dd4acfb50d2420ea6462"
+  },
+  "common/transformations/transformations.so": {
+   "mode": "100755",
+   "sha256": "8bffe98f0b8b7c8f9775b576001ea58f9a88408896bd2d14c79bc2cc01b4d1dd"
+  },
+  "msgq_repo/msgq/ipc_pyx.so": {
+   "mode": "100755",
+   "sha256": "9036e0622f8ba25e670cc8ad04382a19abf367d4fdfb5c450b31c4dc79103d18"
+  },
+  "msgq_repo/msgq/visionipc/visionipc_pyx.so": {
+   "mode": "100755",
+   "sha256": "7f363236417c576fa0d09c9a2eeac7c1a7efee1bcae271c4138d40bdb04eb3a5"
+  },
+  "opendbc_repo/opendbc/dbc/acura_ilx_2016_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "e9419c61e67b06e3d37895458395f1405d9e5938318a8844d0f0e6f4fb15147c"
+  },
+  "opendbc_repo/opendbc/dbc/acura_mdx_2017_can_ext_generated.dbc": {
+   "mode": "100644",
+   "sha256": "2116f2beb1165e81009681400c1398c96e4ff6eacab91fc57d60f462bf40f32b"
+  },
+  "opendbc_repo/opendbc/dbc/acura_rdx_2018_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "1c55866c5696443cf94da74859eaa31c0f67306b92869f6a517e79fb17e2769b"
+  },
+  "opendbc_repo/opendbc/dbc/acura_rdx_2020_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b3f18d4a6fc2d40e9801609717410f41a5d6ca929bf47158879d8b12ca17ce39"
+  },
+  "opendbc_repo/opendbc/dbc/chrysler_pacifica_2017_hybrid_generated.dbc": {
+   "mode": "100644",
+   "sha256": "2e730ae380d1ca35b490446838d8bb4d67beb39c43961ad5248c76ca56579958"
+  },
+  "opendbc_repo/opendbc/dbc/chrysler_ram_dt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "7389e5d1cff2cbdbb67b81fe7abf154975feb0a453bbd8cd77dcf1842ff8e8e2"
+  },
+  "opendbc_repo/opendbc/dbc/chrysler_ram_hd_generated.dbc": {
+   "mode": "100644",
+   "sha256": "3e7200520d9235723f6b66f326af3ce0bd64bafce77723f52b539275a64efd5f"
+  },
+  "opendbc_repo/opendbc/dbc/gm_global_a_powertrain_generated.dbc": {
+   "mode": "100644",
+   "sha256": "56aedd94e0f8ea4cff9e8773d9ea753a2222ebbb9ad582c681ea8596594662c2"
+  },
+  "opendbc_repo/opendbc/dbc/honda_accord_2017_can_ext_generated.dbc": {
+   "mode": "100644",
+   "sha256": "147dadfe5b3b1efc9a80b67593c90bf08d6d5e32b2ea8014e9cfdfe48f3fc992"
+  },
+  "opendbc_repo/opendbc/dbc/honda_bosch_radarless_generated.dbc": {
+   "mode": "100644",
+   "sha256": "9a2a4b0a32018c8896eeb96f0184c14e0a7c2bdf49d25e21ae8f33afc61739f3"
+  },
+  "opendbc_repo/opendbc/dbc/honda_civic_hatchback_ex_2017_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "44e68f4bd41a6dcd17e7f3da538200fb8ccadc92eb796ada6ae398299329632b"
+  },
+  "opendbc_repo/opendbc/dbc/honda_civic_touring_2016_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "75f6e1b545f2619fde534fec6717aeb768c219c2c9518059153bc14c6468965d"
+  },
+  "opendbc_repo/opendbc/dbc/honda_clarity_hybrid_2018_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "cf7b3bfe998819ae00031c125bdc37f7cd6b377660fb446dba39788c9cde2bad"
+  },
+  "opendbc_repo/opendbc/dbc/honda_common_canfd_generated.dbc": {
+   "mode": "100644",
+   "sha256": "2ea0155821a72ac1b62d7041bbab780d6dc66ad2ce0aabbb0222c71e0a9c231a"
+  },
+  "opendbc_repo/opendbc/dbc/honda_crv_ex_2017_body_generated.dbc": {
+   "mode": "100644",
+   "sha256": "09c0f530cf918df19b858d8cd862cf2c65f09d3252ddc0ec790acb1d10aaec0b"
+  },
+  "opendbc_repo/opendbc/dbc/honda_crv_touring_2016_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b78bdfba894198745b8cdc660d98e16f0eab1bed95ed8c6c15174102360faea6"
+  },
+  "opendbc_repo/opendbc/dbc/honda_e_advance_2020_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "e01a118b9fc0e1b1ad0a064579b8944ff333e735bb17511c3ae372caa04735b1"
+  },
+  "opendbc_repo/opendbc/dbc/honda_insight_ex_2019_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b5582d2e3dea104b76af3ae662abde1f083fbdf5b4f783efddf15638304efb54"
+  },
+  "opendbc_repo/opendbc/dbc/honda_odyssey_exl_2018_generated.dbc": {
+   "mode": "100644",
+   "sha256": "685cce64820e8430808ce9901853ffb3ff8d0bc13de3b4cb9397c26cc96e0915"
+  },
+  "opendbc_repo/opendbc/dbc/honda_odyssey_twn_2018_generated.dbc": {
+   "mode": "100644",
+   "sha256": "41745bc8216c62c7ccfef5b2b94caa381febb8a700b536e24d5260e5a1eaa819"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_can_refresh_generated.dbc": {
+   "mode": "100644",
+   "sha256": "0b6896dc68278d5c0ba2a21387eb8bb8b53d77346b4805b1634f4edf2bed9750"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_canfd_generated.dbc": {
+   "mode": "100644",
+   "sha256": "9031c9ca6144e541e6371001c1e86b72f5d9d16cbb87997b53235c9b052f999f"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_kia_mando_corner_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "8f5e8788240b3f6a37dcf22987f76a78929fd9ea13dfe96a06f22a31a07fac6d"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_kia_mando_front_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "aca5aa8bfe86957fd35255a8463ec4d542bf022bdf6d4c76072c6557d827d5db"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_mrr30_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "df8ce47c70fcd39906ecc497967f42c38f675a06a7ef70d60ec132ccd50f3389"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_mrr35_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "0d77896d173c82798abf52e1cdd54a6abc9c314cbadf0ce8febdf1ae1821f820"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_mrrevo14f_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "0e321868b01df835c4740fcb59d6da87b84b1564b611785e172bb271673ff29f"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_palisade_2023_generated.dbc": {
+   "mode": "100644",
+   "sha256": "351e386cc2760a7b26788fb33b88e8c587bdefe2468b2ae7c2459310ac497b90"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_radar_210_21f_generated.dbc": {
+   "mode": "100644",
+   "sha256": "7e6b73772abd2b59edc3de91f5fcbeaabbabf049652cb363f3c3384e5d5d1b16"
+  },
+  "opendbc_repo/opendbc/dbc/nissan_leaf_2018_generated.dbc": {
+   "mode": "100644",
+   "sha256": "ef72130644c025b4be5715f41cc8869bd296383b194af31afc026dc3b1b0100a"
+  },
+  "opendbc_repo/opendbc/dbc/nissan_x_trail_2017_generated.dbc": {
+   "mode": "100644",
+   "sha256": "56c7020ef58741dbfebce5351695709af1a65e81908d2bd16bd0f09885edb184"
+  },
+  "opendbc_repo/opendbc/dbc/rivian_mando_front_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "369ddafdaca20ce5bbba7988ed1cb3a2e76555c35d43fbbe8a9314d8ebac650f"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_forester_2017_generated.dbc": {
+   "mode": "100644",
+   "sha256": "28c6e86353ca80c66a5cf7dc3c89a5f75b2137a92c16715903c2ce28495fe493"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_global_2017_generated.dbc": {
+   "mode": "100644",
+   "sha256": "168809725d55aec99212ff63f972f9f632d4e79cf63b461de55c83073375e5d1"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_global_2020_hybrid_generated.dbc": {
+   "mode": "100644",
+   "sha256": "7d170ff4dd4b9344ef58d4b301f8d93c602ef41f8e284b6d7e36a376ae7d95c3"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_outback_2015_generated.dbc": {
+   "mode": "100644",
+   "sha256": "46703fff83d99ffade420a53e52e4e308fb8a15bae9fa89d07e2b50c5b034257"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_outback_2019_generated.dbc": {
+   "mode": "100644",
+   "sha256": "a2eb0dcec75d02090869f77ea774f93a06cf4dbfdd79e4ba80b25491aec6bb6a"
+  },
+  "opendbc_repo/opendbc/dbc/tesla_radar_bosch_generated.dbc": {
+   "mode": "100644",
+   "sha256": "3745257484dfc984c424e2c7a2751e8ae550e58bdf4f02a075171f16ecd15417"
+  },
+  "opendbc_repo/opendbc/dbc/tesla_radar_continental_generated.dbc": {
+   "mode": "100644",
+   "sha256": "569e44301357fd789f6ec20520e8f73274410df818bdbc618ca51208b524e8db"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_new_mc_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "fd7a06254aa5117ecb252171ce85d00d1b42800456dee35d23b81ce9a1d3e193"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_nodsu_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "9a02a1219179f15722f142b0c171a18d96dd3ce9139fa7a1f88449333ae33feb"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_secoc_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "c83dad3ecce057f5c72ee7b38ace755c19e2d7f3ebb044c2aca7be44b99bb43f"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_tnga_k_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b831aa66d4aa45eef098d735c96b7c1c1b0e58b14399cef1b8a992d787a97d2c"
+  },
+  "opendbc_repo/opendbc/dbc/vw_meb_2024_generated.dbc": {
+   "mode": "100644",
+   "sha256": "c1e5dfe62913306640707b128cf1b490c0ceeef4e2eaa16b5a736814ce63ea6f"
+  },
+  "opendbc_repo/opendbc/dbc/vw_meb_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b7bb2ee239359f2ad4ac8b1716973614cecf48c725367e68ec28fb8f0f4e5078"
+  },
+  "panda/board/obj/body_h7.bin.signed": {
+   "mode": "100644",
+   "sha256": "9f5c28cf9d5073f3cdca59991f13725038784e764153ea88c253f2d6ee4c1a3b"
+  },
+  "panda/board/obj/body_h7/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "3c98e2a1e01475f5f1e87a0bae5ea1b2182108e7b4ee735cb7426515ad4af268"
+  },
+  "panda/board/obj/body_h7/main.bin": {
+   "mode": "100755",
+   "sha256": "349b26c05a73ccdbbb16d25af3f674496d2c8e653ccc2e776728faab3fe720e2"
+  },
+  "panda/board/obj/body_h7/main.elf": {
+   "mode": "100755",
+   "sha256": "8abfa033c9077157053bcd11bd89ba57555de137cebed3c3cf44c856ff19c2f0"
+  },
+  "panda/board/obj/bootstub.body_h7.bin": {
+   "mode": "100755",
+   "sha256": "6ad8baed389788d212b1a9e315eec02554effc25b4320e3f1e31801434cd406c"
+  },
+  "panda/board/obj/bootstub.panda.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_h7.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_hkg_remote.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_hkg_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_remote.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_tesla_wake.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_h7_tesla_wake_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "2657cd6e3dfe0bc149af6005c5dbe36d3585a736e2813f99069489a32c773e2d"
+  },
+  "panda/board/obj/bootstub.panda_hkg_remote.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_hkg_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_jungle_h7.bin": {
+   "mode": "100755",
+   "sha256": "9757ad5c7db950bf902625b81162891a0488989d19b86a54e8fefb84e66c2b2e"
+  },
+  "panda/board/obj/bootstub.panda_remote.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_tesla_wake.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/bootstub.panda_tesla_wake_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "eac04546989eaf824256be15ede4c0c2c48258cc820e92a779c0d0a68a3a5e64"
+  },
+  "panda/board/obj/cert.h": {
+   "mode": "100644",
+   "sha256": "baa137cc7dd5705fa3dd9234d69fe9a737d5168ef07b6ebad5391236bad7cba4"
+  },
+  "panda/board/obj/gitversion.h": {
+   "mode": "100644",
+   "sha256": "b8ad7a1725b0d01825d8c66d486924b1729cff872e280276f196b39a2a0ebb20"
+  },
+  "panda/board/obj/panda.bin.signed": {
+   "mode": "100644",
+   "sha256": "ab0ec3cc1a2db4308fda34cccad94a266f27f42baa66bd5979e2964cf0086a46"
+  },
+  "panda/board/obj/panda/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "60952bd4a90a1091a90ad99b8ae856a3a1e09f9b56ad389a57353920c2287a77"
+  },
+  "panda/board/obj/panda/main.bin": {
+   "mode": "100755",
+   "sha256": "303f759d7af11d1886179e3731909eea143cb332156e44cb6c20ba3dd9da7ab0"
+  },
+  "panda/board/obj/panda/main.elf": {
+   "mode": "100755",
+   "sha256": "f2fb2343d3d64a73f4bcf3b69e3d6a624443ac2268515de78e08f0c0788568cd"
+  },
+  "panda/board/obj/panda_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "68b14a05c203dba3d9bc3a205807c4344a2aa4832fa51345dbda54e9da1c754f"
+  },
+  "panda/board/obj/panda_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "f57c5e1f46de3ff803a53b25deab688c7d7fe61855ade6184d5fab0c74ba469d"
+  },
+  "panda/board/obj/panda_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "b9bfd1b112d03481142fc15b712ffcc8c42a981d582483a5f8f6b33e5762ae7f"
+  },
+  "panda/board/obj/panda_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "5df7872457ca680724a41515b110327c98b6c64e0f76809025e45d8eb99649d6"
+  },
+  "panda/board/obj/panda_h7.bin.signed": {
+   "mode": "100644",
+   "sha256": "382eec9eb7d0ff8ca406aa7892d35b786883cd29659f7af63b058427943bc6d4"
+  },
+  "panda/board/obj/panda_h7/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "8b43a2b0bd762706f0c970bc9008cf88a10685238aaa271997547bb5b4707e1f"
+  },
+  "panda/board/obj/panda_h7/main.bin": {
+   "mode": "100755",
+   "sha256": "b0b5fcca4f64233b5ce75d6d29163bd67cb7f5dcdaee956ed06bc18303cb6df8"
+  },
+  "panda/board/obj/panda_h7/main.elf": {
+   "mode": "100755",
+   "sha256": "2b4ea337acef693522ee7071cfa3fb58528628652735531e9e9abcbab751e47b"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "ebec42f094e46f783df6b19a58ef426e45b9c42327d0e177fa6621c6a339d760"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "f36bd6da89653c3b5f5e2a22aeb095c1c711d74ba34dc1d751550b6c815e57e6"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "5e5fa8fc27d40c283c84ace7eb6c26380d64115f4c761d5b397524dd1038ce27"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "fa287a9d046f455b41f28a3a3c2a05b8a145a97213aab3773428da4257d3f576"
+  },
+  "panda/board/obj/panda_h7_hkg_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "a72ca933a311d4b7716fa8e60bd1db2c75c25c80408575f21d696f83fe51e993"
+  },
+  "panda/board/obj/panda_h7_hkg_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "288e098d12a8d8f4eb2f5c0b727cba078a794bd3116bd6a17999d71c0cd28e3c"
+  },
+  "panda/board/obj/panda_h7_hkg_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "858deff0c588fdaae8acbc4951a1f9420e290568a5a7bc40f6a75aaec54f544c"
+  },
+  "panda/board/obj/panda_h7_hkg_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "07251b62e460c967028c26179db5facb9758f281212535b2fca4df43e1c7781d"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "4580be5c641bd1383e5626cfdad2fe7091a8e12a97c609504d14eb1e751e4ada"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "5a16a80ef721e16a0a8e2551d340321e03d688d0b790dc57c16f1d279aad0eae"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "34f249e753dac73b55e222a1cea4b237a52fb0c137d1541b41eb0d7ed5983d7d"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "efa1aa0e65ff9d73a93f6ac3530f38fcb31d110883e825de70e03bc8f74353f9"
+  },
+  "panda/board/obj/panda_h7_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "8ab7f370fdfb2cfd9661f0eeb87b6d06e73664358c1c7c1103ca60a6e3a1c95d"
+  },
+  "panda/board/obj/panda_h7_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "c988b18f8becf3b96bcf8d7498987b92c0ce30379e66e0f778eaf28f064e9d42"
+  },
+  "panda/board/obj/panda_h7_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "5508eae7d3b8d22bbdc4c57a6608e9a30cf0616c2c2990301a23cb93ab3025bb"
+  },
+  "panda/board/obj/panda_h7_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "7a09178fccb57c882d4ed0169f3aa55be646ece17eec76b76f4f78845a30dd1b"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "9ef4fac6df71651166a49b04f03623d96ac4578c4dac7c9e3588c9a12c36f287"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "89e7f5c82b3925be3f04a68d5c96c8436bacdd836411369fa10b2bd9629baed1"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "54a93a763beef0bdaf592ec2e07fc870e43e9a0488eac7527c95363597d487d7"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "441bdc1aa9bc56863c6c42c90d862a68212585447e0134c76160213c536c3a7d"
+  },
+  "panda/board/obj/panda_h7_tesla_wake.bin.signed": {
+   "mode": "100644",
+   "sha256": "2ce0d0ba2d9782d0bba41ae317a4572581e12dd5e6c2c2c866cecc3ddfad860a"
+  },
+  "panda/board/obj/panda_h7_tesla_wake/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "102419a7871a7ebf4f91f0a9e35967bfd2ca6d43485daba44a1c4772aeabbe39"
+  },
+  "panda/board/obj/panda_h7_tesla_wake/main.bin": {
+   "mode": "100755",
+   "sha256": "c6caa711f975e4f41911fd0861bdc2d717a1a2286055a6ecd8fc67fa7ce1508d"
+  },
+  "panda/board/obj/panda_h7_tesla_wake/main.elf": {
+   "mode": "100755",
+   "sha256": "136e9568fe249b4848fa088592b80b04b483e2efdb065a79b98ac18c58fd79e6"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "4afa6315b82b2440acf8527cb9aad072d75dac7488e09f9763c33987688af035"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "6a54e74ae6a241c03ebb941d30930b47b0b1da146d7e9e25f328fd54365d04d3"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "315b6d86eb785691bf316b7c8489e4b1c277cd809dec6c99cc56a31f9872dbc4"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "9a155dbf1fcfdd3bf803b1048363aef6403f2ac89226d02bca380c8952197dae"
+  },
+  "panda/board/obj/panda_hkg_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "a6cccace45191acf35c159536c9b6cf3eac34d380ceb53cd7aea05e5710cada8"
+  },
+  "panda/board/obj/panda_hkg_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "11a21a717a9f5b1d914642b6e68b3114519c51eca09262f8bb481ce01f793bbc"
+  },
+  "panda/board/obj/panda_hkg_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "eb35585b762f4bedb5553a1df6a9798b389159dfbb5b6a5b082e9b56ea75b82c"
+  },
+  "panda/board/obj/panda_hkg_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "58a6d8c425a4b76611651ce2512d992795b4b87d955da2c7f87031788ae1e688"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "66a3747c653306fe5a8b64637c01557ad3c1ba61fdf6ef878c88023009880a06"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "a6a53cd6b8d6fea9fda09a5b66adf729247fa103e72670e50756a0ac544de5d6"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "be5ff6db7f01cea1689a66878f5e3501904c7a5d66ac9eb03450f52b962fd72a"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "45ee3e5b3b4c2821279de32afdce49fe4721c4a06d09af1cc5c4d5528620f5c3"
+  },
+  "panda/board/obj/panda_jungle_h7.bin.signed": {
+   "mode": "100644",
+   "sha256": "43e2caad9cd300a28eb21ac53aef93a72bb6cb498a0def90fbf9439b263a6be5"
+  },
+  "panda/board/obj/panda_jungle_h7/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "48e6bbc8443145b50a420ae63dcd52623c508bbc00dfa5b2bdc15757a532bfbd"
+  },
+  "panda/board/obj/panda_jungle_h7/main.bin": {
+   "mode": "100755",
+   "sha256": "0e4bb3a5bd5b9d1626149a6d94290bceb6e9f66c54edbb302332fc83c8f138e7"
+  },
+  "panda/board/obj/panda_jungle_h7/main.elf": {
+   "mode": "100755",
+   "sha256": "f0c1543c8559622c0fb145353b661ff011970f10487770c6e365968d9806093f"
+  },
+  "panda/board/obj/panda_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "84243517281fb3a06683e3d8b7e400340c8ab1d2a3db6d7dd9ffa7809c95fb92"
+  },
+  "panda/board/obj/panda_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "a8fcfb5d877cad34367ae2dd91124180186cb7f04a9cd983a9dd235b580f3652"
+  },
+  "panda/board/obj/panda_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "0ee0bbbd17904e5f8f8be4d45dd7d1dc9495b15f768d1d59acc7e5061342e94b"
+  },
+  "panda/board/obj/panda_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "a0b3c6cb542f6eb0de7f6afb2556f30489ea2f5c2093481743010ba5debd8117"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "554c872dad6025605048c5802ee96d098d6670da17536356f1b18355cf24c590"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "6b1c4c051472d87d3bf5ba93775db23972f95c0ea1f4e32f761eeb0afdf75603"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "721b0b30cb58de0d9d18295b62391cf1fec9df3968b5ef8bbb0de813d02037a1"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "e0e68512a7d1e03aa98f337e39a28ff2a442688c2eaa7c249803d4529977bd48"
+  },
+  "panda/board/obj/panda_tesla_wake.bin.signed": {
+   "mode": "100644",
+   "sha256": "34629585869dc317397c3ce651b18213e4500dae0719d78ed94d8988e4abb2ab"
+  },
+  "panda/board/obj/panda_tesla_wake/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "2ebfe3a336f05a0eeed504c2eda5be476c4356275e99e6bfdf1e2d205dd12f4f"
+  },
+  "panda/board/obj/panda_tesla_wake/main.bin": {
+   "mode": "100755",
+   "sha256": "8c538fc3e0883bbe3152e0d24be5ca894d30994c37ff2f61212218f09f2e7c29"
+  },
+  "panda/board/obj/panda_tesla_wake/main.elf": {
+   "mode": "100755",
+   "sha256": "9432f00636d3ef17caf4341bd7be61bd5ba05a57b7900a20507c577c2af0046e"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "4ec8feadeca61f9003fbe5d69968cf5ae3adddf26f9acd16f0757f2a6808057f"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "9ea792b9e92357ed05d6c8efd458a030596154805315c464aa7d3a4c8d9bdd95"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "3a6bbca3f5080e89cef280284d28c7e7769c539e957982c93f8499d41a2ce88f"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "81b87e259eb498630fb7de7a55272b91d2eac5857c5fa66a11cc9414a95a558d"
+  },
+  "panda/board/obj/version": {
+   "mode": "100644",
+   "sha256": "848f5fc7ffe3c7e2199866b5e7357f5afe69f58d4dcfc7f9dedd350c99d589f1"
+  },
+  "prebuilt": {
+   "mode": "100644",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rednose_repo/rednose/helpers/ekf_sym_pyx.so": {
+   "mode": "100755",
+   "sha256": "f838a62a1d3dc24f455953bce4fdee1e01d94b4dfef92d5f99499edb19fbfbae"
+  },
+  "selfdrive/controls/lib/lateral_mpc_lib/c_generated_code/acados_ocp_solver_pyx.so": {
+   "mode": "100755",
+   "sha256": "076092bc08d575bf81649cfdae07b7dbe26f09a07772afa58e9482c4ec12c980"
+  },
+  "selfdrive/controls/lib/lateral_mpc_lib/c_generated_code/libacados_ocp_solver_lat.so": {
+   "mode": "100755",
+   "sha256": "f73386a4c36893e9e8df5704e903694922fa29dd806c810faab5add1362a237f"
+  },
+  "selfdrive/controls/lib/longitudinal_mpc_lib/c_generated_code/acados_ocp_solver_pyx.so": {
+   "mode": "100755",
+   "sha256": "d83dc616d39ff8031601a4ddde8e2847b723b571b8b476e00015b1f90ca75361"
+  },
+  "selfdrive/controls/lib/longitudinal_mpc_lib/c_generated_code/libacados_ocp_solver_long.so": {
+   "mode": "100755",
+   "sha256": "9b5a6c17c4decd955e6cca8dd752f222e94947082550c5bd0bd2dcda89477a12"
+  },
+  "selfdrive/locationd/models/generated/car.cpp": {
+   "mode": "100644",
+   "sha256": "f541feae0f82a5f110d0c13a83354770493aef547bd745bf6aa2409e72e4c68a"
+  },
+  "selfdrive/locationd/models/generated/car.h": {
+   "mode": "100644",
+   "sha256": "83b63d4e40626d94bb213a2d34a3d767e505bbd684b684aacac10d9fd3f1f7a8"
+  },
+  "selfdrive/locationd/models/generated/car.os": {
+   "mode": "100644",
+   "sha256": "e1a6bd91dab9ddaf779bd1e0d743dfc64010c0c82828807e4b9a7fdf61218e0c"
+  },
+  "selfdrive/locationd/models/generated/libcar.so": {
+   "mode": "100755",
+   "sha256": "ed01478ce9f8130dc7a8984c7daa8e510af2737e1ab449ec4dd4a4746494a65d"
+  },
+  "selfdrive/locationd/models/generated/libpose.so": {
+   "mode": "100755",
+   "sha256": "cc2e5debf676112a15bdc8bdb455a93f9d0344ba35efdea36e2430885fbe4a2a"
+  },
+  "selfdrive/locationd/models/generated/pose.cpp": {
+   "mode": "100644",
+   "sha256": "a37a3014634965d302d987d9667d9816eaa068ea4d96219d622f20091d792565"
+  },
+  "selfdrive/locationd/models/generated/pose.h": {
+   "mode": "100644",
+   "sha256": "c2bd9df323ae3ef7e6cd0647a9bbe653162e59ebd3b1b5e9eb883c24673a703f"
+  },
+  "selfdrive/locationd/models/generated/pose.os": {
+   "mode": "100644",
+   "sha256": "2f384484b4132f45fe381369a1e7de2dce9bbf0bc21cc0b8214611e339eb970c"
+  },
+  "selfdrive/modeld/models/commonmodel_pyx.so": {
+   "mode": "100755",
+   "sha256": "43aa1c792851c8190b4865dea2f38079572ce93440acf879b7b6a39fdb7ff52a"
+  },
+  "selfdrive/pandad/pandad": {
+   "mode": "100755",
+   "sha256": "0dba1dbcc21d2b930fb642f4e8cc31593686ecd4c4e623398d8f0ac1e511154c"
+  },
+  "selfdrive/pandad/pandad_api_impl.so": {
+   "mode": "100755",
+   "sha256": "2e5726434fd2bbc3ad5d8edcc4183d7dcca4543d542a5bdbebc2b0807d9399d1"
+  },
+  "system/camerad/camerad": {
+   "mode": "100755",
+   "sha256": "40077f44dd8b62a22e499ac6688ede47bdc822e34071033860a4acc96714913e"
+  },
+  "system/loggerd/bootlog": {
+   "mode": "100755",
+   "sha256": "193748119d0723454703d26538e7e0404994a29aa9e48582a586eeff226f838d"
+  },
+  "system/loggerd/encoderd": {
+   "mode": "100755",
+   "sha256": "e538fb753bf21b838805a66009ac3aa6568b3b77bba256dafdc3e1c0e5ab4b9e"
+  },
+  "system/loggerd/loggerd": {
+   "mode": "100755",
+   "sha256": "a9a385aecf437655d54b5bbf9afe9f93afa9c3f8730abe05e78540b837e53ae5"
+  }
+ },
+ "panda_version_text": "DEV-d3170928-DEBUG",
+ "params": {
+  "keys_source": 802,
+  "registry_sha256": "bdafdd502b9ae5584e46cee84edf36f961b9982ce771f0d2f0c7110d0b61f7d1"
+ },
+ "schema": "sp-mazda-mac-agnos-larch64-stamp/3",
+ "source_commit": "d31709287fdb73936806fe07c1427b29f226cbdd",
+ "source_tree": "002f0b0a079e64faaa9133e3f14b44f905ef029b",
+ "tests": [
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; (cd opendbc_repo && scons -j8 opendbc/safety/tests/libsafety/ >/tmp/libsafety.log 2>&1) || { tail -30 /tmp/libsafety.log; exit 3; }; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_safety.xml opendbc_repo/opendbc/safety/tests/test_mazda.py opendbc_repo/opendbc/safety/tests/test_defaults.py opendbc_repo/opendbc/safety/tests/test_mazda_ti.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 145,
+    "skipped": 27,
+    "xfailed": 7
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_safety.xml",
+   "junit_sha256": "fb5589e3d34e566a48c6ee31c50e688158c743f288af1380770bfa7ab7c7edf4",
+   "log": "test-mazda_safety.log",
+   "log_sha256": "3cf932573a0e4097025efe4f05d5bdc4e041bb253d9335f7fef7b4a25eb46c5f",
+   "name": "mazda_safety",
+   "violations": []
+  },
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_car.xml -k 'mazda or MAZDA' opendbc_repo/opendbc/car/tests/test_car_interfaces.py opendbc_repo/opendbc/car/tests/test_fw_fingerprint.py opendbc_repo/opendbc/car/tests/test_can_fingerprint.py opendbc_repo/opendbc/car/tests/test_platform_configs.py opendbc_repo/opendbc/car/tests/test_mazda3_fingerprint.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 45,
+    "skipped": 10,
+    "xfailed": 0
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_car.xml",
+   "junit_sha256": "bb4c6205b9f353bfc78396e60b1224ba2329effab45aa7383e822d30c9d7c3d4",
+   "log": "test-mazda_car.log",
+   "log_sha256": "54ba47a7008b8a631d87268d47e68723dfa3cd9b998ad09a5110a40ce610e033",
+   "name": "mazda_car",
+   "violations": []
+  },
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; (cd opendbc_repo && scons -j8 opendbc/safety/tests/libsafety/ >/tmp/libsafety.log 2>&1) || { tail -30 /tmp/libsafety.log; exit 3; }; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_car_ti_integration.xml opendbc_repo/opendbc/car/mazda/tests/test_mazda_ti_integration.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 10,
+    "skipped": 0,
+    "xfailed": 0
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_car_ti_integration.xml",
+   "junit_sha256": "dc3552ddf6b814f9d2c6da43d2526426045d7cf7c669ffe9bf7470251a1d2d34",
+   "log": "test-mazda_car_ti_integration.log",
+   "log_sha256": "ff316400bb12313f57bc9a873b88d5de98655a4fe5793e91da4fc1ee9e7fddf6",
+   "name": "mazda_car_ti_integration",
+   "violations": []
+  },
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_controls.xml selfdrive/controls/tests/test_longcontrol_mazda_ti.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 2,
+    "skipped": 0,
+    "xfailed": 0
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_controls.xml",
+   "junit_sha256": "693b4a80aa77bb73cde89629c2d576ad585a0317311b8d9fbce5881d2d38f016",
+   "log": "test-mazda_controls.log",
+   "log_sha256": "e4201d0ed51c455005c3e2e7e8cda2c86cd2c3bf0dabcb60b152c207dafab0eb",
+   "name": "mazda_controls",
+   "violations": []
+  },
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_pandad.xml selfdrive/pandad/tests/test_pandad_tici_discovery.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 19,
+    "skipped": 0,
+    "xfailed": 0
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_pandad.xml",
+   "junit_sha256": "1377df6db0cbdeabb51aaea9bad5130d877d7de149107673a054df275f4423f2",
+   "log": "test-mazda_pandad.log",
+   "log_sha256": "a0d4ed7aad2f52e9bf14c7e634f0546bd32064287c81759d33ed33731007d9b7",
+   "name": "mazda_pandad",
+   "violations": []
+  }
+ ],
+ "trusted_inputs_sha256": {
+  "bin/sp": "0abe365fb2419ef77ee17535262f9c909afbae18b430cd9e2caad126a35c03b4",
+  "builder/Dockerfile.larch64": "caae7edb7856614d32fcd025a75987e7e65b4f14022e6fd73367f0bbc43064ac",
+  "builder/deploy/exchange_dirs.py": "22b336446074c54107011cd31acf5dfc862dd4b5d8b43994d03825010a15b915",
+  "builder/deploy/tree_manifest_dir.py": "e89c287322261c3d824c7daebf6386fb077a814bf94049e0d4e28b488fc0d5f1",
+  "builder/package.py": "598edd6fe9e8e2ba5620934f6f126d83814106c5d0f63372e0ce40eda9bce43b",
+  "builder/pins.env": "8c11da15e08d1f151c19c9f0a230d16a250bd6ffd429ca8dd7e1bc81eabcec91",
+  "builder/policy-consumers.json": "9c37e2c7caafc3dc53ba5e31f5c3fe734e7ce1c6536cc200306bb04908c90e27",
+  "builder/policy.json": "598d76d11b45ae1ccb24d8b9a87788658b2028e4380fa1c5486622e44678a932",
+  "builder/tools/gen_policy.py": "5d4e64e7f5897bd048ef33816ca29ac0441aa33ba5e8d8c4178c7d257b922798",
+  "builder/tools/ic_trusted.py": "190d4a0fb2f78095d796c65f5afc87970ac8ce699ed88d1aad2cf80bdfac09fe",
+  "builder/tools/ic_untrusted.py": "6bb1c116c7097a0c3b58847db36710ace40be73f3330cba9fb597878338b4b2b",
+  "builder/tools/params_check.py": "e0e891afbb739e3a02d03efd23def2bf6fc00e26094981e30e1a4047ef64df6e",
+  "builder/tools/tree_manifest.py": "d204b1cb689ede881ee692560358fd778f9a2d384f2a3797f8829671d975851e",
+  "builder/tools/workflow_guard.py": "6e5033983a11dba6d26b1151a921e560004ad3c56905e85985ecc9061be6ccb9",
+  "builder/trusted_build.py": "682219064024f993b65cd99c03423be578a2ec9e98ce37853dd6b4512d7bdf4f",
+  "builder/verify_artifact_commit.py": "8fb0e0515ed6477fbd7a4c8651f0a7a63df0f4f366a6c9e66a790d9702fc4817"
+ },
+ "upstream_base": "2a12dbd0ad94b46f8a7b6099d32d7216b7676f79",
+ "upstream_ref": "refs/sp-trusted/upstream",
+ "upstream_ref_head": "2a12dbd0ad94b46f8a7b6099d32d7216b7676f79",
+ "venv": {
+  "abi_bytes": {
+   "comma-deps-capnproto": {
+    "differences": [],
+    "files": 96
+   },
+   "comma-deps-ffmpeg": {
+    "differences": [],
+    "files": 146
+   }
+  },
+  "allow_list": [
+   "crcmod",
+   "http-ece",
+   "mapbox-earcut",
+   "pyaudio",
+   "pytest-xdist",
+   "spidev"
+  ],
+  "installed_without_build_in_this_attempt": [],
+  "not_allowed": [],
+  "packages": 96,
+  "packages_sha256": "540d34e3200b19d2a20cbd6635bb77cfbf11293efaa8a10efbb1601079ba40de",
+  "phase2_built_from_source": [
+   "crcmod",
+   "http-ece",
+   "mapbox-earcut",
+   "pyaudio",
+   "pytest-xdist",
+   "spidev"
+  ],
+  "phase2_installed": [
+   "crcmod",
+   "http-ece",
+   "mapbox-earcut",
+   "pyaudio",
+   "pytest-xdist",
+   "spidev"
+  ],
+  "phase3_device_runtime": [
+   "python-dateutil",
+   "six"
+  ],
+  "pth_files": [
+   "_virtualenv.pth",
+   "aaaaa_future_fstrings.pth",
+   "distutils-precedence.pth"
+  ],
+  "python": "3.12.3",
+  "stripped_cached_builds": [
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/1.2.0-py3-none-any.lock",
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/metadata.msgpack",
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/pytweening-1.2.0-py3-none-any",
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/pytweening-1.2.0-py3-none-any.whl",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/1.2.1-py2.py3-none-any.lock",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/http_ece-1.2.1-py2.py3-none-any",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/http_ece-1.2.1-py2.py3-none-any.whl",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/metadata.msgpack",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/0.2.14-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/metadata.msgpack",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/pyaudio-0.2.14-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/pyaudio-0.2.14-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/0.2.0-py2.py3-none-any.lock",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/metadata.msgpack",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/pyrect-0.2.0-py2.py3-none-any",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/pyrect-0.2.0-py2.py3-none-any.whl",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/1.0.3-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/mapbox_earcut-1.0.3-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/mapbox_earcut-1.0.3-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/metadata.msgpack",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/3.8-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/metadata.msgpack",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/spidev-3.8-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/spidev-3.8-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/1.0.1-py3-none-any.lock",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/metadata.msgpack",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/pyscreeze-1.0.1-py3-none-any",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/pyscreeze-1.0.1-py3-none-any.whl",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/0.1.3-py3-none-any.lock",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/metadata.msgpack",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/mouseinfo-0.1.3-py3-none-any",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/mouseinfo-0.1.3-py3-none-any.whl",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/1.7-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/crcmod-1.7-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/crcmod-1.7-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/metadata.msgpack",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/0.0.9-py3-none-any.lock",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/metadata.msgpack",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/pygetwindow-0.0.9-py3-none-any",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/pygetwindow-0.0.9-py3-none-any.whl",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/0.9.54-py3-none-any.lock",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/metadata.msgpack",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/pyautogui-0.9.54-py3-none-any",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/pyautogui-0.9.54-py3-none-any.whl",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/1.4.5-py2.py3-none-any.lock",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/metadata.msgpack",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/pyprof2calltree-1.4.5-py2.py3-none-any",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/pyprof2calltree-1.4.5-py2.py3-none-any.whl",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/0.15-py3-none-any.lock",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/metadata.msgpack",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/python3_xlib-0.15-py3-none-any",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/python3_xlib-0.15-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/3.7.1.dev24+g2b4372bd6-py3-none-any.lock",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/metadata.msgpack",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/pytest_xdist-3.7.1.dev24+g2b4372bd6-py3-none-any",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/pytest_xdist-3.7.1.dev24+g2b4372bd6-py3-none-any.whl"
+  ]
+ },
+ "verdict": "PASS"
+}
