@@ -16,73 +16,6 @@ from openpilot.selfdrive.pandad.panda_firmware import get_firmware_path, get_tes
 from openpilot.selfdrive.pandad.panda_firmware import get_selected_firmware_name as get_selected_firmware_name
 
 
-# comma 3 (tici): the internal panda is a USB device on this port, and udev must finish applying its
-# permissions before libusb can open it. Waiting here keeps a slow udev coldplug from being mistaken for a
-# missing panda, which used to trigger resets and DFU entry while the car was starting.
-TICI_INTERNAL_PANDA_USB_DEVICE = "/sys/bus/usb/devices/1-1.2"
-TICI_UDEV_WAIT_TIMEOUT_S = 30
-TICI_REENUMERATION_TIMEOUT_S = 10
-
-
-def is_tici() -> bool:
-  return HARDWARE.get_device_type() == "tici"
-
-
-def _tici_usb_attr(name: str) -> str | None:
-  try:
-    with open(os.path.join(TICI_INTERNAL_PANDA_USB_DEVICE, name)) as f:
-      return f.read().strip()
-  except OSError:
-    return None
-
-
-def wait_for_tici_panda_udev(timeout: int = TICI_UDEV_WAIT_TIMEOUT_S) -> bool:
-  # Only wait for an enumerated device, so a missing panda still reaches the reset/DFU recovery without delay.
-  if not is_tici() or not os.path.exists(TICI_INTERNAL_PANDA_USB_DEVICE):
-    return True
-  try:
-    ret = subprocess.run(["udevadm", "wait", f"--timeout={timeout}", TICI_INTERNAL_PANDA_USB_DEVICE],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False, timeout=timeout + 5)
-  except subprocess.TimeoutExpired:
-    cloudlog.warning("pandad: udevadm wait did not return in time")
-    return False
-  except OSError as e:
-    cloudlog.warning(f"pandad: udevadm unavailable: {e}")
-    return False
-  if ret.returncode != 0:
-    cloudlog.warning("pandad: internal panda USB device not initialized by udev before timeout")
-  return ret.returncode == 0
-
-
-def wait_for_tici_panda_reenumeration(previous_devnum: str | None, timeout: float = TICI_REENUMERATION_TIMEOUT_S) -> bool:
-  # After a reset or DFU entry the port must show a new USB device before its udev state means anything.
-  if not is_tici():
-    return True
-  for _ in range(int(timeout / 0.1)):
-    devnum = _tici_usb_attr("devnum")
-    if devnum is not None and devnum != previous_devnum:
-      return True
-    time.sleep(0.1)
-  cloudlog.warning("pandad: internal panda did not re-enumerate after reset")
-  return False
-
-
-def list_dfu_pandas() -> list[str]:
-  # the internal panda is USB-only on comma 3; its SPI device node has no panda
-  return PandaDFU.usb_list() if is_tici() else PandaDFU.list()
-
-
-def list_pandas() -> list[str]:
-  return Panda.list(usb_only=is_tici())
-
-
-def tici_internal_panda_ready() -> bool:
-  if not is_tici() or not os.path.exists(TICI_INTERNAL_PANDA_USB_DEVICE) or not wait_for_tici_panda_udev():
-    return False
-  serial = _tici_usb_attr("serial")
-  return serial is not None and serial in list_pandas()
-
-
 def get_expected_firmware_path(panda: Panda, remote_start: bool, hkg_remote_start: bool, ignore_ignition_line: bool,
                                tesla_wake: bool = False) -> str:
   return get_firmware_path(FW_PATH, panda.get_mcu_type().config.app_fn, remote_start, hkg_remote_start, ignore_ignition_line, tesla_wake)
@@ -176,8 +109,6 @@ def main() -> None:
   first_run = True
   params = Params()
   no_internal_panda_count = 0
-  recovery_skipped = False
-  recovery_actions = 0
 
   while not do_exit:
     try:
@@ -185,41 +116,25 @@ def main() -> None:
       cloudlog.event("pandad.flash_and_connect", count=count)
       params.remove("PandaSignatures")
 
-      # Handle missing internal panda. Recovery stages advance by actions actually taken (reset, reset, DFU,
-      # then resets), so a skipped attempt never loses the pending DFU step.
-      if no_internal_panda_count == 0:
-        recovery_skipped = False
-        recovery_actions = 0
-      elif not recovery_skipped and tici_internal_panda_ready():
-        # it appeared since the last scan: connect instead of resetting it (once per missing episode)
-        cloudlog.info("Internal panda became available, skipping recovery")
-        recovery_skipped = True
-      else:
-        previous_devnum = _tici_usb_attr("devnum") if is_tici() else None
-        if recovery_actions == 2:
+      # Handle missing internal panda
+      if no_internal_panda_count > 0:
+        if no_internal_panda_count == 3:
           cloudlog.info("No pandas found, putting internal panda into DFU")
           HARDWARE.recover_internal_panda()
         else:
           cloudlog.info("No pandas found, resetting internal panda")
           HARDWARE.reset_internal_panda()
-        recovery_actions += 1
         time.sleep(3)  # wait to come back up
-        wait_for_tici_panda_reenumeration(previous_devnum)
-
-      wait_for_tici_panda_udev()
 
       # Flash all Pandas in DFU mode
-      dfu_serials = list_dfu_pandas()
+      dfu_serials = PandaDFU.list()
       if len(dfu_serials) > 0:
-        previous_devnum = _tici_usb_attr("devnum") if is_tici() else None
         for serial in dfu_serials:
           cloudlog.info(f"Panda in DFU mode found, flashing recovery {serial}")
           PandaDFU(serial).recover()
         time.sleep(1)
-        wait_for_tici_panda_reenumeration(previous_devnum)
-        wait_for_tici_panda_udev()
 
-      panda_serials = list_pandas()
+      panda_serials = Panda.list()
       if len(panda_serials) == 0:
         no_internal_panda_count += 1
         continue
