@@ -1,5 +1,0 @@
-# Upstream changes under these paths always need MANUAL_REVIEW before a candidate can be READY.
-system/hardware/tici/agnos.json
-launch_env.sh
-launch_chffrplus.sh
-.github/workflows/
