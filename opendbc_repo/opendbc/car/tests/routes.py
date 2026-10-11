@@ -115,6 +115,13 @@ non_tested_cars = [
   VOLVO.VOLVO_S60_RECHARGE,
   VOLVO.POLESTAR_2,
 
+  # mazda-ti: MoreTore Mazda platforms without public test routes
+  MAZDA.MAZDA_CX8,
+  MAZDA.MAZDA_3_2019,
+  MAZDA.MAZDA_CX_30,
+  MAZDA.MAZDA_CX_50,
+  MAZDA.MAZDA_3_2023,
+  MAZDA.MAZDA_CX_30_2023,
 ]
 
 non_tested_cars.extend(CC_ONLY_CAR)
