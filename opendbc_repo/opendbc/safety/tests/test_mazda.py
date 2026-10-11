@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import unittest
 
+from opendbc.car.mazda.values import MazdaSafetyFlags
 from opendbc.car.structs import CarParams
 from opendbc.safety.tests.libsafety import libsafety_py
 import opendbc.safety.tests.common as common
@@ -29,7 +30,8 @@ class TestMazdaSafety(common.CarSafetyTest, common.DriverTorqueSteeringSafetyTes
   def setUp(self):
     self.packer = CANPackerSafety("mazda_2017")
     self.safety = libsafety_py.libsafety
-    self.safety.set_safety_hooks(CarParams.SafetyModel.mazda, 0)
+    # mazda-ti: the mode parses nothing without a generation flag (see test_mazda_ti.TestMazdaUnconfiguredParam)
+    self.safety.set_safety_hooks(CarParams.SafetyModel.mazda, MazdaSafetyFlags.GEN1)
     self.safety.init_tests()
 
   def _torque_meas_msg(self, torque):

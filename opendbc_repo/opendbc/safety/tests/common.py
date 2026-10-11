@@ -1073,6 +1073,10 @@ class SafetyTest(SafetyTestBase):
               continue
             if attr.startswith('TestToyota') and current_test.startswith('TestToyota'):
               continue
+            # Mazda generations and interceptor flags share one safety mode (mazda) and its message IDs;
+            # test_mazda_ti.TestMazdaCrossGenerationTx checks the cross-generation rejections explicitly
+            if attr.startswith('TestMazda') and current_test.startswith('TestMazda'):
+              continue
             if attr.startswith('TestSubaruGen') and current_test.startswith('TestSubaruGen'):
               continue
             if attr.startswith('TestSubaruDPlatform') and current_test.startswith('TestSubaruDPlatform'):
