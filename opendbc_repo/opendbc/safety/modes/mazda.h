@@ -105,3 +105,4 @@ const safety_hooks mazda_hooks = {
   .rx = mazda_rx_hook,
   .tx = mazda_tx_hook,
 };
+// mac-ci rehearsal r1: comment only
