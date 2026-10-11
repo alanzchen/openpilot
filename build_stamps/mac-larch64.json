@@ -1,0 +1,994 @@
+{
+ "agnos": {
+  "AGNOS_SYSTEM_HASH": "d744641104991cdf13e1294aeb9b2628656cab46ed7f234f0f04092a9a5ead8d",
+  "AGNOS_SYSTEM_HASH_RAW": "2516390281514cde7a9ea8cea5f88035cc55a5124aa23626d12ff1f82554c0e8",
+  "AGNOS_VERSION": "19.6.20"
+ },
+ "attempt": "rehearsal-r1-142170937b4a-20261011T095027Z",
+ "build_flags": {
+  "arm_toolchain": "/usr/local/venv/lib/python3.12/site-packages/gcc_arm_none_eabi/toolchain/bin",
+  "device_eigen": "/usr/local/venv/lib/python3.12/site-packages/eigen/install"
+ },
+ "built_at": "2026-10-11T09:53:01.257772+00:00",
+ "gates": {
+  "acceptance-tests": {
+   "evidence": "tests.json",
+   "evidence_sha256": "70d4ea19736358f2926fa0a15948bb5513543309575bdbae1b0d4eabe51ba923",
+   "verdict": "PASS"
+  },
+  "build-graph-b1": {
+   "evidence": "graph-gate-b1.json",
+   "evidence_sha256": "eb3ce75bd82313eb2341a6f9e7f1bc570036bf0023183f48ce5fafa201eb358f",
+   "verdict": "PASS"
+  },
+  "build-graph-b2": {
+   "evidence": "graph-gate-b2.json",
+   "evidence_sha256": "27cfa60ab5cdb5267c8d51caf264b68d14f7a069954b88b2bff0ce21242d9445",
+   "verdict": "PASS"
+  },
+  "candidate-precheck": {
+   "evidence": "precheck.json",
+   "evidence_sha256": "618c7dc471a6e7d89b6509b099ce6917b682e526944aed59262b46baee2a9003",
+   "verdict": "PASS"
+  },
+  "changed-source-inventory": {
+   "detail": {
+    "changed_files": 2
+   },
+   "evidence": "changed-source-inventory.json",
+   "evidence_sha256": "eef251352b15cb975b168626aaad3ff02fe88c70007324ede8a7bb8a2e8bf22f",
+   "verdict": "PASS"
+  },
+  "elf-abi-device-closure": {
+   "evidence": "elf-gate.json",
+   "evidence_sha256": "1114418ad2b88015712f8a8ccb53fd02834af0be0ad5d918ce775565de8ea3b3",
+   "verdict": "PASS"
+  },
+  "firmware-selection": {
+   "evidence": "firmware-selection.json",
+   "evidence_sha256": "d6e823ad6859a127b4294481442d897d938e0369ea724ccc539fb6d3b71a3b06",
+   "verdict": "PASS"
+  },
+  "incremental-idempotence-b1": {
+   "evidence": "idempotence-b1.json",
+   "evidence_sha256": "8574caa88630508d147720dff5b79c49129c8b34b946ec2256872c63becdaa3f",
+   "verdict": "PASS"
+  },
+  "incremental-idempotence-b2": {
+   "evidence": "idempotence-b2.json",
+   "evidence_sha256": "8574caa88630508d147720dff5b79c49129c8b34b946ec2256872c63becdaa3f",
+   "verdict": "PASS"
+  },
+  "independent-rebuild-identical": {
+   "evidence": "reproducibility.json",
+   "evidence_sha256": "912580be44d474f443b430cb4a5abeb0d9c4c36a8917e14511e5c5530db20813",
+   "verdict": "PASS"
+  },
+  "panda-firmware": {
+   "evidence": "panda-gate.json",
+   "evidence_sha256": "374b069a5cda2d35a0369f07da95e15919735cdab373fd0b98349aa53803b86a",
+   "verdict": "PASS"
+  },
+  "params-registry": {
+   "evidence": "params-gate.json",
+   "evidence_sha256": "46388d8e5229f7d81eb5523b4cc39820801a4b5bfd6fc814a7d85e93fe4441ff",
+   "verdict": "PASS"
+  },
+  "source-immutability-b1": {
+   "evidence": "source-immutability-b1.json",
+   "evidence_sha256": "7a1e3a9071821098297152152198f09205d111ba52b903750c0d6b18f3ce456d",
+   "verdict": "PASS"
+  },
+  "source-immutability-b2": {
+   "evidence": "source-immutability-b2.json",
+   "evidence_sha256": "7a1e3a9071821098297152152198f09205d111ba52b903750c0d6b18f3ce456d",
+   "verdict": "PASS"
+  },
+  "venv-pins": {
+   "detail": {
+    "installed_without_build": [],
+    "sdist_not_allowed": []
+   },
+   "evidence": "venv-gate.json",
+   "evidence_sha256": "2636520cd89c94ccc645e92c586aef632db7f2a3db8765d1a14e50a3c2d76001",
+   "verdict": "PASS"
+  }
+ },
+ "host": {
+  "build_root": "AGNOS rootfs container (Mac-hosted, not on-device)",
+  "kind": "Mac Studio (Apple Silicon) / OrbStack linux/arm64 native"
+ },
+ "images": {
+  "agnos_rootfs": "sha256:c8dc7377b05f2aae5a0bd09f69a09cb97537f251c4c403aafe7d477380a1ae6f",
+  "builder": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136"
+ },
+ "label": "rehearsal-r1",
+ "missing_gates": [],
+ "mode": "rehearsal",
+ "not_covered": [
+  "Qualcomm GPU/OpenCL runtime",
+  "camera/modeld on hardware",
+  "panda flash on hardware",
+  "vehicle behaviour"
+ ],
+ "package_inventory": {
+  "cereal/libcereal.a": {
+   "mode": "100644",
+   "sha256": "2f0f4c2b401edd4d6693e60a8347e4fa6de1ebd3ac1aa0c37cc7f8661dfbd456"
+  },
+  "cereal/libsocketmaster.a": {
+   "mode": "100644",
+   "sha256": "8d4110b5163bbdc1bf31c0be60422822fe8feef5b94c040ea5ff573687ecd033"
+  },
+  "cereal/messaging/bridge": {
+   "mode": "100755",
+   "sha256": "925af22178c04238d09d1bd5d138d894afa6e92e21572b7707bc9d7a70ac707d"
+  },
+  "cereal/services.h": {
+   "mode": "100644",
+   "sha256": "16ca6064f47cf547cf1c11f3d8f228d04ce1b5ade502721a03f4bc651a308515"
+  },
+  "common/libcommon.a": {
+   "mode": "100644",
+   "sha256": "b375a54c8677ea6ff59ad0d82d6c0bdaf7bb33b306d1c7c4e4f205a2e24e1294"
+  },
+  "common/params_pyx.cpp": {
+   "mode": "100644",
+   "sha256": "4882fbe3745fcf20d5cf5a646026357365c8a042a53a50d24cfe43e808ec2c3b"
+  },
+  "common/params_pyx.so": {
+   "mode": "100755",
+   "sha256": "70372a28744b059154023362bb0d1bf231b23eda06446c7d379bdcc16facaadf"
+  },
+  "common/transformations/transformations.so": {
+   "mode": "100755",
+   "sha256": "8bffe98f0b8b7c8f9775b576001ea58f9a88408896bd2d14c79bc2cc01b4d1dd"
+  },
+  "msgq_repo/msgq/ipc_pyx.so": {
+   "mode": "100755",
+   "sha256": "9036e0622f8ba25e670cc8ad04382a19abf367d4fdfb5c450b31c4dc79103d18"
+  },
+  "msgq_repo/msgq/visionipc/visionipc_pyx.so": {
+   "mode": "100755",
+   "sha256": "7f363236417c576fa0d09c9a2eeac7c1a7efee1bcae271c4138d40bdb04eb3a5"
+  },
+  "opendbc_repo/opendbc/dbc/acura_ilx_2016_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "e9419c61e67b06e3d37895458395f1405d9e5938318a8844d0f0e6f4fb15147c"
+  },
+  "opendbc_repo/opendbc/dbc/acura_mdx_2017_can_ext_generated.dbc": {
+   "mode": "100644",
+   "sha256": "2116f2beb1165e81009681400c1398c96e4ff6eacab91fc57d60f462bf40f32b"
+  },
+  "opendbc_repo/opendbc/dbc/acura_rdx_2018_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "1c55866c5696443cf94da74859eaa31c0f67306b92869f6a517e79fb17e2769b"
+  },
+  "opendbc_repo/opendbc/dbc/acura_rdx_2020_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b3f18d4a6fc2d40e9801609717410f41a5d6ca929bf47158879d8b12ca17ce39"
+  },
+  "opendbc_repo/opendbc/dbc/chrysler_pacifica_2017_hybrid_generated.dbc": {
+   "mode": "100644",
+   "sha256": "2e730ae380d1ca35b490446838d8bb4d67beb39c43961ad5248c76ca56579958"
+  },
+  "opendbc_repo/opendbc/dbc/chrysler_ram_dt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "7389e5d1cff2cbdbb67b81fe7abf154975feb0a453bbd8cd77dcf1842ff8e8e2"
+  },
+  "opendbc_repo/opendbc/dbc/chrysler_ram_hd_generated.dbc": {
+   "mode": "100644",
+   "sha256": "3e7200520d9235723f6b66f326af3ce0bd64bafce77723f52b539275a64efd5f"
+  },
+  "opendbc_repo/opendbc/dbc/gm_global_a_powertrain_generated.dbc": {
+   "mode": "100644",
+   "sha256": "56aedd94e0f8ea4cff9e8773d9ea753a2222ebbb9ad582c681ea8596594662c2"
+  },
+  "opendbc_repo/opendbc/dbc/honda_accord_2017_can_ext_generated.dbc": {
+   "mode": "100644",
+   "sha256": "147dadfe5b3b1efc9a80b67593c90bf08d6d5e32b2ea8014e9cfdfe48f3fc992"
+  },
+  "opendbc_repo/opendbc/dbc/honda_bosch_radarless_generated.dbc": {
+   "mode": "100644",
+   "sha256": "9a2a4b0a32018c8896eeb96f0184c14e0a7c2bdf49d25e21ae8f33afc61739f3"
+  },
+  "opendbc_repo/opendbc/dbc/honda_civic_hatchback_ex_2017_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "44e68f4bd41a6dcd17e7f3da538200fb8ccadc92eb796ada6ae398299329632b"
+  },
+  "opendbc_repo/opendbc/dbc/honda_civic_touring_2016_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "75f6e1b545f2619fde534fec6717aeb768c219c2c9518059153bc14c6468965d"
+  },
+  "opendbc_repo/opendbc/dbc/honda_clarity_hybrid_2018_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "cf7b3bfe998819ae00031c125bdc37f7cd6b377660fb446dba39788c9cde2bad"
+  },
+  "opendbc_repo/opendbc/dbc/honda_common_canfd_generated.dbc": {
+   "mode": "100644",
+   "sha256": "2ea0155821a72ac1b62d7041bbab780d6dc66ad2ce0aabbb0222c71e0a9c231a"
+  },
+  "opendbc_repo/opendbc/dbc/honda_crv_ex_2017_body_generated.dbc": {
+   "mode": "100644",
+   "sha256": "09c0f530cf918df19b858d8cd862cf2c65f09d3252ddc0ec790acb1d10aaec0b"
+  },
+  "opendbc_repo/opendbc/dbc/honda_crv_touring_2016_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b78bdfba894198745b8cdc660d98e16f0eab1bed95ed8c6c15174102360faea6"
+  },
+  "opendbc_repo/opendbc/dbc/honda_e_advance_2020_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "e01a118b9fc0e1b1ad0a064579b8944ff333e735bb17511c3ae372caa04735b1"
+  },
+  "opendbc_repo/opendbc/dbc/honda_insight_ex_2019_can_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b5582d2e3dea104b76af3ae662abde1f083fbdf5b4f783efddf15638304efb54"
+  },
+  "opendbc_repo/opendbc/dbc/honda_odyssey_exl_2018_generated.dbc": {
+   "mode": "100644",
+   "sha256": "685cce64820e8430808ce9901853ffb3ff8d0bc13de3b4cb9397c26cc96e0915"
+  },
+  "opendbc_repo/opendbc/dbc/honda_odyssey_twn_2018_generated.dbc": {
+   "mode": "100644",
+   "sha256": "41745bc8216c62c7ccfef5b2b94caa381febb8a700b536e24d5260e5a1eaa819"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_can_refresh_generated.dbc": {
+   "mode": "100644",
+   "sha256": "0b6896dc68278d5c0ba2a21387eb8bb8b53d77346b4805b1634f4edf2bed9750"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_canfd_generated.dbc": {
+   "mode": "100644",
+   "sha256": "9031c9ca6144e541e6371001c1e86b72f5d9d16cbb87997b53235c9b052f999f"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_kia_mando_corner_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "8f5e8788240b3f6a37dcf22987f76a78929fd9ea13dfe96a06f22a31a07fac6d"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_kia_mando_front_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "aca5aa8bfe86957fd35255a8463ec4d542bf022bdf6d4c76072c6557d827d5db"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_mrr30_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "df8ce47c70fcd39906ecc497967f42c38f675a06a7ef70d60ec132ccd50f3389"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_mrr35_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "0d77896d173c82798abf52e1cdd54a6abc9c314cbadf0ce8febdf1ae1821f820"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_mrrevo14f_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "0e321868b01df835c4740fcb59d6da87b84b1564b611785e172bb271673ff29f"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_palisade_2023_generated.dbc": {
+   "mode": "100644",
+   "sha256": "351e386cc2760a7b26788fb33b88e8c587bdefe2468b2ae7c2459310ac497b90"
+  },
+  "opendbc_repo/opendbc/dbc/hyundai_radar_210_21f_generated.dbc": {
+   "mode": "100644",
+   "sha256": "7e6b73772abd2b59edc3de91f5fcbeaabbabf049652cb363f3c3384e5d5d1b16"
+  },
+  "opendbc_repo/opendbc/dbc/nissan_leaf_2018_generated.dbc": {
+   "mode": "100644",
+   "sha256": "ef72130644c025b4be5715f41cc8869bd296383b194af31afc026dc3b1b0100a"
+  },
+  "opendbc_repo/opendbc/dbc/nissan_x_trail_2017_generated.dbc": {
+   "mode": "100644",
+   "sha256": "56c7020ef58741dbfebce5351695709af1a65e81908d2bd16bd0f09885edb184"
+  },
+  "opendbc_repo/opendbc/dbc/rivian_mando_front_radar_generated.dbc": {
+   "mode": "100644",
+   "sha256": "369ddafdaca20ce5bbba7988ed1cb3a2e76555c35d43fbbe8a9314d8ebac650f"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_forester_2017_generated.dbc": {
+   "mode": "100644",
+   "sha256": "28c6e86353ca80c66a5cf7dc3c89a5f75b2137a92c16715903c2ce28495fe493"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_global_2017_generated.dbc": {
+   "mode": "100644",
+   "sha256": "168809725d55aec99212ff63f972f9f632d4e79cf63b461de55c83073375e5d1"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_global_2020_hybrid_generated.dbc": {
+   "mode": "100644",
+   "sha256": "7d170ff4dd4b9344ef58d4b301f8d93c602ef41f8e284b6d7e36a376ae7d95c3"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_outback_2015_generated.dbc": {
+   "mode": "100644",
+   "sha256": "46703fff83d99ffade420a53e52e4e308fb8a15bae9fa89d07e2b50c5b034257"
+  },
+  "opendbc_repo/opendbc/dbc/subaru_outback_2019_generated.dbc": {
+   "mode": "100644",
+   "sha256": "a2eb0dcec75d02090869f77ea774f93a06cf4dbfdd79e4ba80b25491aec6bb6a"
+  },
+  "opendbc_repo/opendbc/dbc/tesla_radar_bosch_generated.dbc": {
+   "mode": "100644",
+   "sha256": "3745257484dfc984c424e2c7a2751e8ae550e58bdf4f02a075171f16ecd15417"
+  },
+  "opendbc_repo/opendbc/dbc/tesla_radar_continental_generated.dbc": {
+   "mode": "100644",
+   "sha256": "569e44301357fd789f6ec20520e8f73274410df818bdbc618ca51208b524e8db"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_new_mc_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "fd7a06254aa5117ecb252171ce85d00d1b42800456dee35d23b81ce9a1d3e193"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_nodsu_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "9a02a1219179f15722f142b0c171a18d96dd3ce9139fa7a1f88449333ae33feb"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_secoc_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "c83dad3ecce057f5c72ee7b38ace755c19e2d7f3ebb044c2aca7be44b99bb43f"
+  },
+  "opendbc_repo/opendbc/dbc/toyota_tnga_k_pt_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b831aa66d4aa45eef098d735c96b7c1c1b0e58b14399cef1b8a992d787a97d2c"
+  },
+  "opendbc_repo/opendbc/dbc/vw_meb_2024_generated.dbc": {
+   "mode": "100644",
+   "sha256": "c1e5dfe62913306640707b128cf1b490c0ceeef4e2eaa16b5a736814ce63ea6f"
+  },
+  "opendbc_repo/opendbc/dbc/vw_meb_generated.dbc": {
+   "mode": "100644",
+   "sha256": "b7bb2ee239359f2ad4ac8b1716973614cecf48c725367e68ec28fb8f0f4e5078"
+  },
+  "panda/board/obj/body_h7.bin.signed": {
+   "mode": "100644",
+   "sha256": "b2fdae5a299ad5b9cc2d972256b749e32930e9a188387c260a2aef2c26e9a9c3"
+  },
+  "panda/board/obj/body_h7/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "44d719d359a56fac79d34cfdaa9e03ab77c94607141629ef91434532fa6d435b"
+  },
+  "panda/board/obj/body_h7/main.bin": {
+   "mode": "100755",
+   "sha256": "1640236869ab8a84e56fd1cf40cbbe918211a8de0a295c4c2a4435fe5947928d"
+  },
+  "panda/board/obj/body_h7/main.elf": {
+   "mode": "100755",
+   "sha256": "54e8f7c90df755fa208df16c1935183ecb88e3c8acf1ed061689e80f1a17a2ef"
+  },
+  "panda/board/obj/bootstub.body_h7.bin": {
+   "mode": "100755",
+   "sha256": "1a6c4ddefa345df8ed4d1c02d8d4a16f556ef0860d81c708cb4f6547ff7ea1ef"
+  },
+  "panda/board/obj/bootstub.panda.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_h7.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_hkg_remote.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_hkg_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_remote.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_tesla_wake.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_h7_tesla_wake_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "647b88f3ac255a6ea4698a7ad5e37a30699f77dd6036d902558798ef4dbdb922"
+  },
+  "panda/board/obj/bootstub.panda_hkg_remote.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_hkg_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_jungle_h7.bin": {
+   "mode": "100755",
+   "sha256": "9d8696fccddc10172e0a7101fbfd1321a4f1ab09b74c5c9cbb970540a335c58e"
+  },
+  "panda/board/obj/bootstub.panda_remote.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_remote_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_tesla_wake.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/bootstub.panda_tesla_wake_can_ignition_only.bin": {
+   "mode": "100755",
+   "sha256": "6f4bc7b858e7f0afc59a590fdaa19cbb2fd63c7a0421966f98659bbf601323fb"
+  },
+  "panda/board/obj/cert.h": {
+   "mode": "100644",
+   "sha256": "baa137cc7dd5705fa3dd9234d69fe9a737d5168ef07b6ebad5391236bad7cba4"
+  },
+  "panda/board/obj/gitversion.h": {
+   "mode": "100644",
+   "sha256": "5f59394298f84373dddfb90aa8f872bcc5a69da6a928f3d2034b0e1fe7dddd67"
+  },
+  "panda/board/obj/panda.bin.signed": {
+   "mode": "100644",
+   "sha256": "c2c408a8bc1b45a1ee90c0a83a165505b6821aff3cc77256f375b6394589adbb"
+  },
+  "panda/board/obj/panda/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "1abc455f465b80008e0cccae3f0abe7a918c2ecda8f47600565a8e7127e5faf6"
+  },
+  "panda/board/obj/panda/main.bin": {
+   "mode": "100755",
+   "sha256": "fd63ad90591daa27ae5d46029f94fcdae0374d7c4a073d5ee782558daa62742b"
+  },
+  "panda/board/obj/panda/main.elf": {
+   "mode": "100755",
+   "sha256": "3e3cceb7ede1ce48854a019fa0ce2a643260cd47b2860b96a776a5cd7ef37163"
+  },
+  "panda/board/obj/panda_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "3682b967ce39d60ff28e7feb57b5854a45b8c77ebead3c4b0309060053cd1f39"
+  },
+  "panda/board/obj/panda_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "ebf0c00769d3429e4a0155aafb8dda6c5c2e48b6226581d23bbf5c4a62a9ee1e"
+  },
+  "panda/board/obj/panda_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "509826d01bcd077184ec8282044142b145efe12186184fa204ed53546282252d"
+  },
+  "panda/board/obj/panda_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "e700a2b1ceeca3c2d668c1e81ef4e5de666e0e47171ecf4728dd5bdd48ef82f8"
+  },
+  "panda/board/obj/panda_h7.bin.signed": {
+   "mode": "100644",
+   "sha256": "00d525f8e242d73c0d535b949bed241a799984ce479c7ba6e5a98605db18a773"
+  },
+  "panda/board/obj/panda_h7/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "d7f4a17550211076cf5caf38971eacc6f0f2c23709526fe5f289947cf333e401"
+  },
+  "panda/board/obj/panda_h7/main.bin": {
+   "mode": "100755",
+   "sha256": "064f464165d16204821a32321d5bd94b24a200c8f055258dbcc476eeffc266a2"
+  },
+  "panda/board/obj/panda_h7/main.elf": {
+   "mode": "100755",
+   "sha256": "95ef771f73d5df1e29867619a268e94f86e04cc074291d63b429680bfac5e24b"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "e53a16b942177e576d00cda116f2d014ec5b4d545ad62c9e4baf78b90e1f8711"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "1f16c472e3bd35f0c0141d7bdbc2ad7d984d52672ea9e12ab3e11e0815df5546"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "bd53ae7e4daa412c7311c4228fa8fd4433a3070177e52f8713a57919102e4f00"
+  },
+  "panda/board/obj/panda_h7_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "1f7de3415383b06bdc42e72e2a632db26d47ac821f07f2fa93ba728eef955804"
+  },
+  "panda/board/obj/panda_h7_hkg_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "63f5689cdd87b145b7d04bbd4465eb19e540633e510c29be63538e702b750883"
+  },
+  "panda/board/obj/panda_h7_hkg_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "d189e5250f5f7d9b212e8a5afc6f6a2455eb31339ac473ff09ff3bc7266e617b"
+  },
+  "panda/board/obj/panda_h7_hkg_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "06d68c57ff3baf924a950a1ab3c2b70b2461f74608dfe2985fbc849f1e1b17f5"
+  },
+  "panda/board/obj/panda_h7_hkg_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "a7832fb51981de28642139b7977a6ea0425a749657ccfc54499cd3e721bd117f"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "3624275ecfe2297a34d6d0db7741010e66d360fdfd81d82d6bf02c34e3e6bdc4"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "f257f3f4c07e9d7c45fd8a36a69e968a15c827600418e3c6ee7f4e6539c1128d"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "7fa89d5c07da57f9672ff2d1ef856d3a820ac46072290bef020f3ce4d8999930"
+  },
+  "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "c8fee2493aa45b4090e81c042bac03693e3a4b3bfddea97311e411346186534e"
+  },
+  "panda/board/obj/panda_h7_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "9fb0f2f3ea5c1231d69eb6a96dd10bc63d66006846388af40f4a901a006030b1"
+  },
+  "panda/board/obj/panda_h7_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "1bb07d5bdaf383bb10a100bd2fa354cfab7f21bf1e013d00715bbb7597cebdf1"
+  },
+  "panda/board/obj/panda_h7_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "8ed25fb33531345d5448d13f180d2d8aefc1b4213865d82c689ba559e972e032"
+  },
+  "panda/board/obj/panda_h7_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "774930316d24ca85b8c03b3226db9f29fc99d5b8d08fa21078e2cb9ba37b321a"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "b1e807eb13049824713d281a0aeab183a4a263551c1d6edf49476d98c526ce43"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "fd70b1583ed0502c20579d3b3ebf8eb0985d6ee2641570f7572da387fe3eeb5d"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "532459e27fe67afc952b28c6f545d600604b9095044d51c3d4edf9c647c534f7"
+  },
+  "panda/board/obj/panda_h7_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "ecb0ee0f42a319743644c2d5094c2ea0531ee04b88bbebe0fdddb8cc366111e0"
+  },
+  "panda/board/obj/panda_h7_tesla_wake.bin.signed": {
+   "mode": "100644",
+   "sha256": "1dc70ab3624ffda2677673df7e1d1cd4f94743d3d7f2808edd5b559831d8911c"
+  },
+  "panda/board/obj/panda_h7_tesla_wake/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "eb2aad6c96769fd5e0b3b4f34981796203ec5b0f4082f80d32cf606a16c0fafe"
+  },
+  "panda/board/obj/panda_h7_tesla_wake/main.bin": {
+   "mode": "100755",
+   "sha256": "0ff8bec63dca99b08676749bc779f2a16be1463550377bb5d982878c8c4af583"
+  },
+  "panda/board/obj/panda_h7_tesla_wake/main.elf": {
+   "mode": "100755",
+   "sha256": "8281845278356f65245cefd0414cc213438ea531c6eaa0f9ac66fec596be0900"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "83b514ac591d90f09331eedc615447f309284814416438f3b68b91e6cd7d2c10"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "7bd543078ea3df6b8c0377e843c92749d271f9e3a49eb8746ee44f6f1bf983de"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "96829980a519575816e10ab5d01690629fae3eea12e71349129e0cd96e400a4b"
+  },
+  "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "cd64d1890421d5c6a4d45234cd1222fd59450048267cd2f99f3903c45db1cb2a"
+  },
+  "panda/board/obj/panda_hkg_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "ced0f5c61bac06dcf1b6d89221f1bec82a6ade8b01d20331b50f04e982d7c90b"
+  },
+  "panda/board/obj/panda_hkg_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "e8fbb0915e811c0257ac017abd3011abcd18d99d930c766a6e7bf8c3b7592576"
+  },
+  "panda/board/obj/panda_hkg_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "6212f72ab3ec98eee13274df859033cbd5538578fb6d31adcaa69947bf39eac1"
+  },
+  "panda/board/obj/panda_hkg_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "39839346dd30ab0f8cea73177a1b9f461dac752e0d6ae30ead56ad8be9f5a170"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "6af19c17786efe41550e68aa3013228638b8cd9fd48a5f462c7ca8fc6ea9cc51"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "b3f7d4450e910f59663960bb5744712070bebd1bba55da8dd7386e91dd733a12"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "6aa66190bb79e08b4af1386b2572b3c0283086fba745bd56c2928701c429bf26"
+  },
+  "panda/board/obj/panda_hkg_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "6e47247eb41163d1ac17c950a2c35bd548087be45ef690682d27fca986ac4b57"
+  },
+  "panda/board/obj/panda_jungle_h7.bin.signed": {
+   "mode": "100644",
+   "sha256": "2e02d26ba96fa4d1d0a63ed06777a311d8d0928ac38d6c281a27b8d1e05cdb09"
+  },
+  "panda/board/obj/panda_jungle_h7/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "6eef4604b3179c56db12f6184f38343bb3589c50b2c214919674bf01b13106ec"
+  },
+  "panda/board/obj/panda_jungle_h7/main.bin": {
+   "mode": "100755",
+   "sha256": "a0c456b1f94101b6fc24a414f12bdf74ca8d819c77f7a3716c4812b2813e3e1a"
+  },
+  "panda/board/obj/panda_jungle_h7/main.elf": {
+   "mode": "100755",
+   "sha256": "d219a3a0d63eb83c08e7f68ea6abe84554233a5ccce8001fda6fa52b3dddac8a"
+  },
+  "panda/board/obj/panda_remote.bin.signed": {
+   "mode": "100644",
+   "sha256": "9af9e80bba7d486cd9d1c2df33bf5d75790c3904b366f65b449df8423a6fc6e3"
+  },
+  "panda/board/obj/panda_remote/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "0c43fba59b9295a17be4034b78d3c4c2a16294a1b55a2962ad9ff36f300233e2"
+  },
+  "panda/board/obj/panda_remote/main.bin": {
+   "mode": "100755",
+   "sha256": "273614ab3d6976e24de1982cdcb379db44dffa18873df53b1af0fe5e7a1d1d0d"
+  },
+  "panda/board/obj/panda_remote/main.elf": {
+   "mode": "100755",
+   "sha256": "58fe1ef15e41c6620f730a4447a3bded0db16a11d0b27b98359fd5b568b585da"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "40aef3317d8229374cdcc2a4cb9a49d0965dfc35c8c30b758eae4196ab14fd10"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "a7175cc51f6f3b8596628b33e0720ccd6ed4641425eb8e433bd3f2f0ef5ad736"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "eeae2cb9a43c1aa775c8c747711687da840b9b72c74a066c865016367e75bd3d"
+  },
+  "panda/board/obj/panda_remote_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "f35a67c1f1d5fae127bc88895fe0b1146ba062fc9554794edc5724b0da9cb670"
+  },
+  "panda/board/obj/panda_tesla_wake.bin.signed": {
+   "mode": "100644",
+   "sha256": "c09ab1cf9070b45963785c05678844c250bc1f90d44271f02500344ad0329735"
+  },
+  "panda/board/obj/panda_tesla_wake/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "2d0566379bd1e47e8371ddb91e22a9d477ade14c343d7adc6397de2e4b3b177d"
+  },
+  "panda/board/obj/panda_tesla_wake/main.bin": {
+   "mode": "100755",
+   "sha256": "1e1d92e6744c3e536f24a99bd8f3af77b34fdea1978e43f4327965a96e6f37f6"
+  },
+  "panda/board/obj/panda_tesla_wake/main.elf": {
+   "mode": "100755",
+   "sha256": "82449bdf210930c10f8273ae48e802f576c233ed947f41a191cb594c4c7c307d"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only.bin.signed": {
+   "mode": "100644",
+   "sha256": "858beff6c68fe63e63950978cf0e6f3ce9623d57cb059ce76f4832f58803e904"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only/bootstub.elf": {
+   "mode": "100755",
+   "sha256": "f6424d73bd2b07549cd20f875684c8671a726492c2d4a33d89a406aad0911684"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only/main.bin": {
+   "mode": "100755",
+   "sha256": "20899b7e2ffe94dd385a79993908c5fd997d41f2b8a2fa05e965ecdb83323c15"
+  },
+  "panda/board/obj/panda_tesla_wake_can_ignition_only/main.elf": {
+   "mode": "100755",
+   "sha256": "c4b49655cf6a2235e027e12ee9675767e756b7d986194f88a812b262bf9169df"
+  },
+  "panda/board/obj/version": {
+   "mode": "100644",
+   "sha256": "65a8f9a4e6ec32ae26d174b7da4675e0ce2ca5d40487409a29cfa78e527310e3"
+  },
+  "prebuilt": {
+   "mode": "100644",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "rednose_repo/rednose/helpers/ekf_sym_pyx.so": {
+   "mode": "100755",
+   "sha256": "f838a62a1d3dc24f455953bce4fdee1e01d94b4dfef92d5f99499edb19fbfbae"
+  },
+  "selfdrive/controls/lib/lateral_mpc_lib/c_generated_code/acados_ocp_solver_pyx.so": {
+   "mode": "100755",
+   "sha256": "076092bc08d575bf81649cfdae07b7dbe26f09a07772afa58e9482c4ec12c980"
+  },
+  "selfdrive/controls/lib/lateral_mpc_lib/c_generated_code/libacados_ocp_solver_lat.so": {
+   "mode": "100755",
+   "sha256": "f73386a4c36893e9e8df5704e903694922fa29dd806c810faab5add1362a237f"
+  },
+  "selfdrive/controls/lib/longitudinal_mpc_lib/c_generated_code/acados_ocp_solver_pyx.so": {
+   "mode": "100755",
+   "sha256": "d83dc616d39ff8031601a4ddde8e2847b723b571b8b476e00015b1f90ca75361"
+  },
+  "selfdrive/controls/lib/longitudinal_mpc_lib/c_generated_code/libacados_ocp_solver_long.so": {
+   "mode": "100755",
+   "sha256": "9b5a6c17c4decd955e6cca8dd752f222e94947082550c5bd0bd2dcda89477a12"
+  },
+  "selfdrive/locationd/models/generated/car.cpp": {
+   "mode": "100644",
+   "sha256": "f4fb15a455e8a719bee897d48bce56f8292409f504b61e511b565a83df1efd2b"
+  },
+  "selfdrive/locationd/models/generated/car.h": {
+   "mode": "100644",
+   "sha256": "d0e71d32c56d032c9cc29e1eafdc37d28c5f25daacbaee77dd5af3b78c359d8f"
+  },
+  "selfdrive/locationd/models/generated/car.os": {
+   "mode": "100644",
+   "sha256": "e1a6bd91dab9ddaf779bd1e0d743dfc64010c0c82828807e4b9a7fdf61218e0c"
+  },
+  "selfdrive/locationd/models/generated/libcar.so": {
+   "mode": "100755",
+   "sha256": "ed01478ce9f8130dc7a8984c7daa8e510af2737e1ab449ec4dd4a4746494a65d"
+  },
+  "selfdrive/locationd/models/generated/libpose.so": {
+   "mode": "100755",
+   "sha256": "cc2e5debf676112a15bdc8bdb455a93f9d0344ba35efdea36e2430885fbe4a2a"
+  },
+  "selfdrive/locationd/models/generated/pose.cpp": {
+   "mode": "100644",
+   "sha256": "9d96993d4771765329df5001f4f05c7c5363474f23d93e28c1eda779573001b1"
+  },
+  "selfdrive/locationd/models/generated/pose.h": {
+   "mode": "100644",
+   "sha256": "0f5f51f7c24339a638e2c21cc293bfbfa4f7cb6398015364f864d3a12d3ea6f2"
+  },
+  "selfdrive/locationd/models/generated/pose.os": {
+   "mode": "100644",
+   "sha256": "2f384484b4132f45fe381369a1e7de2dce9bbf0bc21cc0b8214611e339eb970c"
+  },
+  "selfdrive/modeld/models/commonmodel_pyx.so": {
+   "mode": "100755",
+   "sha256": "43aa1c792851c8190b4865dea2f38079572ce93440acf879b7b6a39fdb7ff52a"
+  },
+  "selfdrive/pandad/pandad": {
+   "mode": "100755",
+   "sha256": "6e19cc52b3e8d2934aeb96fbecaa0af822a9803be0ce2cefc071ad70362bd876"
+  },
+  "selfdrive/pandad/pandad_api_impl.so": {
+   "mode": "100755",
+   "sha256": "2e5726434fd2bbc3ad5d8edcc4183d7dcca4543d542a5bdbebc2b0807d9399d1"
+  },
+  "system/camerad/camerad": {
+   "mode": "100755",
+   "sha256": "582509194ad54208b924ff56f301183b7416f7cc27b1f6e019fc5441fd09e20c"
+  },
+  "system/loggerd/bootlog": {
+   "mode": "100755",
+   "sha256": "7f12e27dd9dc5dbee0a7366d3148087a24a946eb7047626dd947688f3f440453"
+  },
+  "system/loggerd/encoderd": {
+   "mode": "100755",
+   "sha256": "c8face060ce7e2de72792edf425cab1957cd7bff62c984fca2ddeea06c755c83"
+  },
+  "system/loggerd/loggerd": {
+   "mode": "100755",
+   "sha256": "23624875a9e07a14db06a1359fe97dd535ae9851ba75969641755669e24031b9"
+  }
+ },
+ "panda_version_text": "DEV-14217093-DEBUG",
+ "params": {
+  "keys_source": 796,
+  "registry_sha256": "6a340d5a4ecde5e451738d813c4bc85d62940ad83184b7a7253ae7cf06ef0b82"
+ },
+ "schema": "sp-mazda-mac-agnos-larch64-stamp/3",
+ "source_commit": "142170937b4ab777c70e3015bfd34dd58221612a",
+ "source_tree": "4b528aebabedc5a963847c013682f63e8bc09f5f",
+ "tests": [
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; (cd opendbc_repo && scons -j8 opendbc/safety/tests/libsafety/ >/tmp/libsafety.log 2>&1) || { tail -30 /tmp/libsafety.log; exit 3; }; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_safety.xml opendbc_repo/opendbc/safety/tests/test_mazda.py opendbc_repo/opendbc/safety/tests/test_defaults.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 53,
+    "skipped": 12,
+    "xfailed": 0
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_safety.xml",
+   "junit_sha256": "98d231dfc816d1b0f15e5d917ffb6ba6cc3c0117d6097d7ed0f23df0cd3fbd00",
+   "log": "test-mazda_safety.log",
+   "log_sha256": "3f9b07bf5fa6dd56bb8dcdd6c7abd5d5e68297089d43cbd75fb8e3dfda81aac4",
+   "name": "mazda_safety",
+   "violations": []
+  },
+  {
+   "command": "set -e; source .venv-linux-arm64/bin/activate; mkdir -p /tmp/params; python -m pytest -q -p no:cacheprovider -p randomly -n0 --randomly-seed=20261011 --junitxml=/work/.sp-junit-mazda_car.xml -k 'mazda or MAZDA' opendbc_repo/opendbc/car/tests/test_car_interfaces.py opendbc_repo/opendbc/car/tests/test_fw_fingerprint.py opendbc_repo/opendbc/car/tests/test_can_fingerprint.py opendbc_repo/opendbc/car/tests/test_platform_configs.py",
+   "counts": {
+    "error": 0,
+    "failed": 0,
+    "passed": 24,
+    "skipped": 6,
+    "xfailed": 0
+   },
+   "env": {
+    "PARAMS_ROOT": "/tmp/params",
+    "image": "sha256:a10ec6ccd7dc0e49919612dadfe35aa550eb863dbfee51d3958c8f0e1bc90136",
+    "network": "none",
+    "randomly_seed": 20261011
+   },
+   "exit": 0,
+   "junit": "junit-mazda_car.xml",
+   "junit_sha256": "727374465bcbc0a1493814d5043ce07d48428125d2870e174c1fcd00fb18552e",
+   "log": "test-mazda_car.log",
+   "log_sha256": "49e8e63d8318dc93a71c53cc5fc6ef129a2f44a2e05273c0dbdfa693830682a1",
+   "name": "mazda_car",
+   "violations": []
+  }
+ ],
+ "trusted_inputs_sha256": {
+  "bin/sp": "0abe365fb2419ef77ee17535262f9c909afbae18b430cd9e2caad126a35c03b4",
+  "builder/Dockerfile.larch64": "caae7edb7856614d32fcd025a75987e7e65b4f14022e6fd73367f0bbc43064ac",
+  "builder/deploy/exchange_dirs.py": "22b336446074c54107011cd31acf5dfc862dd4b5d8b43994d03825010a15b915",
+  "builder/deploy/tree_manifest_dir.py": "e89c287322261c3d824c7daebf6386fb077a814bf94049e0d4e28b488fc0d5f1",
+  "builder/package.py": "598edd6fe9e8e2ba5620934f6f126d83814106c5d0f63372e0ce40eda9bce43b",
+  "builder/pins.env": "8c11da15e08d1f151c19c9f0a230d16a250bd6ffd429ca8dd7e1bc81eabcec91",
+  "builder/policy-consumers.json": "9c37e2c7caafc3dc53ba5e31f5c3fe734e7ce1c6536cc200306bb04908c90e27",
+  "builder/policy.json": "5e6cae0ebdbcb6c74822280f9a00ceee20b828f4e7ea2733001b9a2d100b0783",
+  "builder/tools/gen_policy.py": "d724fc1f30c7a28093ad9ad7d22bb5a8750b1be09eddfe742b51e7d8e236b6cb",
+  "builder/tools/ic_trusted.py": "190d4a0fb2f78095d796c65f5afc87970ac8ce699ed88d1aad2cf80bdfac09fe",
+  "builder/tools/ic_untrusted.py": "6bb1c116c7097a0c3b58847db36710ace40be73f3330cba9fb597878338b4b2b",
+  "builder/tools/params_check.py": "33c944c76333f955c884969c628509dd66e868619630f2cd3bf5c7666d2613f6",
+  "builder/tools/tree_manifest.py": "d204b1cb689ede881ee692560358fd778f9a2d384f2a3797f8829671d975851e",
+  "builder/tools/workflow_guard.py": "6e5033983a11dba6d26b1151a921e560004ad3c56905e85985ecc9061be6ccb9",
+  "builder/trusted_build.py": "25fe84619b8631daabc653b5ce0acf3c5c437b8dd0d449b0369fe985b8dc44da",
+  "builder/verify_artifact_commit.py": "8fb0e0515ed6477fbd7a4c8651f0a7a63df0f4f366a6c9e66a790d9702fc4817"
+ },
+ "upstream_base": "d9a208770d2813ba1d1f325b7dadca1a972b1549",
+ "upstream_ref": "refs/remotes/fork/mac-ci/rehearsal/r1/upstream",
+ "upstream_ref_head": "d9a208770d2813ba1d1f325b7dadca1a972b1549",
+ "venv": {
+  "abi_bytes": {
+   "comma-deps-capnproto": {
+    "differences": [],
+    "files": 96
+   },
+   "comma-deps-ffmpeg": {
+    "differences": [],
+    "files": 146
+   }
+  },
+  "allow_list": [
+   "crcmod",
+   "http-ece",
+   "mapbox-earcut",
+   "pyaudio",
+   "pytest-xdist",
+   "spidev"
+  ],
+  "installed_without_build_in_this_attempt": [],
+  "not_allowed": [],
+  "packages": 94,
+  "packages_sha256": "69d6b9e80bf7c1a4542762a46f6b2657164355e6f30c7883d6efb6496300ff09",
+  "phase2_built_from_source": [
+   "crcmod",
+   "http-ece",
+   "mapbox-earcut",
+   "pyaudio",
+   "pytest-xdist",
+   "spidev"
+  ],
+  "phase2_installed": [
+   "crcmod",
+   "http-ece",
+   "mapbox-earcut",
+   "pyaudio",
+   "pytest-xdist",
+   "spidev"
+  ],
+  "pth_files": [
+   "_virtualenv.pth",
+   "aaaaa_future_fstrings.pth",
+   "distutils-precedence.pth"
+  ],
+  "python": "3.12.3",
+  "stripped_cached_builds": [
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/1.2.0-py3-none-any.lock",
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/metadata.msgpack",
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/pytweening-1.2.0-py3-none-any",
+   "sdists-v9/pypi/pytweening/1.2.0/DqlMJTzbnMnrJ-hD/pytweening-1.2.0-py3-none-any.whl",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/1.2.1-py2.py3-none-any.lock",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/http_ece-1.2.1-py2.py3-none-any",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/http_ece-1.2.1-py2.py3-none-any.whl",
+   "sdists-v9/pypi/http-ece/1.2.1/FDOxZsQ5OzmLy0LR/metadata.msgpack",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/0.2.14-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/metadata.msgpack",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/pyaudio-0.2.14-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/pyaudio/0.2.14/A3P-z5FMvxlJa07-/pyaudio-0.2.14-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/0.2.0-py2.py3-none-any.lock",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/metadata.msgpack",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/pyrect-0.2.0-py2.py3-none-any",
+   "sdists-v9/pypi/pyrect/0.2.0/dDHvYlYqFQY3dQD8/pyrect-0.2.0-py2.py3-none-any.whl",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/1.0.3-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/mapbox_earcut-1.0.3-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/mapbox_earcut-1.0.3-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/mapbox-earcut/1.0.3/2JxfFqlKKrM1WoDA/metadata.msgpack",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/3.8-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/metadata.msgpack",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/spidev-3.8-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/spidev/3.8/fZFZHjtfyyq2o9K9/spidev-3.8-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/1.0.1-py3-none-any.lock",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/metadata.msgpack",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/pyscreeze-1.0.1-py3-none-any",
+   "sdists-v9/pypi/pyscreeze/1.0.1/LD-7PziqbHJn69en/pyscreeze-1.0.1-py3-none-any.whl",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/0.1.3-py3-none-any.lock",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/metadata.msgpack",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/mouseinfo-0.1.3-py3-none-any",
+   "sdists-v9/pypi/mouseinfo/0.1.3/uC7xc4Drcudp57eG/mouseinfo-0.1.3-py3-none-any.whl",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/1.7-cp312-cp312-linux_aarch64.lock",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/crcmod-1.7-cp312-cp312-linux_aarch64",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/crcmod-1.7-cp312-cp312-linux_aarch64.whl",
+   "sdists-v9/pypi/crcmod/1.7/ju5KBltqNyQzmyLu/metadata.msgpack",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/0.0.9-py3-none-any.lock",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/metadata.msgpack",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/pygetwindow-0.0.9-py3-none-any",
+   "sdists-v9/pypi/pygetwindow/0.0.9/_fUnxtD3ZN7g9b6b/pygetwindow-0.0.9-py3-none-any.whl",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/0.9.54-py3-none-any.lock",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/metadata.msgpack",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/pyautogui-0.9.54-py3-none-any",
+   "sdists-v9/pypi/pyautogui/0.9.54/g-P9ejWP0nj0svy_/pyautogui-0.9.54-py3-none-any.whl",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/1.4.5-py2.py3-none-any.lock",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/metadata.msgpack",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/pyprof2calltree-1.4.5-py2.py3-none-any",
+   "sdists-v9/pypi/pyprof2calltree/1.4.5/yf8BKCh_xV2JLQPQ/pyprof2calltree-1.4.5-py2.py3-none-any.whl",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/0.15-py3-none-any.lock",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/metadata.msgpack",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/python3_xlib-0.15-py3-none-any",
+   "sdists-v9/pypi/python3-xlib/0.15/Jcs4sKftG54fUtXF/python3_xlib-0.15-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/1LL6bytYBm2a6aEl/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/AIXNcOcd28oYvjFc/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/iOm3s9itLethhqVy/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/54d_8WGbMz_GAKc1/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/0.1.0-py3-none-any.lock",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/metadata.msgpack",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/openpilot-0.1.0-py3-none-any",
+   "sdists-v9/editable/f71270d48d7f2006/KoH0ZiXJJpMkCsKz/openpilot-0.1.0-py3-none-any.whl",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/3.7.1.dev24+g2b4372bd6-py3-none-any.lock",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/metadata.msgpack",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/pytest_xdist-3.7.1.dev24+g2b4372bd6-py3-none-any",
+   "sdists-v9/git/f3f08fd0b887abb0/2b4372bd62699fb4/pytest_xdist-3.7.1.dev24+g2b4372bd6-py3-none-any.whl"
+  ]
+ },
+ "verdict": "PASS"
+}
