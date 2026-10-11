@@ -593,3 +593,4 @@ void pandad_main_thread(std::vector<std::string> serials) {
     delete panda;
   }
 }
+// mac-ci rehearsal upstream r1
