@@ -10,6 +10,7 @@ import pytest
 
 from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.starpilot.common import screen_settings as screen
+from openpilot.starpilot.common.screen_gaze import ScreenGazeDimmer, screen_yaw
 
 
 class Params:
@@ -44,6 +45,7 @@ def make_device(*, device_type="tici", **settings):
                                            'ScreenBrightnessOnroad': 101, 'StandbyMode': True, **settings}), sm=Messages())
   app = SimpleNamespace(target_fps=20, big_ui=lambda: False, mouse_events=[], set_should_render=lambda value: None)
   env = {**vars(screen), 'ui_state': state, 'gui_app': app, 'UIStatus': status, 'BACKLIGHT_OFFROAD': 65,
+         'ScreenGazeDimmer': ScreenGazeDimmer, 'screen_yaw': screen_yaw,
          'np': np, 'time': SimpleNamespace(monotonic=lambda: 100), 'FirstOrderFilter': FirstOrderFilter,
          'Callable': Callable, 'HARDWARE': SimpleNamespace(set_display_power=lambda value: None, get_device_type=lambda: device_type),
          'cloudlog': SimpleNamespace(debug=lambda value: None), 'PC': False, 'TICI': True}

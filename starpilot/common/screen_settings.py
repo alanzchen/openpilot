@@ -4,6 +4,7 @@ The existing brightness value 101 continues to encode Auto for older clients.
 Manual values and offsets are independent for the driving and parked screens.
 """
 from contextlib import contextmanager
+from dataclasses import dataclass
 import fcntl
 import math
 import os
@@ -38,8 +39,29 @@ SCREEN_WAKE_DESCRIPTIONS = {
   'StandbyWakeTurnSignal': 'Wake the screen from Standby when a turn signal is activated or its direction changes.',
 }
 SCREEN_WAKE_KEYS = frozenset(key for key, _, _ in SCREEN_WAKE_OPTIONS)
-SCREEN_SETTING_KEYS = SCREEN_INT_KEYS | SCREEN_WAKE_KEYS
+SCREEN_GAZE_RANGES = {
+  'ScreenGazeDimPercent': (20, 5, 100),
+  'ScreenGazeDimDelay': (3, 1, 30),
+  'ScreenGazeScreenSide': (0, 0, 1),
+  'ScreenGazeYawThreshold': (15, 5, 45),
+}
+SCREEN_BOOL_KEYS = SCREEN_WAKE_KEYS | {'ScreenGazeDimming'}
+SCREEN_SETTING_KEYS = SCREEN_INT_KEYS | SCREEN_BOOL_KEYS | SCREEN_GAZE_RANGES.keys()
 _WRITE_LOCK = RLock()
+
+
+@dataclass(frozen=True)
+class GazeDimmingPreferences:
+  enabled: bool = False
+  percent: int = 20
+  delay: int = 3
+  screen_side: int = 0  # Right; 1 = Left, relative to the driver.
+  yaw_threshold: int = 15
+
+
+def gaze_dimming_preferences(params):
+  values = [_integer(params, key, *limits) for key, limits in SCREEN_GAZE_RANGES.items()]
+  return GazeDimmingPreferences(_boolean(_raw(params, 'ScreenGazeDimming')), *values)
 
 
 def _raw(params, key):
@@ -112,11 +134,14 @@ def _screen_write_transaction(params):
 def write_screen_setting(params, key, value):
   if key not in SCREEN_SETTING_KEYS:
     raise ValueError('Unknown screen setting')
-  if key in SCREEN_WAKE_KEYS:
+  if key in SCREEN_BOOL_KEYS:
     if type(value) is not bool:
-      raise ValueError('Wake selections must be booleans')
+      raise ValueError('Screen toggles must be booleans')
   else:
-    lo, hi = (-30, 30) if key.endswith('Offset') else (0, 101 if key in BRIGHTNESS_KEYS else 100)
+    if key in SCREEN_GAZE_RANGES:
+      _, lo, hi = SCREEN_GAZE_RANGES[key]
+    else:
+      lo, hi = (-30, 30) if key.endswith('Offset') else (0, 101 if key in BRIGHTNESS_KEYS else 100)
     if type(value) not in (int, float) or not math.isfinite(value) or int(value) != value or not lo <= value <= hi:
       raise ValueError(f'{key} must be a whole number from {lo} to {hi}')
     value = int(value)
@@ -138,12 +163,12 @@ def _write_screen_setting(params, key, value):
   applied = []
   try:
     for changed_key, changed_value in changes.items():
-      put = params.put_bool if changed_key in SCREEN_WAKE_KEYS else params.put_int
+      put = params.put_bool if changed_key in SCREEN_BOOL_KEYS else params.put_int
       put(changed_key, changed_value)
       applied.append(changed_key)
       actual = _raw(params, changed_key)
-      if changed_key in SCREEN_WAKE_KEYS:
-        matches = (changed_key in enabled_wake_keys(params)) == changed_value
+      if changed_key in SCREEN_BOOL_KEYS:
+        matches = actual is not None and _boolean(actual) == changed_value
       else:
         matches = actual is not None and _integer(params, changed_key, -999, -100, 101) == changed_value
       if not matches:
@@ -154,7 +179,7 @@ def _write_screen_setting(params, key, value):
         previous = before[changed_key]
         if previous is None:
           params.remove(changed_key)
-        elif changed_key in SCREEN_WAKE_KEYS:
+        elif changed_key in SCREEN_BOOL_KEYS:
           params.put_bool(changed_key, _boolean(previous))
         else:
           params.put_int(changed_key, int(previous))

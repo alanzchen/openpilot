@@ -6190,7 +6190,7 @@ def setup(app):
         return jsonify({"error": "Missing 'key' or 'value' in request body."}), 400
 
       key = str(data["key"]).strip()
-      if key.startswith(("ScreenBrightness", "StandbyWake")):
+      if key.startswith(("ScreenBrightness", "StandbyWake", "ScreenGaze")):
         from openpilot.common.params import UnknownKeyName
         from openpilot.starpilot.common.screen_settings import write_screen_setting
         try:

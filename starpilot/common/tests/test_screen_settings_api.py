@@ -30,7 +30,10 @@ def test_mode_write_returns_remembered_manual_value():
 
 
 @pytest.mark.parametrize('key,value,expected', [('ScreenBrightnessOffset', -25, -25), ('ScreenBrightnessOnroad', 0, 0),
-                                               ('StandbyWakeCriticalAlert', False, False)])
+                                               ('StandbyWakeCriticalAlert', False, False),
+                                               ('ScreenGazeDimming', True, True), ('ScreenGazeDimPercent', 35, 35),
+                                               ('ScreenGazeDimDelay', 8, 8), ('ScreenGazeScreenSide', 1, 1),
+                                               ('ScreenGazeYawThreshold', 10, 10)])
 def test_screen_values_are_validated_and_return_typed_readback(key, value, expected):
   params = Params()
   response = client_for(params).put('/api/params', json={'key': key, 'value': value})
@@ -41,6 +44,8 @@ def test_screen_values_are_validated_and_return_typed_readback(key, value, expec
 
 @pytest.mark.parametrize('key,value', [
   ('ScreenBrightnessOffset', 31), ('ScreenBrightnessOnroadOffset', -31), ('StandbyWakeEngage', 'false'), ('StandbyWakeFake', True),
+  ('ScreenGazeDimming', 'false'), ('ScreenGazeDimPercent', 0), ('ScreenGazeDimDelay', 31),
+  ('ScreenGazeScreenSide', 2), ('ScreenGazeYawThreshold', 46), ('ScreenGazeUnknown', True),
 ])
 def test_invalid_screen_requests_return_400_without_writes(key, value):
   params = Params()

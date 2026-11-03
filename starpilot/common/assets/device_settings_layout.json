@@ -4709,6 +4709,78 @@
         "max": 101
       },
       {
+        "key": "ScreenGazeDimming",
+        "label": "Dim When Looking Away",
+        "description": "Dim the driving screen when your head is turned away from it. Looking toward the screen restores normal brightness. Touch, alerts, and unavailable driver-monitoring data keep the screen readable. Head direction estimates screen attention; it does not track your exact eye gaze.",
+        "picker_description": "Dims the driving screen when you are not looking toward it.",
+        "data_type": "bool",
+        "ui_type": "toggle",
+        "default": false,
+        "parent_key": "ScreenManagement",
+        "is_parent_toggle": true,
+        "settings_tier": "simple"
+      },
+      {
+        "key": "ScreenGazeDimPercent",
+        "label": "Dimmed Brightness",
+        "description": "Percentage of your normal onroad brightness to use while looking away. The screen remains at least 5% bright and never becomes brighter than your normal setting.",
+        "data_type": "int",
+        "ui_type": "numeric",
+        "default": 20,
+        "min": 5,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "parent_key": "ScreenGazeDimming",
+        "visible_when_all_true": ["ScreenManagement", "ScreenGazeDimming"],
+        "settings_tier": "simple"
+      },
+      {
+        "key": "ScreenGazeDimDelay",
+        "label": "Looking Away Delay",
+        "description": "Wait this long after looking away before dimming. Looking toward the screen restores brightness immediately.",
+        "data_type": "int",
+        "ui_type": "numeric",
+        "default": 3,
+        "min": 1,
+        "max": 30,
+        "step": 1,
+        "unit": " seconds",
+        "parent_key": "ScreenGazeDimming",
+        "visible_when_all_true": ["ScreenManagement", "ScreenGazeDimming"],
+        "settings_tier": "simple"
+      },
+      {
+        "key": "ScreenGazeScreenSide",
+        "label": "Screen Side",
+        "description": "Choose which side of your forward view the screen is mounted on, from the driver's seat.",
+        "data_type": "int",
+        "ui_type": "dropdown",
+        "default": 0,
+        "options": [
+          {"value": 0, "label": "Right"},
+          {"value": 1, "label": "Left"}
+        ],
+        "parent_key": "ScreenGazeDimming",
+        "visible_when_all_true": ["ScreenManagement", "ScreenGazeDimming"],
+        "settings_tier": "simple"
+      },
+      {
+        "key": "ScreenGazeYawThreshold",
+        "label": "Screen Look Angle",
+        "description": "How far your head must turn from the calibrated forward direction toward the screen to restore brightness. Lower this angle if a small glance should count.",
+        "data_type": "int",
+        "ui_type": "numeric",
+        "default": 15,
+        "min": 5,
+        "max": 45,
+        "step": 1,
+        "unit": "°",
+        "parent_key": "ScreenGazeDimming",
+        "visible_when_all_true": ["ScreenManagement", "ScreenGazeDimming"],
+        "settings_tier": "simple"
+      },
+      {
         "key": "ScreenRecorder",
         "label": "Screen Recorder",
         "description": "Add a button to the driving screen to record the display.",

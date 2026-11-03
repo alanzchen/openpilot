@@ -140,3 +140,43 @@ def test_offset_limits_can_be_saved_in_both_contexts(offset):
 
 def test_legacy_excessive_offset_is_clamped_in_brightness_calculation():
   assert screen().calculate_screen_brightness(65, 101, -100) == 46
+
+
+def test_gaze_defaults_and_stored_preferences():
+  assert screen().gaze_dimming_preferences(Params()) == screen().GazeDimmingPreferences()
+  params = Params({'ScreenGazeDimming': b'1', 'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8,
+                   'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10})
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10)
+
+
+@pytest.mark.parametrize('stored,expected', [
+  ({'ScreenGazeDimPercent': -2, 'ScreenGazeDimDelay': 99, 'ScreenGazeScreenSide': 9, 'ScreenGazeYawThreshold': -10},
+   (5, 30, 1, 5)),
+  ({'ScreenGazeDimPercent': b'bad', 'ScreenGazeDimDelay': float('inf'), 'ScreenGazeYawThreshold': float('nan')},
+   (20, 3, 0, 15)),
+])
+def test_gaze_read_preferences_are_bounded_without_rewriting(stored, expected):
+  params = Params(stored)
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(False, *expected)
+  assert params.values == stored
+
+
+@pytest.mark.parametrize('key,value', [
+  ('ScreenGazeDimming', 'false'), ('ScreenGazeDimming', 1), ('ScreenGazeDimPercent', 0), ('ScreenGazeDimPercent', 101),
+  ('ScreenGazeDimDelay', 0), ('ScreenGazeDimDelay', 31), ('ScreenGazeDimDelay', True), ('ScreenGazeDimDelay', 3.5),
+  ('ScreenGazeScreenSide', -1), ('ScreenGazeScreenSide', 2), ('ScreenGazeYawThreshold', 4), ('ScreenGazeYawThreshold', 46),
+  ('ScreenGazeYawThreshold', float('nan')), ('ScreenGazeFake', True),
+])
+def test_gaze_invalid_writes_do_not_change_preferences(key, value):
+  params = Params({'ScreenGazeDimming': True})
+  with pytest.raises(ValueError):
+    screen().write_screen_setting(params, key, value)
+  assert params.values == {'ScreenGazeDimming': True}
+
+
+def test_failed_gaze_toggle_write_is_reported_and_rolled_back():
+  from test_screen_settings_transactions import SilentOnceParams
+  params = SilentOnceParams({'ScreenGazeDimming': True})
+  with pytest.raises(OSError):
+    screen().write_screen_setting(params, 'ScreenGazeDimming', False)
+  assert params.values == {'ScreenGazeDimming': True}
