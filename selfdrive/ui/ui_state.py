@@ -18,7 +18,9 @@ from openpilot.system.hardware import HARDWARE, PC
 from openpilot.starpilot.common.screen_settings import (
   alert_wake_key, brightness_preferences, calculate_screen_brightness, enabled_wake_keys, standby_button_press_time,
   screen_off_toggle_counter,
+  GazeDimmingPreferences, gaze_dimming_preferences,
 )
+from openpilot.starpilot.common.screen_gaze import ScreenGazeDimmer, screen_yaw
 
 BACKLIGHT_OFFROAD = 65 if HARDWARE.get_device_type() == "mici" else 50
 
@@ -334,6 +336,8 @@ class Device:
     self._last_status = ui_state.status
     self._screen_offset = self._screen_offset_onroad = 0
     self._wake_keys = frozenset()
+    self._gaze_preferences = GazeDimmingPreferences()
+    self._gaze_dimmer = ScreenGazeDimmer()
     self._refresh_screen_settings(force=True)
 
     self._offroad_brightness: int = BACKLIGHT_OFFROAD
@@ -367,6 +371,7 @@ class Device:
 
   def _reset_interactive_timeout(self) -> None:
     self._interaction_time = time.monotonic() + self.interactive_timeout
+    self._gaze_dimmer.reset()
 
   def reset_interactive_timeout(self) -> None:
     self._reset_interactive_timeout()
@@ -399,6 +404,7 @@ class Device:
       self._screen_offset,
       self._screen_offset_onroad,
       self._wake_keys,
+      self._gaze_preferences,
     )
 
     self._screen_management = self._params.get_bool("ScreenManagement")
@@ -411,6 +417,7 @@ class Device:
       self._screen_offset = brightness_preferences(self._params, "ScreenBrightness")["offset"]
       self._screen_offset_onroad = brightness_preferences(self._params, "ScreenBrightnessOnroad")["offset"]
       self._wake_keys = frozenset(enabled_wake_keys(self._params))
+      self._gaze_preferences = gaze_dimming_preferences(self._params)
     else:
       self._screen_brightness = 101
       self._screen_brightness_onroad = 101
@@ -419,6 +426,7 @@ class Device:
       self._standby_mode = False
       self._screen_offset = self._screen_offset_onroad = 0
       self._wake_keys = frozenset()
+      self._gaze_preferences = GazeDimmingPreferences()
 
     self._screen_settings_refresh_time = now
     current = (
@@ -431,9 +439,12 @@ class Device:
       self._screen_offset,
       self._screen_offset_onroad,
       self._wake_keys,
+      self._gaze_preferences,
     )
-    if previous != current and self._interaction_time > 0:
-      self._reset_interactive_timeout()
+    if previous != current:
+      self._gaze_dimmer.reset()
+      if self._interaction_time > 0:
+        self._reset_interactive_timeout()
 
   def set_offroad_brightness(self, brightness: int | None):
     if brightness is None:
@@ -467,7 +478,7 @@ class Device:
 
     automatic = self._brightness_filter.update(clipped_brightness)
     interactive = time.monotonic() <= self._interaction_time
-    return calculate_screen_brightness(
+    brightness = calculate_screen_brightness(
       automatic,
       self._screen_brightness_onroad if ui_state.started else self._screen_brightness,
       self._screen_offset_onroad if ui_state.started else self._screen_offset,
@@ -475,6 +486,25 @@ class Device:
       awake=self._awake,
       standby_timed_out=ui_state.started and self._standby_mode and not interactive,
     )
+    return self._gaze_dimmer.brightness(
+      brightness, time.monotonic(), self._gaze_preferences, self._screen_gaze_yaw(),
+      suppressed=not ui_state.started or bool(self._active_standby_alerts()),
+    )
+
+  def _screen_gaze_yaw(self) -> float | None:
+    if not ui_state.started or not self._gaze_preferences.enabled:
+      return None
+    dm = self._fresh_message("driverMonitoringState")
+    if dm is None:
+      return None
+    sm = ui_state.sm
+    # Also check source age: replay/simulation can mark an old packet alive.
+    if (sm.recv_frame["driverMonitoringState"] <= ui_state.started_frame or
+        not 0 <= time.monotonic() - sm.logMonoTime["driverMonitoringState"] / 1e9 < 0.5):
+      return None
+    if str(dm.alertLevel) not in ("none", "0"):
+      return None
+    return screen_yaw(dm, self._gaze_preferences.screen_side)
 
   def _update_wakefulness(self):
     # Handle interactive timeout

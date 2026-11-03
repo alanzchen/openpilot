@@ -22,7 +22,8 @@ import {api} from '/assets/mobile/js/api.js';
 const layout = ${JSON.stringify(layout)};
 const values = reactive({ScreenManagement:true, ScreenBrightness:101, ScreenBrightnessManual:67, ScreenBrightnessOffset:0,
   ScreenBrightnessOnroad:101, ScreenBrightnessOnroadOffset:0, ScreenTimeout:30, ScreenTimeoutOnroad:15, StandbyMode:false,
-  GalaxyDeveloperMode:false, ...${JSON.stringify(wakeDefaults)}});
+  GalaxyDeveloperMode:false, ScreenGazeDimming:false, ScreenGazeDimPercent:20, ScreenGazeDimDelay:3,
+  ScreenGazeScreenSide:0, ScreenGazeYawThreshold:15, ...${JSON.stringify(wakeDefaults)}});
 window.values=values; window.writes=[]; window.holdWrite=false; window.failWrite=false;
 window.fetch=async (input,init={}) => {
   const url=new URL(input,location.href);
@@ -41,7 +42,7 @@ createApp({components:{SettingTree, GalaxySelect},setup:()=>({values}),
   computed:{params(){return section.params.filter(p=>isSettingVisible(section,p,this.values))}},
   methods:{change(patch){Object.assign(values,applyParamChange(values,patch))}},
   template:'<div class="gx-card"><SettingTree :params="params" :values="values" :expanded="expanded" @change="change" @manage="expanded[$event]=!expanded[$event]" /></div>'
-}).mount('#app');
+}).component('GalaxySelect',GalaxySelect).mount('#app');
 `
 ;(async () => {
   assert.equal(section.params.find(p => p.key === 'ScreenBrightness').ui_type, 'numeric', 'shared layout preserves old Galaxy brightness rendering')
@@ -72,6 +73,32 @@ createApp({components:{SettingTree, GalaxySelect},setup:()=>({values}),
     assert.equal(section.params.find(p => p.key === 'ScreenBrightness').settings_tier, 'advanced')
     assert.equal(section.params.find(p => p.key === 'StandbyWakeButton').settings_tier, 'advanced')
     assert.equal(await offMode.count(), 0, 'screen controls stay hidden until Galaxy Developer Mode is enabled')
+    assert.equal(await page.evaluate(()=>window.writes.length),0,'initial render cannot write settings')
+    // Gaze dimming is opt-in and configurable without Developer Mode.
+    const gazeNode=page.locator('.gx-tree-node').filter({has:page.getByText('Dim When Looking Away',{exact:true})})
+    const gaze=gazeNode.locator('.gx-switch input')
+    const gazeRow=key=>page.locator('.gx-row').filter({has:page.getByText(section.params.find(p=>p.key===key).label,{exact:true})})
+    assert.equal(await gaze.isChecked(),false)
+    assert.equal(await gazeNode.getByRole('button',{name:'Manage',exact:true}).count(),0)
+    assert.equal(await gazeRow('ScreenGazeDimPercent').count(),0)
+    await gaze.check()
+    await gazeNode.getByRole('button',{name:'Manage',exact:true}).click()
+    await gazeRow('ScreenGazeDimPercent').waitFor()
+    for(const [key,value] of [['ScreenGazeDimPercent','35'],['ScreenGazeDimDelay','8'],['ScreenGazeYawThreshold','10']]) {
+      const slider=gazeRow(key).locator('input[type=range]')
+      await slider.fill(value); await slider.dispatchEvent('change')
+      await page.waitForFunction(({key,value})=>window.values[key]===value,{key,value:Number(value)})
+    }
+    const sideSelect=gazeRow('ScreenGazeScreenSide').locator('select')
+    assert.deepEqual(await sideSelect.locator('option').allTextContents(),['Right','Left'])
+    await sideSelect.evaluate(el=>{el.value='1';el.dispatchEvent(new Event('change',{bubbles:true}))})
+    await page.waitForFunction(()=>window.values.ScreenGazeScreenSide===1)
+    await gaze.uncheck()
+    await gazeRow('ScreenGazeDimPercent').waitFor({state:'detached'})
+    assert.equal(await gazeNode.getByRole('button',{name:'Manage',exact:true}).count(),0)
+    await page.evaluate(()=>{window.values.ScreenGazeDimming=true;window.values.ScreenManagement=false})
+    await gazeRow('ScreenGazeDimPercent').waitFor({state:'detached'})
+    await page.evaluate(()=>{window.values.ScreenManagement=true;window.values.ScreenGazeDimming=false})
     await page.evaluate(()=>{window.values.GalaxyDeveloperMode=true})
     await offMode.waitFor()
     assert.equal(await modeValue(offModeSelect),'auto')
@@ -89,7 +116,6 @@ createApp({components:{SettingTree, GalaxySelect},setup:()=>({values}),
     assert.equal(await page.getByText(/Works independently of Standby Mode/).count(),0)
     assert.ok(section.params.filter(p => /^ScreenTimeout/.test(p.key)).every(p => p.unit === ' seconds'),'timeouts display seconds')
     assert.equal(await page.getByText('30 seconds',{exact:true}).count(),1,'offroad timeout readout includes its unit')
-    assert.equal(await page.evaluate(()=>window.writes.length),0,'initial render cannot write settings')
     assert.equal(await page.getByText('101',{exact:true}).count(),0,'internal Auto sentinel cannot appear')
 
     await setMode(offModeSelect,'manual')
@@ -147,7 +173,8 @@ createApp({components:{SettingTree, GalaxySelect},setup:()=>({values}),
 
     const standbyNode=page.locator('.gx-tree-node').filter({has:page.getByText('Standby Mode',{exact:true})})
     const standby=standbyNode.locator('.gx-switch input')
-    const wakeRow=key=>page.locator('.gx-row').filter({has:page.getByText(section.params.find(p=>p.key===key).label,{exact:true})})
+    // Advanced badges are nested inside labels; use the unique description to locate each row.
+    const wakeRow=key=>page.locator('.gx-row').filter({has:page.getByText(section.params.find(p=>p.key===key).description,{exact:true})})
     assert.equal(await wakeRow(wakes[0]).count(),0)
     assert.equal(await standbyNode.getByRole('button',{name:'Manage',exact:true}).count(),0)
     await standby.check()
@@ -201,6 +228,6 @@ createApp({components:{SettingTree, GalaxySelect},setup:()=>({values}),
     await page.evaluate(()=>{window.values.StandbyMode=true;window.values.ScreenManagement=false})
     assert.equal(await wakeRow(wakes[0]).count(),0,'disabled Screen Settings hides wake choices')
     assert.deepEqual(errors,[])
-    console.log('PASS: real Vue Auto/Manual controls, manual100 default/reset, +/-30% offsets, memory/zero, independent contexts, drag/pending stability, save rollback, seven described standard wake toggles, Manage/Close submenu, seconds readouts, mobile layout, zero page errors')
+    console.log('PASS: opt-in gaze dimming with brightness/delay/side/angle controls, real Vue Auto/Manual controls, manual100 default/reset, +/-30% offsets, memory/zero, independent contexts, drag/pending stability, save rollback, seven described standard wake toggles, Manage/Close submenu, seconds readouts, mobile layout, zero page errors')
   } finally {await browser.close()}
 })().catch(error=>{console.error(error);process.exitCode=1})
