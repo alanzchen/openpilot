@@ -208,9 +208,11 @@ def make_gaze_device(monkeypatch, **overrides):
   device._ignition = device._screen_off_started = True
   device._interaction_time = 110
 
-  def advance(seconds=0):
+  def advance(seconds=0, *, new_packet=True):
     clock[0] += seconds
-    state.sm.logMonoTime['driverMonitoringState'] = int(clock[0] * 1e9)
+    if new_packet:
+      state.sm.logMonoTime['driverMonitoringState'] = int(clock[0] * 1e9)
+      state.sm.recv_frame['driverMonitoringState'] += 1
     return clock[0]
 
   advance()
@@ -223,6 +225,7 @@ def test_gaze_dimming_uses_live_monitoring_and_restores_brightness_immediately(m
   advance(3)
   assert device._calculate_brightness() == 9
   state.sm['driverMonitoringState'].visionPolicyState.pose.yaw = 0.075 + math.radians(25)
+  advance()
   assert device._calculate_brightness() == 45
 
 
@@ -236,8 +239,10 @@ def test_configured_screen_side_and_rhd_are_used_by_device(monkeypatch, side, rh
   assert device._calculate_brightness() == 9
   screenward = math.radians(25) * (-1 if side else 1) * (-1 if rhd else 1)
   dm.visionPolicyState.pose.yaw = 0.075 - screenward
+  advance()
   assert device._calculate_brightness() == 9
   dm.visionPolicyState.pose.yaw = 0.075 + screenward
+  advance()
   assert device._calculate_brightness() == 45
 
 
@@ -283,6 +288,7 @@ def test_unusable_monitoring_restores_brightness_and_restarts_delay(monkeypatch,
     sm.recv_frame['driverMonitoringState'] = state.started_frame
   elif failure == 'dm_alert':
     sm['driverMonitoringState'].alertLevel = 'one'
+    advance()
   assert device._calculate_brightness() == 45
   sm.alive['driverMonitoringState'] = sm.valid['driverMonitoringState'] = True
   sm.recv_frame['driverMonitoringState'] = state.started_frame + 1
@@ -370,3 +376,112 @@ def test_settings_saved_externally_refresh_and_restart_gaze_delay(monkeypatch):
   state.ui_params.values['ScreenGazeDimming'] = False
   device._refresh_screen_settings()
   assert device._calculate_brightness() == 45
+
+
+@pytest.mark.parametrize('mode', ['disabled', 'offroad', 'blank'])
+def test_inactive_gaze_path_skips_monitoring_and_extra_alert_reads(monkeypatch, mode):
+  device, state, _ = make_gaze_device(monkeypatch, ScreenGazeDimming=mode != 'disabled')
+  if mode == 'offroad':
+    state.started = False
+  if mode == 'blank':
+    device._screen_brightness_onroad = 0
+    device._interaction_time = 99
+
+  def unexpected_read(*_args, **_kwargs):
+    raise AssertionError('Inactive gaze dimming should not read monitoring or alerts')
+
+  monkeypatch.setattr(device, '_screen_gaze_yaw', unexpected_read)
+  monkeypatch.setattr(device, '_active_standby_alerts', unexpected_read)
+  assert device._calculate_brightness() == (0 if mode == 'blank' else 35 if mode == 'offroad' else 45)
+
+
+def test_gaze_pose_decodes_once_per_packet_while_deadline_and_staleness_tick_each_frame(monkeypatch):
+  device, _, advance = make_gaze_device(monkeypatch)
+  conversions = []
+  original = ui_state_module.screen_yaw
+
+  def convert(dm, side):
+    conversions.append(side)
+    return original(dm, side)
+
+  monkeypatch.setattr(ui_state_module, 'screen_yaw', convert)
+  assert device._calculate_brightness() == 45
+  for _ in range(10):
+    assert device._calculate_brightness() == 45
+  assert len(conversions) == 1
+
+  advance(2.8)
+  assert device._calculate_brightness() == 45
+  advance(0.21, new_packet=False)
+  assert device._calculate_brightness() == 9
+  assert len(conversions) == 2
+
+  # A cached pose must stop dimming as soon as its unchanged source expires.
+  advance(0.3, new_packet=False)
+  assert device._calculate_brightness() == 45
+  assert len(conversions) == 2
+  advance()
+  assert device._calculate_brightness() == 45
+  advance(3)
+  assert device._calculate_brightness() == 9
+  assert len(conversions) == 4
+
+
+@pytest.mark.parametrize('flag', ['alive', 'valid'])
+def test_cached_gaze_pose_rechecks_message_health_without_new_packet(monkeypatch, flag):
+  device, state, advance = make_gaze_device(monkeypatch)
+  assert device._screen_gaze_yaw(ui_state_module.time.monotonic()) == pytest.approx(0, abs=1e-5)
+  getattr(state.sm, flag)['driverMonitoringState'] = False
+  advance(0.1, new_packet=False)
+  assert device._screen_gaze_yaw(ui_state_module.time.monotonic()) is None
+  getattr(state.sm, flag)['driverMonitoringState'] = True
+  advance(0.1, new_packet=False)
+  assert device._screen_gaze_yaw(ui_state_module.time.monotonic()) == pytest.approx(0, abs=1e-5)
+
+
+def test_non_dm_alert_packet_restores_cached_gaze_brightness_immediately(monkeypatch):
+  device, state, advance = make_gaze_device(monkeypatch)
+  device._calculate_brightness()
+  advance(3)
+  assert device._calculate_brightness() == 9
+  frame = state.sm.recv_frame['driverMonitoringState']
+  state.sm['selfdriveState'].alertSize = 'small'
+  advance(0.1, new_packet=False)
+  assert state.sm.recv_frame['driverMonitoringState'] == frame
+  assert device._calculate_brightness() == 45
+
+
+def test_screen_side_setting_invalidates_cached_pose_without_new_dm_packet(monkeypatch):
+  device, state, advance = make_gaze_device(monkeypatch)
+  state.sm['driverMonitoringState'].visionPolicyState.pose.yaw = 0.075 - math.radians(25)
+  device._calculate_brightness()
+  advance(3)
+  assert device._calculate_brightness() == 9
+  frame = state.sm.recv_frame['driverMonitoringState']
+  state.ui_params.values['ScreenGazeScreenSide'] = 1
+  device._refresh_screen_settings(force=True)
+  assert state.sm.recv_frame['driverMonitoringState'] == frame
+  assert device._screen_gaze_yaw(ui_state_module.time.monotonic()) == pytest.approx(25, abs=1e-5)
+  assert device._calculate_brightness() == 45
+
+
+@pytest.mark.parametrize('enabled', [False, True])
+def test_device_update_reuses_wakefulness_alert_snapshot_for_brightness(monkeypatch, enabled):
+  device, _, _ = make_gaze_device(monkeypatch, ScreenGazeDimming=enabled)
+  scans = []
+  calculated_alerts = []
+  calculate = device._calculate_brightness
+
+  def active_alerts():
+    scans.append(True)
+    return {'StandbyWakeInfoAlert'}
+
+  def update_brightness(active_alerts=None):
+    calculated_alerts.append(active_alerts)
+    assert calculate(active_alerts) == 45
+
+  monkeypatch.setattr(device, '_active_standby_alerts', active_alerts)
+  monkeypatch.setattr(device, '_update_brightness', update_brightness)
+  device.update()
+  assert len(scans) == 1
+  assert calculated_alerts == [{'StandbyWakeInfoAlert'}]

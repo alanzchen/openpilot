@@ -27,6 +27,12 @@ The feature uses the existing driver-monitoring head-pose estimate, corrected fo
 
 Touch restarts the dimming delay. Any displayed onroad alert or driver-monitoring alert restores normal brightness while it is reported, independently of Standby wake selections. Missing faces, uncertain pose, non-vision monitoring, invalid data or data older than half a second also restore normal brightness and restart the delay. Parked brightness is unaffected. Standby, manual screen-off and intentional 0% brightness retain precedence; head turns do not wake a screen turned off by those features. This changes only display brightness, without changing driver-monitoring alerts or policy.
 
+### Runtime cost
+
+Gaze dimming reads the same `driverMonitoringState` subscription as the driver-monitoring icon. It adds no camera stream, model inference, subscriber, process or rendering work. Pose conversion is cached per received monitoring packet (normally 20 Hz), while source freshness, alerts and the dimming deadline remain checked at the UI refresh rate. Alert classification is shared with the existing wakefulness update. Brightness writes use the existing worker path and run only when the resulting brightness changes.
+
+With gaze dimming disabled, the brightness calculation skips monitoring and additional alert reads. The existing once-per-second settings refresh checks only the enable toggle; the four numeric preferences are loaded when enabled. Reads use the existing UI parameter cache. Dimming stays independent of the icon widget because that widget may be hidden, covered or not rendering.
+
 ## Timeouts and wake choices
 
 Both timeout readouts use seconds, with a 5–60 second range and 5 second steps. The parked timeout controls normal offroad sleep. The onroad timeout and wake choices are visible when Standby is enabled; the onroad timeout also remains the internal temporary-visibility duration for manual 0%.

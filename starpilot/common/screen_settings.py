@@ -60,8 +60,12 @@ class GazeDimmingPreferences:
 
 
 def gaze_dimming_preferences(params):
+  # Disabled users only need the toggle refreshed. Keep the other saved values
+  # untouched and load them when enabled, rather than reading four extra keys.
+  if not _boolean(_raw(params, 'ScreenGazeDimming')):
+    return GazeDimmingPreferences()
   values = [_integer(params, key, *limits) for key, limits in SCREEN_GAZE_RANGES.items()]
-  return GazeDimmingPreferences(_boolean(_raw(params, 'ScreenGazeDimming')), *values)
+  return GazeDimmingPreferences(True, *values)
 
 
 def _raw(params, key):

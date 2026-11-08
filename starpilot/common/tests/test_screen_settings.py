@@ -149,6 +149,45 @@ def test_gaze_defaults_and_stored_preferences():
   assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10)
 
 
+@pytest.mark.parametrize('disabled', [None, False, b'0'])
+def test_disabled_gaze_reads_only_enable_toggle(monkeypatch, disabled):
+  params = Params({'ScreenGazeDimming': disabled})
+  reads = []
+  original_get = params.get
+
+  def tracked_get(key):
+    reads.append(key)
+    return original_get(key)
+
+  monkeypatch.setattr(params, 'get', tracked_get)
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences()
+  assert reads == ['ScreenGazeDimming']
+
+
+def test_disabled_gaze_preserves_custom_settings_for_reenable(monkeypatch):
+  stored = {'ScreenGazeDimming': False, 'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8,
+            'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10}
+  params = Params(stored)
+  reads = []
+  original_get = params.get
+
+  def tracked_get(key):
+    reads.append(key)
+    return original_get(key)
+
+  monkeypatch.setattr(params, 'get', tracked_get)
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences()
+  assert reads == ['ScreenGazeDimming']
+  assert params.values == stored
+
+  params.values['ScreenGazeDimming'] = True
+  reads.clear()
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10)
+  assert set(reads) == set(stored)
+  assert len(reads) == len(stored)
+  assert params.values == {**stored, 'ScreenGazeDimming': True}
+
+
 @pytest.mark.parametrize('stored,expected', [
   ({'ScreenGazeDimPercent': -2, 'ScreenGazeDimDelay': 99, 'ScreenGazeScreenSide': 9, 'ScreenGazeYawThreshold': -10},
    (5, 30, 1, 5)),
@@ -156,8 +195,9 @@ def test_gaze_defaults_and_stored_preferences():
    (20, 3, 0, 15)),
 ])
 def test_gaze_read_preferences_are_bounded_without_rewriting(stored, expected):
+  stored = {'ScreenGazeDimming': True, **stored}
   params = Params(stored)
-  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(False, *expected)
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, *expected)
   assert params.values == stored
 
 
