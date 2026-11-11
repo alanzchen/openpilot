@@ -30,6 +30,7 @@ def test_mode_write_returns_remembered_manual_value():
 
 
 @pytest.mark.parametrize('key,value,expected', [('ScreenBrightnessOffset', -25, -25), ('ScreenBrightnessOnroad', 0, 0),
+                                               ('ScreenManagement', True, True), ('ScreenManagement', False, False),
                                                ('StandbyWakeCriticalAlert', False, False),
                                                ('ScreenGazeDimming', True, True), ('ScreenGazeDimPercent', 35, 35),
                                                ('ScreenGazeDimDelay', 8, 8), ('ScreenGazeScreenSide', 1, 1),
@@ -39,11 +40,14 @@ def test_screen_values_are_validated_and_return_typed_readback(key, value, expec
   response = client_for(params).put('/api/params', json={'key': key, 'value': value})
   assert response.status_code == 200
   assert response.json['updated'][key] == expected
+  assert type(response.json['updated'][key]) is type(expected)
   assert params.values[key] == expected
+  assert type(params.values[key]) is type(expected)
 
 
 @pytest.mark.parametrize('key,value', [
   ('ScreenBrightnessOffset', 31), ('ScreenBrightnessOnroadOffset', -31), ('StandbyWakeEngage', 'false'), ('StandbyWakeFake', True),
+  ('ScreenManagement', 'false'), ('ScreenManagement', 0), ('ScreenManagement', 1), ('ScreenManagement', None),
   ('ScreenGazeDimming', 'false'), ('ScreenGazeDimPercent', 0), ('ScreenGazeDimDelay', 31),
   ('ScreenGazeScreenSide', 2), ('ScreenGazeYawThreshold', 46), ('ScreenGazeUnknown', True),
 ])
@@ -61,9 +65,10 @@ def test_native_write_failure_is_reported_instead_of_success():
   assert response.status_code == 503
 
 
-def test_galaxy_failed_wake_write_reports_error_and_restores_selection():
+@pytest.mark.parametrize('key', ['StandbyWakeCriticalAlert', 'ScreenManagement'])
+def test_galaxy_failed_toggle_write_reports_error_and_restores_selection(key):
   from test_screen_settings_transactions import SilentOnceParams, galaxy_params
-  params = SilentOnceParams({'StandbyWakeCriticalAlert': True})
-  response = client_for(galaxy_params(params)).put('/api/params', json={'key': 'StandbyWakeCriticalAlert', 'value': False})
+  params = SilentOnceParams({key: True})
+  response = client_for(galaxy_params(params)).put('/api/params', json={'key': key, 'value': False})
   assert response.status_code == 503
-  assert params.values == {'StandbyWakeCriticalAlert': True}
+  assert params.values == {key: True}

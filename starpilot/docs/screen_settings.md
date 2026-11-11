@@ -12,7 +12,9 @@ Galaxy shows a mode selector and the slider for that mode. Standby uses the norm
 
 ## Dim when looking away
 
-In Galaxy, open **Device & Data → Screen Settings → Dim When Looking Away**. It defaults to off. Enable it and select **Manage** to configure:
+On the device, open **Settings → StarPilot → System → Display → Dim When Looking Away**. The Display entry shows On or Off and opens a detail page. Enable dimming to see brightness, delay and screen-side controls; expand **Advanced** for the screen look angle. If Screen Settings is disabled, the page provides a toggle to enable it first. Numeric and side-selection dialogs save on confirmation; cancel leaves the saved value unchanged. A failed save displays an error and keeps the prior setting.
+
+In Galaxy, open **Device & Data → Screen Settings → Dim When Looking Away**, enable it and select **Manage**. Both interfaces edit the same persistent preferences, with dimming off by default:
 
 | Setting | Default | Range / choices |
 | --- | --- | --- |
@@ -31,7 +33,7 @@ Touch restarts the dimming delay. Any displayed onroad alert or driver-monitorin
 
 Gaze dimming reads the same `driverMonitoringState` subscription as the driver-monitoring icon. It adds no camera stream, model inference, subscriber, process or rendering work. Pose conversion is cached per received monitoring packet (normally 20 Hz), while source freshness, alerts and the dimming deadline remain checked at the UI refresh rate. Alert classification is shared with the existing wakefulness update. Brightness writes use the existing worker path and run only when the resulting brightness changes.
 
-With gaze dimming disabled, the brightness calculation skips monitoring and additional alert reads. The existing once-per-second settings refresh checks only the enable toggle; the four numeric preferences are loaded when enabled. Reads use the existing UI parameter cache. Dimming stays independent of the icon widget because that widget may be hidden, covered or not rendering.
+With gaze dimming disabled, the brightness calculation skips monitoring and additional alert reads. The existing once-per-second settings refresh checks only the enable toggle; the four numeric preferences are loaded when enabled. Reads use the existing UI parameter cache. Dimming stays independent of the icon widget because that widget may be hidden, covered or not rendering. The native detail page is created only when opened and adds no preference polling or widgets to the driving screen.
 
 ## Timeouts and wake choices
 
@@ -67,6 +69,7 @@ From a configured Linux checkout with the project Python dependencies:
 PYTHONPATH=. python -m pytest -q -c /dev/null --confcutdir=starpilot/common/tests \
   starpilot/common/tests/test_screen_*.py \
   selfdrive/ui/tests/test_device_screen_settings.py \
+  selfdrive/ui/tests/test_screen_gaze_settings.py \
   starpilot/system/wheel_controls/tests
 
 PYTHONPATH=. python -m pytest -q -c /dev/null --confcutdir=starpilot/system/the_galaxy/tests \

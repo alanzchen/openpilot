@@ -45,7 +45,7 @@ SCREEN_GAZE_RANGES = {
   'ScreenGazeScreenSide': (0, 0, 1),
   'ScreenGazeYawThreshold': (15, 5, 45),
 }
-SCREEN_BOOL_KEYS = SCREEN_WAKE_KEYS | {'ScreenGazeDimming'}
+SCREEN_BOOL_KEYS = SCREEN_WAKE_KEYS | {'ScreenManagement', 'ScreenGazeDimming'}
 SCREEN_SETTING_KEYS = SCREEN_INT_KEYS | SCREEN_BOOL_KEYS | SCREEN_GAZE_RANGES.keys()
 _WRITE_LOCK = RLock()
 

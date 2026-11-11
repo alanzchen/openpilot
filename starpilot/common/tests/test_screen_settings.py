@@ -66,11 +66,24 @@ def test_manual_zero_is_remembered_and_auto_offset_is_retained():
   assert params.values['ScreenBrightness'] == 0
 
 
+@pytest.mark.parametrize('enabled', [False, True])
+def test_screen_management_master_save_is_typed_and_preserves_preferences(enabled):
+  saved = {'ScreenManagement': not enabled, 'ScreenBrightness': 101, 'ScreenGazeDimming': True,
+           'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8, 'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10}
+  params = Params(saved)
+  updated = screen().write_screen_setting(params, 'ScreenManagement', enabled)
+  assert updated == {'ScreenManagement': enabled}
+  assert type(updated['ScreenManagement']) is bool
+  assert params.values == {**saved, 'ScreenManagement': enabled}
+  assert type(params.values['ScreenManagement']) is bool
+
+
 @pytest.mark.parametrize('key,value', [
   ('ScreenBrightness', -1), ('ScreenBrightness', 102), ('ScreenBrightness', True),
   ('ScreenBrightness', 3.5), ('ScreenBrightnessOffset', -31), ('ScreenBrightnessOffset', float('nan')),
   ('ScreenBrightnessOnroadOffset', 31), ('ScreenBrightnessManual', 101),
   ('StandbyWakeCriticalAlert', 'false'), ('StandbyWakeBrake', 1), ('StandbyWakeUnknown', True),
+  ('ScreenManagement', 'false'), ('ScreenManagement', 0), ('ScreenManagement', 1), ('ScreenManagement', None),
 ])
 def test_invalid_values_are_rejected_without_any_writes(key, value):
   params = Params({'ScreenBrightness': 101})

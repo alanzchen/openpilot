@@ -39,6 +39,17 @@ def test_galaxy_failed_wake_write_preserves_enabled_selection():
   assert params.values == {'StandbyWakeCriticalAlert': True}
 
 
+@pytest.mark.parametrize('saved', [False, True])
+def test_native_screen_management_write_failure_restores_saved_master_and_invalidates_cache(saved):
+  params = SilentOnceParams({'ScreenManagement': saved, 'ScreenGazeDimming': True})
+  cache = UIParamCache(params, ttl=60)
+  assert cache.get('ScreenManagement') is saved
+  with pytest.raises(OSError):
+    write_screen_setting(cache, 'ScreenManagement', not saved)
+  assert params.values == {'ScreenManagement': saved, 'ScreenGazeDimming': True}
+  assert cache.get('ScreenManagement') is saved
+
+
 def test_cached_native_mode_change_preserves_a_newer_galaxy_manual_value():
   params = Params({'ScreenBrightness': 25, 'ScreenBrightnessManual': 25})
   cache = UIParamCache(params, ttl=60)
