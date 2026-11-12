@@ -123,7 +123,12 @@ class ScreenGazeSettingsView(AetherSettingsView):
   def _save(self, key: str, value) -> bool:
     try:
       write_screen_setting(self._params, key, value)
-    except (OSError, ValueError, KeyError, UnknownKeyName):
+    except UnknownKeyName:
+      self._push_dialog(alert_dialog(tr(
+        "This installation needs rebuilt device binaries for screen dimming. Install a build that includes these settings."
+      )))
+      return False
+    except (OSError, ValueError, KeyError):
       self._push_dialog(alert_dialog(tr("Screen setting could not be saved. Please try again.")))
       return False
     self._params.invalidate()

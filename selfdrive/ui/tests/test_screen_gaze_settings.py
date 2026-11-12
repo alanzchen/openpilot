@@ -10,6 +10,7 @@ import pytest
 os.environ.setdefault('SP_HEADLESS_TEST', '1')
 
 from openpilot.selfdrive.ui.lib.ui_param_cache import UIParamCache
+from openpilot.common.params import UnknownKeyName
 from openpilot.starpilot.common.screen_settings import SCREEN_GAZE_RANGES, write_screen_setting
 from openpilot.system.ui.widgets import DialogResult
 
@@ -21,6 +22,7 @@ class StoredParams:
     self.writes = []
     self.fail_key = None
     self.silent_key = None
+    self.unknown_key = None
 
   def get_param_path(self):
     return str(self.directory / 'd')
@@ -38,6 +40,8 @@ class StoredParams:
     return int(self.get(key) or 0)
 
   def put_int(self, key, value):
+    if key == self.unknown_key:
+      raise UnknownKeyName(key)
     if key == self.fail_key:
       raise OSError('Storage unavailable')
     self.writes.append((key, value))
@@ -155,6 +159,19 @@ def test_save_failure_keeps_stored_value_reports_error_and_does_not_wake(native_
   assert storage.values[key] == 35
   assert page._value(key) == 35
   assert native_page.errors
+  assert not native_page.interactions
+
+
+def test_missing_native_registry_key_explains_required_rebuilt_binaries(native_page):
+  page, storage = native_page.page, native_page.storage
+  before = dict(storage.values)
+  storage.unknown_key = 'ScreenGazeDimming'
+  assert not page._save('ScreenGazeDimming', False)
+  assert storage.values == before
+  assert storage.writes == []
+  assert native_page.errors == [
+    'This installation needs rebuilt device binaries for screen dimming. Install a build that includes these settings.',
+  ]
   assert not native_page.interactions
 
 
