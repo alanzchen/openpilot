@@ -19,7 +19,12 @@ for name, expected in json.loads(Path('/opt/linux-device-build/protected-package
   with (Path('/usr/local/venv/lib/python3.12/site-packages') / name).open('rb') as source:
     assert hashlib.file_digest(source, 'sha256').hexdigest() == expected, name
 PY
-scons -j"${LINUX_DEVICE_JOBS}" --extras --cache-disable 2>&1 | tee /reports/build.log
+# Build every deployed output, then only the extra CPU test binaries used by
+# acceptance. Desktop replay tools are outside the device deployment inventory.
+scons -j"${LINUX_DEVICE_JOBS}" --minimal --cache-disable 2>&1 | tee /reports/build.log
+scons -j"${LINUX_DEVICE_JOBS}" --extras --cache-disable \
+  common/tests/test_common opendbc_repo/opendbc/safety/tests/libsafety/libsafety.so \
+  2>&1 | tee -a /reports/build.log
 python /control/gates.py manifest --root /work --artifacts-file /control/artifacts.txt --output /reports/artifacts.json
 python /control/gates.py abi --root /work --artifacts-file /control/artifacts.txt --output /reports/abi.json
 python /control/gates.py params --root /work --output /reports/params.json
