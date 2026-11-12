@@ -1,0 +1,30 @@
+name: Linux device build
+
+on:
+  push:
+    branches: [codex/gaze-screen-dimming]
+  pull_request:
+    branches: [mazda-starpilot-ti]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linux-device-build-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  runner:
+    name: ARM64 runner readiness
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - name: Verify native ARM64 and Docker
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = aarch64
+          docker version
+          df -h /
+          free -h
