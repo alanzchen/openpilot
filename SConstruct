@@ -190,8 +190,8 @@ lenv = {
   "TERA_PATH": Dir("#").abspath + f"/third_party/acados/{arch}/t_renderer"
 }
 
-# Allow callers to override cache/temp dirs used by subprocesses (e.g. tinygrad model compilation).
-for key in ("HOME", "TMPDIR", "XDG_CACHE_HOME", "CACHEDB", "PARAMS_ROOT"):
+# Preserve caller cache paths and reproducibility settings in build subprocesses.
+for key in ("HOME", "TMPDIR", "XDG_CACHE_HOME", "CACHEDB", "PARAMS_ROOT", "SOURCE_DATE_EPOCH", "PYTHONHASHSEED", "TZ"):
   if key in os.environ:
     lenv[key] = os.environ[key]
 

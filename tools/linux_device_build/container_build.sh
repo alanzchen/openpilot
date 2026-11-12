@@ -29,9 +29,15 @@ from pathlib import Path
 import subprocess
 allowed = set(Path('/control/artifacts.txt').read_text().splitlines())
 changed = set(subprocess.check_output(['git', 'diff', 'HEAD', '--no-renames', '--name-only', '-z', '--']).decode().split('\0')) - {''}
-unexpected = sorted(changed - allowed)
+prebuilt = Path('prebuilt')
+prebuilt_removed = not prebuilt.exists() and not prebuilt.is_symlink()
+# run.sh deliberately removes the tracked deployment marker to force a build.
+# Only package.py recreates it after all gates pass.
+unexpected = sorted(changed - allowed - ({'prebuilt'} if prebuilt_removed else set()))
 report = {'verdict': 'FAIL' if unexpected else 'PASS', 'unexpected_source_changes': unexpected,
-          'changed_artifact_count': len(changed & allowed)}
+          'changed_artifact_count': len(changed & allowed), 'prebuilt_removed_for_rebuild': prebuilt_removed}
+if not prebuilt_removed:
+  report['verdict'] = 'FAIL'
 Path('/reports/source.json').write_text(json.dumps(report, indent=2) + '\n')
-assert not unexpected, unexpected
+assert report['verdict'] == 'PASS', report
 PY
