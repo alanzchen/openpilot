@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: false
       - name: Record source identity
         id: source
@@ -38,6 +38,7 @@ jobs:
         run: |
           set -euo pipefail
           git check-ref-format "refs/heads/${SOURCE_BRANCH}"
+          git fetch --no-tags --depth=1 origin 967cc94dc9634ae5bb170fd3ea415318e234713a
           printf 'sha=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           printf 'branch=%s\n' "$SOURCE_BRANCH" >> "$GITHUB_OUTPUT"
       - name: Prepare native runner tools
@@ -87,7 +88,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ needs.build.outputs.source_sha }}
-          fetch-depth: 0
+          fetch-depth: 1
           persist-credentials: true
       - name: Download the verified artifact bundle
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
@@ -104,6 +105,7 @@ jobs:
         run: |
           set -euo pipefail
           git check-ref-format "refs/heads/${SOURCE_BRANCH}"
+          git fetch --no-tags --depth=1 origin 967cc94dc9634ae5bb170fd3ea415318e234713a
           remote_head="$(git ls-remote --exit-code origin "refs/heads/${SOURCE_BRANCH}" | cut -f1)"
           test "$remote_head" = "$EXPECTED_SOURCE"
           python3 tools/linux_device_build/package.py apply \
