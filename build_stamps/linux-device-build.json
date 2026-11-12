@@ -1,5 +1,5 @@
 {
-  "archive_sha256": "00f319a137fd93b520c7a55ddd8afb28634f04edcde6c15787126665cc8d08f7",
+  "archive_sha256": "2f0b8bc8d89ddbf93cd736fceb89690196ff5dfc15a0084e4de819bcef391be0",
   "artifacts": {
     "cereal/libcereal.a": {
       "mode": "100644",
@@ -19,7 +19,7 @@
     },
     "common/libcommon.a": {
       "mode": "100644",
-      "sha256": "aa9ffe8bc6dd4b8c122cd15d0cfba524b8d3038d66acb9885daad29269e9482d"
+      "sha256": "25081656c3723ed3ea0d96fa463f94986e8f098769633c3524c99dd2f90a4793"
     },
     "common/params_pyx.cpp": {
       "mode": "100644",
@@ -27,7 +27,7 @@
     },
     "common/params_pyx.so": {
       "mode": "100755",
-      "sha256": "553d59c0e5e12e51a45e800f2caf5ec9ace952e6411f227b040d30e95fce3243"
+      "sha256": "745b63db73a61a3186c870c9cd4305c53f0fb48e315a36ecb44f3227256bee34"
     },
     "common/transformations/transformations.so": {
       "mode": "100755",
@@ -223,91 +223,91 @@
     },
     "panda/board/obj/body_h7.bin.signed": {
       "mode": "100644",
-      "sha256": "eb149aa07b64bdde3db5e014b37ee436b289cfd632cda40d1d3b26a39fa75bcd"
+      "sha256": "62976bdd09c9da9d5573a57078996f3d3346520fe9b644dc47ae538bd421d5ba"
     },
     "panda/board/obj/body_h7/bootstub.elf": {
       "mode": "100755",
-      "sha256": "ac97fe0197c98c8dff61f91535bf738e499f62f8095d1fa1e16c9eca758309ac"
+      "sha256": "66241dd2f011fb35f4c318f11f4c1955c0016ef9fbe6ad807ab0df8cd7f50079"
     },
     "panda/board/obj/body_h7/main.bin": {
       "mode": "100755",
-      "sha256": "0e71136c5fea5aa6013e83ddb2108f4ff765a98d9daa1a5d5319f53b5a456f10"
+      "sha256": "57c4dbb82111355c3eb56c0485f99ffbeec08f625ca43352ae3170c58ab4ace4"
     },
     "panda/board/obj/body_h7/main.elf": {
       "mode": "100755",
-      "sha256": "2b2c2d11c118d9eb914e9abb525de43081744bb9b009d91a57c01305262f0335"
+      "sha256": "3003325c21b3293e320dce5dc22812901c8b3c8a8de5cba9b6bbeaf23801684d"
     },
     "panda/board/obj/bootstub.body_h7.bin": {
       "mode": "100755",
-      "sha256": "5df53455b30f1b657ff5959700877e09957743ea8d3d9470bca660411b22b82c"
+      "sha256": "c5594a39837b7df0a067b860d594b9cedf5d7dc3e9ac0b3da1bbd094946431cc"
     },
     "panda/board/obj/bootstub.panda.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_h7.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_hkg_remote.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_hkg_remote_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_remote.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_remote_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_tesla_wake.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_h7_tesla_wake_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "10d91481c7c092ea58bcfb7ed8c64f6357f849f3533dde2e4a2eb4f0b9c91ef5"
+      "sha256": "04c3cc0b3596a5486a3017bf07fe782498ad428e4a62d12be2415a3d3aabbe51"
     },
     "panda/board/obj/bootstub.panda_hkg_remote.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_hkg_remote_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_jungle_h7.bin": {
       "mode": "100755",
-      "sha256": "d604936ae4ff765a7771093b75b0635bc5425bd1008a436738c5556a4b146e2b"
+      "sha256": "5875ca5a48dc0e6877aba2ce87d339765913d14bfc8e1f77cb2fa390b208bfca"
     },
     "panda/board/obj/bootstub.panda_remote.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_remote_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_tesla_wake.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/bootstub.panda_tesla_wake_can_ignition_only.bin": {
       "mode": "100755",
-      "sha256": "e407955462f7106ea686830b4bc18000949121d0eb415cbb44f72b21a0e55c4d"
+      "sha256": "106321f3c1206aeb34826c975658b9e97aecb26c81ddf3e53fdc1852f92468a9"
     },
     "panda/board/obj/cert.h": {
       "mode": "100644",
@@ -315,283 +315,283 @@
     },
     "panda/board/obj/gitversion.h": {
       "mode": "100644",
-      "sha256": "60db86cadcd7dd486edad4d6272d51524d6f6dd67f0cd16b2e39bbd4040e097b"
+      "sha256": "50ebde525b0f120c5d099c08ea534ae8fcf947e2be9b073649b4008d7838e7f3"
     },
     "panda/board/obj/panda.bin.signed": {
       "mode": "100644",
-      "sha256": "05e802c95b43ed0c810841b407153c7227bcbd3d7b127239f08e89639bc66328"
+      "sha256": "28dd829fbdd922216c37993d5ada1b6ae1cfdc10657522ff5c55370756102508"
     },
     "panda/board/obj/panda/bootstub.elf": {
       "mode": "100755",
-      "sha256": "a3c57ebecf9c5aed44c5032822fa26ebf71f57879357da3f0c650d3e04d87d3e"
+      "sha256": "5d2fe5f2d6d5c6f6dcad1a12e354e50562d727a69a18828d38b6729ff6731752"
     },
     "panda/board/obj/panda/main.bin": {
       "mode": "100755",
-      "sha256": "d5572f5f0b1d5bfb728c925fb178e7141398927d2fb026df217ad5bb4bf73ce1"
+      "sha256": "d06fa2a46abf52641f2e2cf3ac5a75a5d24d0123294a6624ebee93d5d9142f5d"
     },
     "panda/board/obj/panda/main.elf": {
       "mode": "100755",
-      "sha256": "136e1ac5993e41c2fbf771a99dfba1abf24497cb32d3a31f22f484fc98801752"
+      "sha256": "9ba066e2b996ff67e679e1d5f9c869509934827af6175c28e70835ae7da0c83b"
     },
     "panda/board/obj/panda_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "040e70afb2467865272e291d9374ca3aa70015b8ec803f1d5fd4f4ad78b85f91"
+      "sha256": "65cd3eef52be887310dc7e0f89e10d95e775168fa38a86aa0cf690a68e99b030"
     },
     "panda/board/obj/panda_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "d0a1a77280e48a38aa685bea1d152438512af7d699796a52851fe08547bbb921"
+      "sha256": "bd2c90d35a2a112c7a877aa72299b2e6b87bd910846d3c46583ff77b8bb9532f"
     },
     "panda/board/obj/panda_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "e6a51572cf1a18a6d9ef556a04c92ae5cc5dfb61bc79c6a427ca900f9a71ed14"
+      "sha256": "d83295cd01d4844775b17587008a5104f54b525b6438c184a556cf7ce82b0704"
     },
     "panda/board/obj/panda_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "e1d7e0897a62b0bb9c14e7959d3262d31254abd89d8315e0c455a6970a105f67"
+      "sha256": "f3cc462c142a2a43380f3d5300811ff9d928ee5692d20b40cb308a1c1a00521f"
     },
     "panda/board/obj/panda_h7.bin.signed": {
       "mode": "100644",
-      "sha256": "945fcf1af6b5050260d08be48fc9e07a3658bab243315650c1964ac71198b3c3"
+      "sha256": "66d9de28dee393117d9710d37ebeb853bb304b62b7665f1ef6cd0255541dd0b9"
     },
     "panda/board/obj/panda_h7/bootstub.elf": {
       "mode": "100755",
-      "sha256": "698a70c29a9c0d5c982be7a6bd6b7f1571d29fbc6a5cfc477b8145aa5d1b77c2"
+      "sha256": "adb22840c2607007ef67d8dd1e97cf919218f341acda6133c9a49d162d65c732"
     },
     "panda/board/obj/panda_h7/main.bin": {
       "mode": "100755",
-      "sha256": "cc6145b3296a2d1725f95c7fe6d4509ee114f46711864be46f42139034559219"
+      "sha256": "b163aafa471e58e0ddcb92cc6de5aebc554403280f289ef90da0e0e83e773cbf"
     },
     "panda/board/obj/panda_h7/main.elf": {
       "mode": "100755",
-      "sha256": "8cbca85176401a5c830f2dd70c470c9b0080df73dc869776b734adbdc9549c99"
+      "sha256": "240904e02220405592c0d4a1edaf4564d184a2c501b754d72101ecd104bca5ea"
     },
     "panda/board/obj/panda_h7_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "572289deaacff7368ff2caf15f0d7d2cceb185c59535a5c295e228466b15a14e"
+      "sha256": "2052afb0921ca65955b26b610769f0f4d9425364704d11729af097089dc93ce4"
     },
     "panda/board/obj/panda_h7_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "1396cbd0d516af4352ef179205ae5d7ff41e129e45c5832dd3a05643d74e2b6f"
+      "sha256": "82c87b65cc41cce9b3bf9e955e4e44eb9073420246c59e27d7fe59e120c254c5"
     },
     "panda/board/obj/panda_h7_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "f1be9c627c5ea2a9f1dc668122a5b1e2c8000e733b61039fe22789e9058abfcd"
+      "sha256": "ddaea8f3585e2d1c1d2305f8cfbcdb5c4222f00dbf43785eac32276ea677c82c"
     },
     "panda/board/obj/panda_h7_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "2e30509492df4c4eae99662edf5f8057a894eb45a3640be1496bbbed293f749e"
+      "sha256": "c9bf919a76d0377b3289c48c938cdd47b3c137f4fa26ed5688311f42db75f5e5"
     },
     "panda/board/obj/panda_h7_hkg_remote.bin.signed": {
       "mode": "100644",
-      "sha256": "0cbfe0bada5279c3c93baf4913fcd78163fd6bd2ffbe450a68f2448b3fe6fe5a"
+      "sha256": "82e2f74cdeac32d905df62255c9c0f223a6ea8cc13a44adb0b7a176418b5dd8c"
     },
     "panda/board/obj/panda_h7_hkg_remote/bootstub.elf": {
       "mode": "100755",
-      "sha256": "24e6f9abad607e57799e3b18cf29c7a91fba3cc4db4b007a24e2ec9c1ad6b9ff"
+      "sha256": "55f38733a83c6da30c2d8e2b0306b01963e25cbf9da140a6a7a0e14d34ebdd12"
     },
     "panda/board/obj/panda_h7_hkg_remote/main.bin": {
       "mode": "100755",
-      "sha256": "55a84ac40928abb233715b0ffb5db9cb2ef50bfc8230c74641b4a40d41f2334b"
+      "sha256": "5da4af770ff5d8ba95c590afe53bdbf801aca61b3750fa493b89e2a585ab4b3a"
     },
     "panda/board/obj/panda_h7_hkg_remote/main.elf": {
       "mode": "100755",
-      "sha256": "5aaf596e4e04429f573cb28bf01d60d6ac80015206be6bb5c2ad6e340a996aa0"
+      "sha256": "457d6ebc79d0b5b6a7d9de5a54d45bc6299aa8edadcacc0dfdcf0d2e4a3cdd9a"
     },
     "panda/board/obj/panda_h7_hkg_remote_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "64c0aa6aaf28d0b77d71248e695eb60818f88aacaf15794b80abfdb4efb8a3d9"
+      "sha256": "edb3e6c2c3eba8c9f993a70063075f4b6c86a922c7290c637280d2b5c9d57318"
     },
     "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "b4685a90830c7ef313d794730dd9c31ffa032ea487d1a041b362c828618f31f7"
+      "sha256": "ff8fe2fe96634876b14aa090652458e6f8fb862707dd6051f794f1928042b237"
     },
     "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "6f3f8ed59e70306bde00df2a3ce196f17bf6ecaf95a001ba919074cb109e4816"
+      "sha256": "b79e48a0071857e6eaa828a7d9cff6c3344fdce05140284779faba5a8abddbc6"
     },
     "panda/board/obj/panda_h7_hkg_remote_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "73f04bf6677f58b7521270e590fc3c71b9c264fbdddfc73236b9627ffaf4e4db"
+      "sha256": "e5210983e6bc7fa39f2df5dde9932a4a6b7fcb45d68655e32288358f97ad5ed6"
     },
     "panda/board/obj/panda_h7_remote.bin.signed": {
       "mode": "100644",
-      "sha256": "a5427d7c871137dd46181b4b5149e021db61595bbee2b903216209133a7a8a6b"
+      "sha256": "e7342c41bb57e83535c7544915e01abf0fdca39f6576447344b791003abed7c5"
     },
     "panda/board/obj/panda_h7_remote/bootstub.elf": {
       "mode": "100755",
-      "sha256": "ead63552dd14a6ebf48d098061ec2bae80089b3b0ee11822134655c6e781a42a"
+      "sha256": "718ad5f687f670ffdf033cfa3a00b16fc315903ad677a65f66e2c04ec1b99fef"
     },
     "panda/board/obj/panda_h7_remote/main.bin": {
       "mode": "100755",
-      "sha256": "3410ffd729a0cc91bd2fbcefdab4a7f523008738512b0cf1a351a9ea25829563"
+      "sha256": "8a2f9fae5ecebbb37aa050790de8395ec52814e4d581dfcb44e42d0fccaeaa0c"
     },
     "panda/board/obj/panda_h7_remote/main.elf": {
       "mode": "100755",
-      "sha256": "f1c6dbadc12b554de2c7e38b437754ec6c4f085719beec9fc0832d9ef2b3ba76"
+      "sha256": "3713bb5005794b230dac78c9905a5227ed5ec55c44c24fd6cbac0786e41f0edf"
     },
     "panda/board/obj/panda_h7_remote_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "b9d0f76b53738b61b84411741172b5391e589ea7aa420194639b1f36f5acb788"
+      "sha256": "786b539d289c59bb73969b9216ba451d0286582f74d514c227373a131ab1b7d2"
     },
     "panda/board/obj/panda_h7_remote_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "3b6e9badb6ef564e611cfb4f5c41b3bd495dee22ec2466b24783eab07fbe0f95"
+      "sha256": "7f5679800d85570d28fff961c6cb44d14b5eb1ea0992ca7de30c9b1618bee479"
     },
     "panda/board/obj/panda_h7_remote_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "ed183a661bf7cf9ffabfb204046d83e13ef94e2f0c590a7141e19a8ab3012872"
+      "sha256": "aea2baf3dc7183aa621c454b16d9135b0ee40cff0f9f56e009946e0518a9b149"
     },
     "panda/board/obj/panda_h7_remote_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "4069af9a3bcf9794e699ccc67116b2c1cbba61d5ca613600200bf2e18b13f453"
+      "sha256": "7d3b76fbcb8a508a2bbd527e0220e57fb4fd6321f11351d6d62f73c2719e1477"
     },
     "panda/board/obj/panda_h7_tesla_wake.bin.signed": {
       "mode": "100644",
-      "sha256": "810cec0c0a0305836a62b987c5d55591e459ec7820e2a41d5661ce0eab2fff79"
+      "sha256": "926b9de605eb0cdcd92e5af8baa6c8950ade714e4054d8b82cec878ab2c8d71e"
     },
     "panda/board/obj/panda_h7_tesla_wake/bootstub.elf": {
       "mode": "100755",
-      "sha256": "687e2eef24726210aed0166314b4463d1d53cc2e935937523790a017a2cdcc0f"
+      "sha256": "894d9e9ebc7937806af0492da8a86ea50fb17e3d354328c603303c91e181d603"
     },
     "panda/board/obj/panda_h7_tesla_wake/main.bin": {
       "mode": "100755",
-      "sha256": "5e8c1a94eeaa9b0469fd59ae095a4cbb338e4535bce3c04c0551872bad5f50f1"
+      "sha256": "4f3e8b11fc1f145276af55208d01ca897eaaf1e9f146632b08e4884a77ec1a6c"
     },
     "panda/board/obj/panda_h7_tesla_wake/main.elf": {
       "mode": "100755",
-      "sha256": "bceb877325da5cb6231ec8379c9916d3fc8d4279834eced4cf882d2d2ac64abb"
+      "sha256": "57e1923a255bbe5ecd7e68d1f41294268c34ee6ecfad8c9fc5fec6ea4a46ea91"
     },
     "panda/board/obj/panda_h7_tesla_wake_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "d5ada869ed995bbd8e87ca6772a828b1d748887d04e7ae9c9463723a07ba954a"
+      "sha256": "66933d572952d17a17de7ee11c7277aa5b602e697ec99ceb6080e67b0d39736a"
     },
     "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "778a712379cf2a242b3c054ede78cd5e513e9976ae71637e5b31b44282d72db0"
+      "sha256": "503fa19f289580ad8e3c5f8a7e406145a6b65d7d8ab3d41ef1558db51664e1b5"
     },
     "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "94c97d265b3297b2323a818e6a72115ab5d8d0bfffdc1ff7cd42070ec97f0661"
+      "sha256": "2b3b45cd9ade62913d71d95959ec3f7f0e08abd913492323ed8a377e74cba4dc"
     },
     "panda/board/obj/panda_h7_tesla_wake_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "eb2e040fd201fc3d25f01a4da7085260f5dd5dd66650d3dcc2d2958f59215596"
+      "sha256": "407c8c06881a72333c941e93160386267c467609bf7ef14143f34ca42310e9e2"
     },
     "panda/board/obj/panda_hkg_remote.bin.signed": {
       "mode": "100644",
-      "sha256": "3d33dc5d38bc8ba84411db91b90b5029ec0db8b8c89890fee615b0de021ffe69"
+      "sha256": "f5bf2b26780f57dabe50183098d6ff5a1a435f826a359fc74c988a4d2f15e159"
     },
     "panda/board/obj/panda_hkg_remote/bootstub.elf": {
       "mode": "100755",
-      "sha256": "c78981a94e7e61826689d2e0708a290433503a56870e10b1daee0e1113d38219"
+      "sha256": "d05fa27d10354a25f03ec1ac92b4eaa566c79cb94a31c938619a88f7847c4d4c"
     },
     "panda/board/obj/panda_hkg_remote/main.bin": {
       "mode": "100755",
-      "sha256": "0ced9da43765c2d9e731ea08e3f6bf1d4a9358f93e6abd9596d5ac4c84645431"
+      "sha256": "f6fa445594a2e34ac196e44d50d06301d85a6382b49bd88ecb5204b267257999"
     },
     "panda/board/obj/panda_hkg_remote/main.elf": {
       "mode": "100755",
-      "sha256": "21f63299feed5a16a44023b9814c4b8931440295376e6c728b63ec2b5eb8586f"
+      "sha256": "ee5aa319cc8961265da8f111d52cb714495d31e17081bc76b1bc7455956a978c"
     },
     "panda/board/obj/panda_hkg_remote_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "28f135d59ff5cd18d24bb472a216ab85b325afcd5f98b81f783dd82a0a14b82c"
+      "sha256": "fa7c9d7d149a7375a17fef14a4a1df3441db17fb2c7b2d9c3400d719e5ff5539"
     },
     "panda/board/obj/panda_hkg_remote_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "5e620dfb3369849df5b526618bb7da7324aedc3296a4ae417b5fe3844f91109e"
+      "sha256": "8809712d0d5d528e29a409d762b750eb88abbe69deed8da6bda364ea1aeab68a"
     },
     "panda/board/obj/panda_hkg_remote_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "57decd91bea1908372e1c4801e985efa4fad5b8e708aa96994bf6822a0ed2b54"
+      "sha256": "0c3d9c0c8ce139eff6bcb6c5e35c060693444adb435ced6d549cec95917d6d2d"
     },
     "panda/board/obj/panda_hkg_remote_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "b6c6574ad580f50ff3cc6b1b700b4fc12a309db881a7e2f8358e8724336474c5"
+      "sha256": "4ad98222f820c7350d476de106d387da17e90d89f742b58985d1d1d557aba3ca"
     },
     "panda/board/obj/panda_jungle_h7.bin.signed": {
       "mode": "100644",
-      "sha256": "06abbf210894b70725e8d2982d14ea1632564f44a28971a0229cb28296f0a2d9"
+      "sha256": "f83717b88c938c194250dda83b6ed1beeaac12e6299282fbe966fb47d949f147"
     },
     "panda/board/obj/panda_jungle_h7/bootstub.elf": {
       "mode": "100755",
-      "sha256": "39319cc4ef324a284c063a08e0a1dae9b12229fb5ecf8f70f9c9979be418647c"
+      "sha256": "5bc6267a1e7a00bb4d5d1af4113c7687ecd9b15242af0ff2f207e3b9ac07e8c7"
     },
     "panda/board/obj/panda_jungle_h7/main.bin": {
       "mode": "100755",
-      "sha256": "6240bf4161dc6be5e905fca8501ad146269a1148b95f275798ba1af2257d69e8"
+      "sha256": "3ced81610323d78151d5ac6e615caacfcdb97da9d935d1d7c52969724dd2583a"
     },
     "panda/board/obj/panda_jungle_h7/main.elf": {
       "mode": "100755",
-      "sha256": "096886ea77e8b7219a5805e290a37ccf4f158feeaee8340c1680c9b69404275d"
+      "sha256": "2bf565c8dba191938b9011d9da8b18867ee48fcd49b9e0821fee3c5f174e4e45"
     },
     "panda/board/obj/panda_remote.bin.signed": {
       "mode": "100644",
-      "sha256": "f0e362bc23fcb7324a5e9abd255a2ad7d1fe1a038d76eb480f8bdf7e38134b4e"
+      "sha256": "19dd1d0723b3df9c4b06617ecbc6475f87f958b5cc691440a765c313fffed622"
     },
     "panda/board/obj/panda_remote/bootstub.elf": {
       "mode": "100755",
-      "sha256": "914e060de9a54a2b26aa1f737b410c2545bd51b17d90a5e06e8d8ea7b6454f04"
+      "sha256": "2ba1f4c664a12a6ec2d021cc3bb949d1340df3020982bcf4670c734a53a79e2c"
     },
     "panda/board/obj/panda_remote/main.bin": {
       "mode": "100755",
-      "sha256": "f4aadaf3f0b06c850236c02adecac0e2f1fecf92c5a1aaa4b5f88bcba538f94a"
+      "sha256": "1b5611d357bca1c45b43e3fc04cd02ec5d3de91f98999a2ee852f606a9a88e42"
     },
     "panda/board/obj/panda_remote/main.elf": {
       "mode": "100755",
-      "sha256": "674c263b5dd34a7ac51298ef8481f6cf1832433055da8cd5c0858c67540d0555"
+      "sha256": "8de030ede15c6501f89ad16a60c89ffcb5b1d0e9c1e619cae8cbce0b2afff9d2"
     },
     "panda/board/obj/panda_remote_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "81da795874ab564d96096cfbef3e52ff9642cc1e267b429f9a0820c77adbd824"
+      "sha256": "48566e1324dcde85618f9374418a4593269ed7d26f292e36409aee3394e19ab3"
     },
     "panda/board/obj/panda_remote_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "8f81c3776d03449c33295cc3f076ae0a647e9b440e19b33fa43327590ac3a91b"
+      "sha256": "87668f5707981bc2b58a138e5be88d880484549e5668d3899ad5d2efa708a0ff"
     },
     "panda/board/obj/panda_remote_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "c76bac9a08ab62ad64f6cda44c4aa5cc46c75568f37112f3ed22d0c0e3d93619"
+      "sha256": "dc7c4fa15988040a9794f2db7f687d8626c1d6cc3b01f43ad006ef8b6f38e5a5"
     },
     "panda/board/obj/panda_remote_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "f32c370efbc851d4c3b9127df7f80de5fc804288f414828eaab7d0dd3c7e0e68"
+      "sha256": "36b5419975fc5fec2980b17259da0d02f03fef4596a7995e0a077c386aa54bcf"
     },
     "panda/board/obj/panda_tesla_wake.bin.signed": {
       "mode": "100644",
-      "sha256": "25c7064f87840cb96210f9a8211e4f10a81411188154476b0b0ec30880f7f5dc"
+      "sha256": "474cb8b9582c20be91b84a85d5032830f09903e577a443a6c7d35306e0745af0"
     },
     "panda/board/obj/panda_tesla_wake/bootstub.elf": {
       "mode": "100755",
-      "sha256": "d56ec3b06e91456d9fe04ba0cf9abb9731303cc62922073b5655c64261a37f94"
+      "sha256": "de9992280588460d0f7ddfaa430c061523cdbbb18b93c1e8154fe524305f0f7f"
     },
     "panda/board/obj/panda_tesla_wake/main.bin": {
       "mode": "100755",
-      "sha256": "98dc2c88f556eb01c20450404ba1d894b7bd67fdce7e5e7ac805a050f6d38ece"
+      "sha256": "790b297c85a54aae295a54f3fa46c3739bca6bd48f1df3c4d9746f1019b66598"
     },
     "panda/board/obj/panda_tesla_wake/main.elf": {
       "mode": "100755",
-      "sha256": "c70e11ada9a13fc1566770895bb29bdccc18307c8e7cf735d3d384e167551d6d"
+      "sha256": "0e083aca201df15cd032963789e521acbd871da84e812fbe76578788ca916515"
     },
     "panda/board/obj/panda_tesla_wake_can_ignition_only.bin.signed": {
       "mode": "100644",
-      "sha256": "b2d7efd06d599701934469d9b1c877a93538efdf7dc3e893956ffb5ab882aa46"
+      "sha256": "213ea8230ed8c421458f3a528214a56a793cffae6b28f3d3403e6df19758aa46"
     },
     "panda/board/obj/panda_tesla_wake_can_ignition_only/bootstub.elf": {
       "mode": "100755",
-      "sha256": "7f210061b9c92924e22b33069717e7e77e0081c7599ad080a9d7777a342adb33"
+      "sha256": "836937b3caa78dfb5be4e6b997295510c6d7afa2dbe53c4fd240367897cc3fc1"
     },
     "panda/board/obj/panda_tesla_wake_can_ignition_only/main.bin": {
       "mode": "100755",
-      "sha256": "b37cf4b111cb651dd5d13801507eee05eb6032bd9e8df3e75e741c26c844674c"
+      "sha256": "85d234b7b3349c246e97fde790e70b2953fab70a7083a6ab0c6617bb2b86401a"
     },
     "panda/board/obj/panda_tesla_wake_can_ignition_only/main.elf": {
       "mode": "100755",
-      "sha256": "27aa4d97c281d7c92220849c8e93ebc157f3b3a5e47dba2aea8d6dc96ae53038"
+      "sha256": "33694770dcdecf20e6f26fa6909200a3e321592a81520ecaea543c2379b61963"
     },
     "panda/board/obj/version": {
       "mode": "100644",
-      "sha256": "09b95dc4ae05a68dc8c5f4dccfd4c6d9a0b73db4951de86702724ff0d22ecedc"
+      "sha256": "ee961c8e07b3ec470869158896d671646d7da328f7dfc78d8497e0c66e4913a3"
     },
     "prebuilt": {
       "mode": "100644",
@@ -655,7 +655,7 @@
     },
     "selfdrive/pandad/pandad": {
       "mode": "100755",
-      "sha256": "8004871622c9992cfd4d4fe4b7159bd65be825845b930d012a19f55ebb0f034e"
+      "sha256": "033cefb96a1bb1508c901f5e895230d2fa60c0ddd8ed22ce0d9d7b5961479606"
     },
     "selfdrive/pandad/pandad_api_impl.so": {
       "mode": "100755",
@@ -663,26 +663,26 @@
     },
     "system/camerad/camerad": {
       "mode": "100755",
-      "sha256": "c65fd73c05c2d39a9395d2ab0e820cf9d6959e23a177922e97a5b651647433dd"
+      "sha256": "7decf361015caf6e31797956b6bcdb173158eb3c9f338aae4e7098fd2f84c5de"
     },
     "system/loggerd/bootlog": {
       "mode": "100755",
-      "sha256": "e59b99412efa87ebcef349248b2b357335a1876b61cab30112f03e2ecb62a5be"
+      "sha256": "9a42fbd09479d70a89c44949d489b465a4043febd630d7f854953dce35b7966a"
     },
     "system/loggerd/encoderd": {
       "mode": "100755",
-      "sha256": "7de24e0c14bf862108faf4787818b065ca6b4b4476404d39a11bf1691bf854d7"
+      "sha256": "76fc4399051909e2e2dec780d54def2b9eeb8be7b2f20063c4e474d1e7f85e30"
     },
     "system/loggerd/loggerd": {
       "mode": "100755",
-      "sha256": "34a3db8a5400693017e76ee80ce6fbdb7ffea41854e21f721adfc713c6c11c51"
+      "sha256": "6465d913613b903fc6771e8ed5534a1b5f193f0657ce3addd99c2cdf6163b57a"
     }
   },
   "environment": {
     "python": "3.12.3",
     "raw_sha256": "2516390281514cde7a9ea8cea5f88035cc55a5124aa23626d12ff1f82554c0e8",
     "raw_size": 4718592000,
-    "rootfs_tar_sha256": "d138abca21897e9a0f6163304df6a3a36557e15db71d0095ff3a8c502e5e9ecb",
+    "rootfs_tar_sha256": "cdbd925992280cedfb0064d05079f6633f390ce03751c8ab9acc8eb19ef0b58b",
     "system_sha256": "d744641104991cdf13e1294aeb9b2628656cab46ed7f234f0f04092a9a5ead8d",
     "urls": [
       "https://files.firestar.link/x/iss4fjdpqont/system29.img.xz",
@@ -1481,9 +1481,9 @@
       "counts": {
         "errors": 0,
         "failures": 0,
-        "passed": 714,
-        "skipped": 48,
-        "tests": 762,
+        "passed": 824,
+        "skipped": 49,
+        "tests": 873,
         "xfailed": 7
       },
       "exit_code": 0,
@@ -1576,10 +1576,10 @@
           "errors": 0,
           "failures": 0,
           "name": "screen-runtime",
-          "passed": 414,
+          "passed": 524,
           "report": "screen-runtime.xml",
           "skipped": 0,
-          "tests": 414,
+          "tests": 524,
           "verdict": "PASS",
           "xfailed": 0
         },
@@ -1589,8 +1589,8 @@
           "name": "galaxy-settings",
           "passed": 77,
           "report": "galaxy-settings.xml",
-          "skipped": 4,
-          "tests": 81,
+          "skipped": 5,
+          "tests": 82,
           "verdict": "PASS",
           "xfailed": 0
         }
@@ -1599,14 +1599,15 @@
     },
     "params": {
       "errors": [],
-      "extension_sha256": "553d59c0e5e12e51a45e800f2caf5ec9ace952e6411f227b040d30e95fce3243",
-      "keys_native": 807,
-      "keys_source": 807,
-      "registry_sha256": "7f84fec7c0d5550ae5f37f49b1add104ff34592904f36173c234fda179bf6fc6",
+      "extension_sha256": "745b63db73a61a3186c870c9cd4305c53f0fb48e315a36ecb44f3227256bee34",
+      "keys_native": 808,
+      "keys_source": 808,
+      "registry_sha256": "f981a58da6129149eb22fe7f2b6d3068d7bb5fe04843388fd3369de2edd2d5a1",
       "roundtrip_keys": [
         "ScreenGazeDimDelay",
         "ScreenGazeDimPercent",
         "ScreenGazeDimming",
+        "ScreenGazeDimmingMode",
         "ScreenGazeScreenSide",
         "ScreenGazeYawThreshold",
         "ScreenManagement"
@@ -1622,24 +1623,24 @@
       "removed": [],
       "same_source": true,
       "schema": 1,
-      "source_sha": "bd14f75f961345e8cb4917354c8f007580afc763",
+      "source_sha": "e3ed6a8999127e1c0d6a89ce1903cdb57e6d61a9",
       "verdict": "PASS"
     },
     "source-immutability-b1": {
-      "changed_artifact_count": 109,
+      "changed_artifact_count": 99,
       "prebuilt_removed_for_rebuild": true,
       "unexpected_source_changes": [],
       "verdict": "PASS"
     },
     "source-immutability-b2": {
-      "changed_artifact_count": 109,
+      "changed_artifact_count": 99,
       "prebuilt_removed_for_rebuild": true,
       "unexpected_source_changes": [],
       "verdict": "PASS"
     }
   },
-  "image_id": "sha256:4a84539a59a12551db0449d588a3bffa5cf2ba6d57f91182cd679a5811a0d092",
-  "manifest_sha256": "bd886767b3487ef7c52ad29804432ef945434d8232fd61e0cefd9784c4f443d8",
+  "image_id": "sha256:854e96bf697cd1c83773a338f0bcc6a7c26f0fe84d6e0d61805181e5dda91ba2",
+  "manifest_sha256": "6b77ef9500c6ea1ec9d258a6c2a0ebcd178570904f5170cf802bd6615c5018ee",
   "not_covered": [
     "Qualcomm GPU/OpenCL execution",
     "physical cameras",
@@ -1647,6 +1648,6 @@
     "vehicle behavior"
   ],
   "schema": "sp-linux-device-build/1",
-  "source_sha": "bd14f75f961345e8cb4917354c8f007580afc763",
+  "source_sha": "e3ed6a8999127e1c0d6a89ce1903cdb57e6d61a9",
   "verdict": "PASS"
 }
