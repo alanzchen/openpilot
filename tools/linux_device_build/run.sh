@@ -42,6 +42,12 @@ for attempt in b1 b2; do
   mkdir -p "${REPORTS}/${attempt}"
   git clone --no-hardlinks --no-checkout "${SOURCE_ROOT}" "${checkout}"
   git -C "${checkout}" checkout --detach "${SOURCE_SHA}"
+  # The host's shallow fetch may retain this disconnected pin only in
+  # FETCH_HEAD. Local clones do not copy that unadvertised object, so fetch it
+  # explicitly and verify the immutable inventory before spending time building.
+  git -C "${checkout}" fetch --no-tags --depth=1 origin "${BASELINE}"
+  git -C "${checkout}" show "${BASELINE}:build_stamps/mac-larch64.json" > "${REPORTS}/${attempt}/baseline.json"
+  cmp "${CONTROL}/baseline.json" "${REPORTS}/${attempt}/baseline.json"
   # Force every shipped generated/native artifact to be recreated. Do not
   # accept tracked prebuilts or a warm SCons cache as evidence of a build.
   python3 - "${checkout}" "${CONTROL}/artifacts.txt" <<'PY'
