@@ -106,7 +106,7 @@ def prepare(cache, output):
                     '-C', str(root), '-cf', str(archive), '.'], check=True)
   provenance = {**pins, 'rootfs_tar_sha256': digest(archive), 'uv_lock_sha256': digest(REPO / 'uv.lock')}
   (output / 'provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
-  for name in ('Dockerfile', 'pins.json', 'bootstrap.py'):
+  for name in ('Dockerfile', 'pins.json', 'bootstrap.py', 'sitecustomize.py'):
     shutil.copyfile(HERE / name, output / name)
   shutil.copyfile(REPO / 'uv.lock', output / 'uv.lock')
   print(f'Prepared verified Docker context at {output}', flush=True)

@@ -3,7 +3,7 @@
 # Keep the actual device userspace: no Ubuntu base image or apt upgrades.
 FROM scratch
 ADD agnos-rootfs.tar /
-COPY pins.json provenance.json uv.lock bootstrap.py /opt/linux-device-build/
+COPY pins.json provenance.json uv.lock bootstrap.py sitecustomize.py /opt/linux-device-build/
 ENV VIRTUAL_ENV=/usr/local/venv \
     PATH=/opt/linux-device-build/packages/bin:/usr/local/venv/lib/python3.12/site-packages/gcc_arm_none_eabi/toolchain/bin:/usr/local/venv/lib/python3.12/site-packages/capnproto/install/bin:/usr/local/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     PYTHONPATH=/opt/linux-device-build/packages \

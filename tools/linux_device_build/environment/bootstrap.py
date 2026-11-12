@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -15,7 +16,7 @@ SITE = Path('/usr/local/venv/lib/python3.12/site-packages')
 # These are tools and missing generator/test dependencies, not a replacement
 # device runtime. Their exact versions and wheel hashes come from repo uv.lock.
 TOOLS = (
-  'scons', 'cython', 'casadi', 'scipy', 'pyyaml', 'hypothesis', 'sortedcontainers',
+  'scons', 'cython', 'future-fstrings', 'casadi', 'scipy', 'pyyaml', 'hypothesis', 'sortedcontainers',
   'parameterized', 'pytest', 'pytest-asyncio', 'pytest-cpp', 'pytest-mock', 'pytest-randomly',
   'pytest-repeat', 'pytest-subtests', 'pytest-timeout',
   'iniconfig', 'pluggy', 'execnet',
@@ -89,6 +90,7 @@ def main():
     # sys.prefix=/usr/local/venv for correct on-device ffmpeg runtime RPATHs.
     subprocess.run([sys.executable, '-m', 'pip', 'install', '--no-cache-dir', '--no-deps',
                     '--no-build-isolation', '--target', str(overlay), *paths], check=True)
+  shutil.copyfile(ROOT / 'sitecustomize.py', overlay / 'sitecustomize.py')
   if before != protected_bytes():
     raise RuntimeError('Device-managed dependency bytes changed while installing build tools')
   (ROOT / 'protected-packages.json').write_text(json.dumps(before, sort_keys=True, indent=2) + '\n')
@@ -97,7 +99,15 @@ def main():
   # before an expensive project build starts.
   subprocess.run(['clang', '--version'], check=True)
   subprocess.run(['arm-none-eabi-gcc', '--version'], check=True)
-  check = 'import capnproto, ffmpeg, eigen, numpy, Cython, SCons, pytest; ' + 'print("AGNOS managed native dependencies and locked build tools imported")'
+  codec_source = b'# coding: future_fstrings\nvalue = f"{21}"\n'
+  check = '\n'.join((
+    'import capnproto, ffmpeg, eigen, numpy, Cython, SCons, pytest, codecs',
+    f'assert Cython.__version__ == {packages["cython"]["version"]!r}',
+    f'assert SCons.__version__ == {packages["scons"]["version"]!r}',
+    'codecs.lookup("future_fstrings")',
+    f'compile({codec_source!r}, "<acados-codec-probe>", "exec")',
+    'print("AGNOS managed native dependencies and locked build tools imported")',
+  ))
   subprocess.run([sys.executable, '-c', check], check=True)
 
 

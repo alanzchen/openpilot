@@ -178,11 +178,12 @@ ranlib = '/usr/bin/ranlib' if arch == "Darwin" else 'ranlib'
 
 lenv = {
   "PATH": os.environ['PATH'],
-  "PYTHONPATH": ":".join([
+  "PYTHONPATH": os.pathsep.join(filter(None, [
     Dir("#").abspath,
     Dir("#third_party/acados").abspath,
     Dir("#opendbc_repo").abspath,
-  ]),
+    os.environ.get("PYTHONPATH", ""),
+  ])),
 
   "ACADOS_SOURCE_DIR": Dir("#third_party/acados").abspath,
   "ACADOS_PYTHON_INTERFACE_PATH": Dir("#third_party/acados/acados_template").abspath,
