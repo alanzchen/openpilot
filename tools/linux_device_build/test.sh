@@ -63,6 +63,9 @@ raise SystemExit(exit_code)
 PY
   local receipt_status="$?"
   rm -rf -- "${CI_TEST_TMP}"
+  if [[ -n "${CI_MSGQ_DIR:-}" ]]; then
+    rm -rf -- "${CI_MSGQ_DIR}"
+  fi
   exit "${receipt_status}"
 }
 trap finish EXIT
@@ -75,11 +78,14 @@ done
 rm -f -- "${REPORTS_DIR}/tests.json"
 export PARAMS_ROOT="${CI_TEST_TMP}/params"
 export OPENPILOT_PREFIX="linuxci-$$"
+CI_MSGQ_DIR="/dev/shm/msgq_${OPENPILOT_PREFIX}"
 export LOG_ROOT="${CI_TEST_TMP}/logs"
 export COMMA_CACHE="${CI_TEST_TMP}/downloads"
 export SP_HEADLESS_TEST=1
 export PYTHONPATH="${REPO_ROOT}:${REPO_ROOT}/starpilot/third_party${PYTHONPATH:+:${PYTHONPATH}}"
-mkdir -p "${PARAMS_ROOT}" "${LOG_ROOT}" "${COMMA_CACHE}"
+# msgq opens endpoint files within this namespace, but does not create its
+# parent directory. Normally OpenpilotPrefix's pytest fixture creates it.
+mkdir -p "${PARAMS_ROOT}" "${LOG_ROOT}" "${COMMA_CACHE}" "${CI_MSGQ_DIR}"
 
 # Managed FFmpeg is also used by extension modules loaded during acceptance.
 FFMPEG_LIB_DIR="$("${PYTHON}" -c 'import ffmpeg; print(ffmpeg.LIB_DIR)')"
