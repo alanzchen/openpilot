@@ -127,12 +127,14 @@ from openpilot.starpilot.common.screen_settings import gaze_dimming_preferences,
 defaults = {
   'ScreenManagement': True,
   'ScreenGazeDimming': False,
+  'ScreenGazeDimmingMode': 0,
   'ScreenGazeDimPercent': 20,
   'ScreenGazeDimDelay': 3,
   'ScreenGazeScreenSide': 0,
   'ScreenGazeYawThreshold': 15,
 }
-saved = {'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8, 'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 25}
+saved = {'ScreenGazeDimmingMode': 1, 'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8,
+         'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 25}
 with TemporaryDirectory(prefix='native-screen-params-') as directory:
   params = Params(directory)
   assert isinstance(params, NativeParams), 'Python Params fallback cannot satisfy the native registry gate'
@@ -143,15 +145,27 @@ with TemporaryDirectory(prefix='native-screen-params-') as directory:
     assert params.get_key_flag(key) & ParamKeyFlag.PERSISTENT, key
   for key, value in saved.items():
     write_screen_setting(params, key, value)
+  params = Params(directory)
+  for key, value in saved.items():
+    assert params.get(key) == value, key
   write_screen_setting(params, 'ScreenGazeDimming', True)
   assert gaze_dimming_preferences(params).enabled
+  assert gaze_dimming_preferences(params).mode == 1
   write_screen_setting(params, 'ScreenManagement', False)
+  assert Params(directory).get('ScreenGazeDimmingMode') == 1
   write_screen_setting(params, 'ScreenManagement', True)
   for key, value in saved.items():
     assert params.get(key) == value, key
   write_screen_setting(params, 'ScreenGazeDimming', False)
+  assert Params(directory).get('ScreenGazeDimmingMode') == 1
+  assert gaze_dimming_preferences(params).mode == 0
   write_screen_setting(params, 'ScreenGazeDimming', True)
   assert gaze_dimming_preferences(params).percent == 35
+  assert gaze_dimming_preferences(params).mode == 1
+  write_screen_setting(params, 'ScreenGazeDimmingMode', 0)
+  params = Params(directory)
+  assert params.get('ScreenGazeDimmingMode') == 0
+  assert gaze_dimming_preferences(params).mode == 0
 
 report = {'python': platform.python_version(), 'machine': platform.machine(), 'agnos': '19.6.20',
           'native_modules': modules, 'screen_defaults': defaults, 'verdict': 'PASS'}

@@ -4721,9 +4721,24 @@
         "settings_tier": "simple"
       },
       {
+        "key": "ScreenGazeDimmingMode",
+        "label": "Dimming Style",
+        "description": "After Delay waits before dimming. Follow Head Direction changes brightness continuously as you turn toward or away from the screen, with a short fade and no looking-away delay.",
+        "data_type": "int",
+        "ui_type": "dropdown",
+        "default": 0,
+        "options": [
+          {"value": 0, "label": "After Delay"},
+          {"value": 1, "label": "Follow Head Direction"}
+        ],
+        "parent_key": "ScreenGazeDimming",
+        "visible_when_all_true": ["ScreenManagement", "ScreenGazeDimming"],
+        "settings_tier": "simple"
+      },
+      {
         "key": "ScreenGazeDimPercent",
         "label": "Dimmed Brightness",
-        "description": "Percentage of your normal onroad brightness to use while looking away. The screen remains at least 5% bright and never becomes brighter than your normal setting.",
+        "description": "Percentage of normal onroad brightness while looking away. Follow Head Direction uses this as the minimum and smoothly brightens as you turn toward the screen. The screen remains at least 5% bright and never becomes brighter than your normal setting.",
         "data_type": "int",
         "ui_type": "numeric",
         "default": 20,
@@ -4748,6 +4763,9 @@
         "unit": " seconds",
         "parent_key": "ScreenGazeDimming",
         "visible_when_all_true": ["ScreenManagement", "ScreenGazeDimming"],
+        "visible_when_key": "ScreenGazeDimmingMode",
+        "visible_when_values": [0],
+        "visible_when_default": 0,
         "settings_tier": "simple"
       },
       {
@@ -4768,7 +4786,7 @@
       {
         "key": "ScreenGazeYawThreshold",
         "label": "Screen Look Angle",
-        "description": "How far your head must turn from the calibrated forward direction toward the screen to restore brightness. Lower this angle if a small glance should count.",
+        "description": "How far your head must turn from the calibrated forward direction toward the screen for normal brightness. Follow Head Direction uses this as the full-brightness angle. Lower it if a small glance should count.",
         "data_type": "int",
         "ui_type": "numeric",
         "default": 15,

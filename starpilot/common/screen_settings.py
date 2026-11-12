@@ -44,6 +44,7 @@ SCREEN_GAZE_RANGES = {
   'ScreenGazeDimDelay': (3, 1, 30),
   'ScreenGazeScreenSide': (0, 0, 1),
   'ScreenGazeYawThreshold': (15, 5, 45),
+  'ScreenGazeDimmingMode': (0, 0, 1),
 }
 SCREEN_BOOL_KEYS = SCREEN_WAKE_KEYS | {'ScreenManagement', 'ScreenGazeDimming'}
 SCREEN_SETTING_KEYS = SCREEN_INT_KEYS | SCREEN_BOOL_KEYS | SCREEN_GAZE_RANGES.keys()
@@ -57,11 +58,12 @@ class GazeDimmingPreferences:
   delay: int = 3
   screen_side: int = 0  # Right; 1 = Left, relative to the driver.
   yaw_threshold: int = 15
+  mode: int = 0  # After Delay; 1 = Follow Head Direction.
 
 
 def gaze_dimming_preferences(params):
   # Disabled users only need the toggle refreshed. Keep the other saved values
-  # untouched and load them when enabled, rather than reading four extra keys.
+  # untouched and load them when enabled, rather than reading the extra keys.
   if not _boolean(_raw(params, 'ScreenGazeDimming')):
     return GazeDimmingPreferences()
   values = [_integer(params, key, *limits) for key, limits in SCREEN_GAZE_RANGES.items()]

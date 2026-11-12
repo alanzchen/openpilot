@@ -158,8 +158,32 @@ def test_legacy_excessive_offset_is_clamped_in_brightness_calculation():
 def test_gaze_defaults_and_stored_preferences():
   assert screen().gaze_dimming_preferences(Params()) == screen().GazeDimmingPreferences()
   params = Params({'ScreenGazeDimming': b'1', 'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8,
-                   'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10})
-  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10)
+                   'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10, 'ScreenGazeDimmingMode': 1})
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10, 1)
+
+
+def test_existing_gaze_preferences_keep_delay_mode_and_positional_arguments():
+  preferences = screen().GazeDimmingPreferences(True, 35, 8, 1, 10)
+  assert preferences.mode == 0
+  assert list(screen().SCREEN_GAZE_RANGES)[-1] == 'ScreenGazeDimmingMode'
+  params = Params({'ScreenGazeDimming': True, 'ScreenGazeDimDelay': 8})
+  assert screen().gaze_dimming_preferences(params).mode == 0
+  assert params.values == {'ScreenGazeDimming': True, 'ScreenGazeDimDelay': 8}
+
+
+def test_older_registry_missing_the_style_key_uses_delay_mode_without_writes():
+  from openpilot.common.params import UnknownKeyName
+
+  class OlderParams(Params):
+    def get(self, key):
+      if key == 'ScreenGazeDimmingMode':
+        raise UnknownKeyName(key)
+      return super().get(key)
+
+  params = OlderParams({'ScreenGazeDimming': True, 'ScreenGazeDimDelay': 12})
+  preferences = screen().gaze_dimming_preferences(params)
+  assert (preferences.mode, preferences.delay) == (0, 12)
+  assert params.values == {'ScreenGazeDimming': True, 'ScreenGazeDimDelay': 12}
 
 
 @pytest.mark.parametrize('disabled', [None, False, b'0'])
@@ -179,7 +203,7 @@ def test_disabled_gaze_reads_only_enable_toggle(monkeypatch, disabled):
 
 def test_disabled_gaze_preserves_custom_settings_for_reenable(monkeypatch):
   stored = {'ScreenGazeDimming': False, 'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8,
-            'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10}
+            'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 10, 'ScreenGazeDimmingMode': 1}
   params = Params(stored)
   reads = []
   original_get = params.get
@@ -195,7 +219,7 @@ def test_disabled_gaze_preserves_custom_settings_for_reenable(monkeypatch):
 
   params.values['ScreenGazeDimming'] = True
   reads.clear()
-  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10)
+  assert screen().gaze_dimming_preferences(params) == screen().GazeDimmingPreferences(True, 35, 8, 1, 10, 1)
   assert set(reads) == set(stored)
   assert len(reads) == len(stored)
   assert params.values == {**stored, 'ScreenGazeDimming': True}
@@ -219,12 +243,32 @@ def test_gaze_read_preferences_are_bounded_without_rewriting(stored, expected):
   ('ScreenGazeDimDelay', 0), ('ScreenGazeDimDelay', 31), ('ScreenGazeDimDelay', True), ('ScreenGazeDimDelay', 3.5),
   ('ScreenGazeScreenSide', -1), ('ScreenGazeScreenSide', 2), ('ScreenGazeYawThreshold', 4), ('ScreenGazeYawThreshold', 46),
   ('ScreenGazeYawThreshold', float('nan')), ('ScreenGazeFake', True),
+  ('ScreenGazeDimmingMode', -1), ('ScreenGazeDimmingMode', 2), ('ScreenGazeDimmingMode', True),
+  ('ScreenGazeDimmingMode', '1'), ('ScreenGazeDimmingMode', 0.5), ('ScreenGazeDimmingMode', float('inf')),
 ])
 def test_gaze_invalid_writes_do_not_change_preferences(key, value):
   params = Params({'ScreenGazeDimming': True})
   with pytest.raises(ValueError):
     screen().write_screen_setting(params, key, value)
   assert params.values == {'ScreenGazeDimming': True}
+
+
+@pytest.mark.parametrize('stored,expected', [(-1, 0), (2, 1), (b'bad', 0), (float('nan'), 0)])
+def test_stored_gaze_style_is_bounded_without_rewriting(stored, expected):
+  params = Params({'ScreenGazeDimming': True, 'ScreenGazeDimmingMode': stored})
+  assert screen().gaze_dimming_preferences(params).mode == expected
+  assert params.values['ScreenGazeDimmingMode'] is stored
+
+
+def test_switching_gaze_style_preserves_saved_delay_and_display_preferences():
+  saved = {'ScreenGazeDimming': True, 'ScreenGazeDimDelay': 12, 'ScreenGazeDimPercent': 35,
+           'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 25}
+  params = Params(saved)
+  for mode in (1, 0):
+    updated = screen().write_screen_setting(params, 'ScreenGazeDimmingMode', mode)
+    assert updated == {'ScreenGazeDimmingMode': mode}
+    assert type(updated['ScreenGazeDimmingMode']) is int
+    assert params.values == {**saved, 'ScreenGazeDimmingMode': mode}
 
 
 def test_failed_gaze_toggle_write_is_reported_and_rolled_back():

@@ -104,12 +104,16 @@ def test_disabled_feature_hides_children_and_toggle_preserves_configuration(nati
   assert page._parent_toggle.get_state()
   assert {key: page._value(key) for key in SCREEN_GAZE_RANGES} == {
     'ScreenGazeDimPercent': 35, 'ScreenGazeDimDelay': 8, 'ScreenGazeScreenSide': 1, 'ScreenGazeYawThreshold': 25,
+    'ScreenGazeDimmingMode': 0,
   }
 
 
-def test_advanced_angle_is_local_and_hidden_until_expanded(native_page):
+@pytest.mark.parametrize('mode', [0, 1])
+def test_advanced_angle_is_local_and_hidden_until_expanded(native_page, mode):
   page, storage = native_page.page, native_page.storage
-  assert {'ScreenGazeDimPercent', 'ScreenGazeDimDelay', 'ScreenGazeScreenSide'} <= visible_rows(page).keys()
+  storage.values['ScreenGazeDimmingMode'] = mode
+  assert {'ScreenGazeDimmingMode', 'ScreenGazeDimPercent', 'ScreenGazeScreenSide'} <= visible_rows(page).keys()
+  assert ('ScreenGazeDimDelay' in visible_rows(page)) == (mode == 0)
   assert 'ScreenGazeYawThreshold' not in visible_rows(page)
   page._toggle_advanced()
   assert 'ScreenGazeYawThreshold' in visible_rows(page)
@@ -135,7 +139,8 @@ def test_screen_management_disabled_explains_recovery_and_prevents_ineffective_e
 
 
 @pytest.mark.parametrize('key,value', [('ScreenGazeDimming', False), ('ScreenGazeDimPercent', 35),
-                                     ('ScreenGazeDimDelay', 8), ('ScreenGazeScreenSide', 1), ('ScreenGazeYawThreshold', 25)])
+                                     ('ScreenGazeDimDelay', 8), ('ScreenGazeScreenSide', 1), ('ScreenGazeYawThreshold', 25),
+                                     ('ScreenGazeDimmingMode', 1)])
 def test_native_save_persists_same_keys_as_galaxy_and_invalidates_cache(native_page, key, value):
   page, storage = native_page.page, native_page.storage
   native_page.cache.get(key)
@@ -162,15 +167,16 @@ def test_save_failure_keeps_stored_value_reports_error_and_does_not_wake(native_
   assert not native_page.interactions
 
 
-def test_missing_native_registry_key_explains_required_rebuilt_binaries(native_page):
+@pytest.mark.parametrize('key,value', [('ScreenGazeDimming', False), ('ScreenGazeDimmingMode', 1)])
+def test_missing_native_registry_key_explains_required_update(native_page, key, value):
   page, storage = native_page.page, native_page.storage
   before = dict(storage.values)
-  storage.unknown_key = 'ScreenGazeDimming'
-  assert not page._save('ScreenGazeDimming', False)
+  storage.unknown_key = key
+  assert not page._save(key, value)
   assert storage.values == before
   assert storage.writes == []
   assert native_page.errors == [
-    'This installation needs rebuilt device binaries for screen dimming. Install a build that includes these settings.',
+    'Update and restart StarPilot to use these screen dimming settings.',
   ]
   assert not native_page.interactions
 
@@ -205,17 +211,71 @@ def test_screen_side_selector_uses_physical_right_left_and_preserves_cancel(nati
   assert storage.values['ScreenGazeScreenSide'] == 1
 
 
+def test_dimming_style_defaults_to_after_delay_and_only_saves_confirmed_selection(native_page):
+  page, storage = native_page.page, native_page.storage
+  assert visible_rows(page)['ScreenGazeDimmingMode'].get_value() == 'After Delay'
+  page._activate_target('value:ScreenGazeDimmingMode')
+  dialog = native_page.pushed[-1]
+  assert dialog.title == 'Dimming Style'
+  assert dialog.options == ['After Delay', 'Follow Head Direction']
+  assert dialog.selection == 'After Delay'
+  dialog.selection = 'Follow Head Direction'
+  dialog.callback(DialogResult.CANCEL)
+  assert storage.writes == []
+  assert 'ScreenGazeDimDelay' in visible_rows(page)
+
+  page._show_dimming_style()
+  dialog = native_page.pushed[-1]
+  dialog.selection = 'Follow Head Direction'
+  dialog.callback(DialogResult.CONFIRM)
+  assert storage.values['ScreenGazeDimmingMode'] == 1
+  assert visible_rows(page)['ScreenGazeDimmingMode'].get_value() == 'Follow Head Direction'
+  assert 'ScreenGazeDimDelay' not in visible_rows(page)
+
+
+def test_follow_head_direction_hides_delay_preserves_it_and_blocks_stale_click(native_page):
+  page, storage = native_page.page, native_page.storage
+  write_screen_setting(storage, 'ScreenGazeDimDelay', 12)
+  assert 'ScreenGazeDimDelay' in visible_rows(page)
+  write_screen_setting(storage, 'ScreenGazeDimmingMode', 1)
+  native_page.cache.invalidate()
+  assert 'ScreenGazeDimDelay' not in visible_rows(page)
+  page._activate_target('value:ScreenGazeDimDelay')
+  assert not native_page.pushed
+  assert storage.values['ScreenGazeDimDelay'] == 12
+  assert page._save('ScreenGazeDimmingMode', 0)
+  assert visible_rows(page)['ScreenGazeDimDelay'].get_value() == '12 seconds'
+
+
+@pytest.mark.parametrize('failure', ['exception', 'silent_write', 'invalid_value'])
+def test_failed_style_save_preserves_existing_style_and_delay(native_page, failure):
+  page, storage = native_page.page, native_page.storage
+  storage.values.update(ScreenGazeDimmingMode=0, ScreenGazeDimDelay=12)
+  if failure == 'exception':
+    storage.fail_key = 'ScreenGazeDimmingMode'
+  elif failure == 'silent_write':
+    storage.silent_key = 'ScreenGazeDimmingMode'
+  assert not page._save('ScreenGazeDimmingMode', 2 if failure == 'invalid_value' else 1)
+  assert storage.values['ScreenGazeDimmingMode'] == 0
+  assert storage.values['ScreenGazeDimDelay'] == 12
+  assert 'ScreenGazeDimDelay' in visible_rows(page)
+  assert native_page.errors == ['Screen setting could not be saved. Please try again.']
+  assert not native_page.interactions
+
+
 def test_external_galaxy_writes_are_refreshed_when_reopening(native_page):
   page, storage = native_page.page, native_page.storage
   assert page._value('ScreenGazeDimDelay') == 3
   assert page._parent_toggle.get_state()
   write_screen_setting(storage, 'ScreenGazeDimDelay', 12)
   write_screen_setting(storage, 'ScreenGazeScreenSide', 1)
+  write_screen_setting(storage, 'ScreenGazeDimmingMode', 1)
   write_screen_setting(storage, 'ScreenGazeDimming', False)
   writes = list(storage.writes)
   page.show_event()
   assert page._value('ScreenGazeDimDelay') == 12
   assert page._value('ScreenGazeScreenSide') == 1
+  assert page._value('ScreenGazeDimmingMode') == 1
   assert not page._parent_toggle.get_state()
   assert not visible_rows(page)
   assert storage.writes == writes
@@ -229,6 +289,7 @@ def test_stale_row_click_after_external_disable_does_not_open_dialog(native_page
   native_page.cache.invalidate()
   page._activate_target('value:ScreenGazeDimPercent')
   page._activate_target('value:ScreenGazeScreenSide')
+  page._activate_target('value:ScreenGazeDimmingMode')
   assert not native_page.pushed
   assert storage.writes == []
 
@@ -366,8 +427,8 @@ def test_display_navigation_row_is_measured_inside_group_and_short_layouts_can_s
     assert not view.vertical_scrolling_disabled
 
 
-@pytest.mark.parametrize('modal', ['numeric', 'side', 'alert'])
-@pytest.mark.parametrize('resume_target', ['parent', 'numeric', 'side'])
+@pytest.mark.parametrize('modal', ['numeric', 'side', 'style', 'alert'])
+@pytest.mark.parametrize('resume_target', ['parent', 'numeric', 'side', 'style'])
 def test_embedded_page_widget_ignores_modal_touches_and_resumes_after_cancel(native_page, monkeypatch, modal, resume_target):
   import pyray as rl
 
@@ -396,8 +457,10 @@ def test_embedded_page_widget_ignores_modal_touches_and_resumes_after_cancel(nat
     parent_id: rl.Rectangle(20, 20, 200, 60),
     'value:ScreenGazeDimPercent': rl.Rectangle(20, 120, 200, 60),
     'value:ScreenGazeScreenSide': rl.Rectangle(20, 240, 200, 60),
+    'value:ScreenGazeDimmingMode': rl.Rectangle(20, 360, 200, 60),
   })
-  positions = {'parent': rl.Vector2(100, 50), 'numeric': rl.Vector2(100, 150), 'side': rl.Vector2(100, 270)}
+  positions = {'parent': rl.Vector2(100, 50), 'numeric': rl.Vector2(100, 150),
+               'side': rl.Vector2(100, 270), 'style': rl.Vector2(100, 390)}
 
   def tap(target):
     for pressed, released in ((True, False), (False, True)):
@@ -411,6 +474,8 @@ def test_embedded_page_widget_ignores_modal_touches_and_resumes_after_cancel(nat
     page._show_numeric('ScreenGazeDimPercent')
   elif modal == 'side':
     page._show_screen_side()
+  elif modal == 'style':
+    page._show_dimming_style()
   else:
     assert not page._save('ScreenGazeDimPercent', 2)
   dialog = stack[-1]
@@ -427,7 +492,7 @@ def test_embedded_page_widget_ignores_modal_touches_and_resumes_after_cancel(nat
   stack.pop()
   if modal == 'numeric':
     dialog.callback(DialogResult.CANCEL, 60)
-  elif modal == 'side':
+  elif modal in ('side', 'style'):
     dialog.callback(DialogResult.CANCEL)
   assert page.enabled
   tap(resume_target)

@@ -34,7 +34,8 @@ def test_mode_write_returns_remembered_manual_value():
                                                ('StandbyWakeCriticalAlert', False, False),
                                                ('ScreenGazeDimming', True, True), ('ScreenGazeDimPercent', 35, 35),
                                                ('ScreenGazeDimDelay', 8, 8), ('ScreenGazeScreenSide', 1, 1),
-                                               ('ScreenGazeYawThreshold', 10, 10)])
+                                               ('ScreenGazeYawThreshold', 10, 10),
+                                               ('ScreenGazeDimmingMode', 0, 0), ('ScreenGazeDimmingMode', 1, 1)])
 def test_screen_values_are_validated_and_return_typed_readback(key, value, expected):
   params = Params()
   response = client_for(params).put('/api/params', json={'key': key, 'value': value})
@@ -50,6 +51,8 @@ def test_screen_values_are_validated_and_return_typed_readback(key, value, expec
   ('ScreenManagement', 'false'), ('ScreenManagement', 0), ('ScreenManagement', 1), ('ScreenManagement', None),
   ('ScreenGazeDimming', 'false'), ('ScreenGazeDimPercent', 0), ('ScreenGazeDimDelay', 31),
   ('ScreenGazeScreenSide', 2), ('ScreenGazeYawThreshold', 46), ('ScreenGazeUnknown', True),
+  ('ScreenGazeDimmingMode', -1), ('ScreenGazeDimmingMode', 2), ('ScreenGazeDimmingMode', True),
+  ('ScreenGazeDimmingMode', '1'), ('ScreenGazeDimmingMode', 0.5), ('ScreenGazeDimmingMode', None),
 ])
 def test_invalid_screen_requests_return_400_without_writes(key, value):
   params = Params()
@@ -72,3 +75,13 @@ def test_galaxy_failed_toggle_write_reports_error_and_restores_selection(key):
   response = client_for(galaxy_params(params)).put('/api/params', json={'key': key, 'value': False})
   assert response.status_code == 503
   assert params.values == {key: True}
+
+
+@pytest.mark.parametrize('failure', ['silent', 'wrong_value'])
+def test_galaxy_failed_style_save_returns_error_and_preserves_delay(failure):
+  from test_screen_settings_transactions import FaultyStyleParams, galaxy_params
+  saved = {'ScreenGazeDimmingMode': 0, 'ScreenGazeDimDelay': 12}
+  params = FaultyStyleParams(saved, failure)
+  response = client_for(galaxy_params(params)).put('/api/params', json={'key': 'ScreenGazeDimmingMode', 'value': 1})
+  assert response.status_code == 503
+  assert params.values == saved

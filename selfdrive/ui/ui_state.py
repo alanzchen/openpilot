@@ -1,8 +1,6 @@
 import json
 import pyray as rl
-import numpy as np
 import time
-import threading
 from collections.abc import Callable
 from enum import Enum
 from cereal import messaging, car, log
@@ -21,6 +19,7 @@ from openpilot.starpilot.common.screen_settings import (
   GazeDimmingPreferences, gaze_dimming_preferences,
 )
 from openpilot.starpilot.common.screen_gaze import ScreenGazeDimmer, screen_yaw
+from openpilot.starpilot.common.screen_brightness import ScreenBrightnessWriter
 
 BACKLIGHT_OFFROAD = 65 if HARDWARE.get_device_type() == "mici" else 50
 
@@ -324,6 +323,8 @@ class Device:
     self._interactive_timeout_callbacks: list[Callable] = []
     self._prev_timed_out = False
     self._awake: bool = True
+    self._brightness_urgent = True
+    self._gaze_restore_active = False
     self._params = ui_state.ui_params
 
     self._screen_settings_refresh_time: float = 0.0
@@ -345,7 +346,7 @@ class Device:
     self._offroad_brightness: int = BACKLIGHT_OFFROAD
     self._last_brightness: int = 0
     self._brightness_filter = FirstOrderFilter(BACKLIGHT_OFFROAD, 10.00, 1 / gui_app.target_fps)
-    self._brightness_thread: threading.Thread | None = None
+    self._brightness_writer = ScreenBrightnessWriter(HARDWARE.set_screen_brightness)
 
   @property
   def awake(self) -> bool:
@@ -374,6 +375,7 @@ class Device:
   def _reset_interactive_timeout(self) -> None:
     self._interaction_time = time.monotonic() + self.interactive_timeout
     self._gaze_dimmer.reset()
+    self._brightness_urgent = True
 
   def reset_interactive_timeout(self) -> None:
     self._reset_interactive_timeout()
@@ -446,6 +448,8 @@ class Device:
     if previous != current:
       self._gaze_dimmer.reset()
       self._gaze_frame = -1
+      self._gaze_restore_active = False
+      self._brightness_urgent = True
       if self._interaction_time > 0:
         self._reset_interactive_timeout()
 
@@ -456,12 +460,12 @@ class Device:
 
   def _update_brightness(self, active_alerts=None):
     brightness = self._calculate_brightness(active_alerts)
-
-    if brightness != self._last_brightness:
-      if self._brightness_thread is None or not self._brightness_thread.is_alive():
-        self._brightness_thread = threading.Thread(target=HARDWARE.set_screen_brightness, args=(brightness,))
-        self._brightness_thread.start()
-        self._last_brightness = brightness
+    if brightness != self._last_brightness or self._brightness_urgent:
+      # Keep one latest target while hardware is busy. Curve steps share a
+      # bounded writer; restore/blank events bypass its normal rate limit.
+      self._brightness_writer.submit(brightness, urgent=self._brightness_urgent or brightness == 0)
+      self._last_brightness = brightness
+    self._brightness_urgent = False
 
   def _calculate_brightness(self, active_alerts=None) -> int:
     if self._screen_off:
@@ -477,7 +481,7 @@ class Device:
       else:
         clipped_brightness = ((clipped_brightness + 16.0) / 116.0) ** 3.0
 
-      clipped_brightness = float(np.interp(clipped_brightness, [0, 1], [30, 100]))
+      clipped_brightness = 30.0 + 70.0 * min(max(clipped_brightness, 0.0), 1.0)
 
     automatic = self._brightness_filter.update(clipped_brightness)
     now = time.monotonic()
@@ -498,10 +502,23 @@ class Device:
       return brightness
     if active_alerts is None:
       active_alerts = self._active_standby_alerts()
+    if active_alerts:
+      self._restore_gaze_brightness()
+      return brightness
+    yaw = self._screen_gaze_yaw(now)
+    if yaw is None:
+      self._restore_gaze_brightness()
+      return brightness
+    self._gaze_restore_active = False
     return self._gaze_dimmer.brightness(
-      brightness, now, self._gaze_preferences, self._screen_gaze_yaw(now),
-      suppressed=bool(active_alerts),
+      brightness, now, self._gaze_preferences, yaw,
     )
+
+  def _restore_gaze_brightness(self):
+    if not self._gaze_restore_active:
+      self._brightness_urgent = True
+    self._gaze_restore_active = True
+    self._gaze_dimmer.reset()
 
   def _screen_gaze_yaw(self, now: float) -> float | None:
     sm = ui_state.sm

@@ -22,8 +22,15 @@ class ScreenGazeSettingsView(AetherSettingsView):
     self._dialog = None
     basic_rows = [
       SettingRow(
+        "ScreenGazeDimmingMode", "value", tr_noop("Dimming Style"),
+        tr_noop("Follow Head Direction fades as your head turns, without a look-away delay."),
+        enabled=self._active,
+        get_value=lambda: tr("Follow Head Direction") if self._value("ScreenGazeDimmingMode") else tr("After Delay"),
+        on_click=self._show_dimming_style,
+      ),
+      SettingRow(
         "ScreenGazeDimPercent", "value", tr_noop("Dimmed Brightness"),
-        tr_noop("Percentage of normal onroad brightness while looking away."),
+        tr_noop("Lowest brightness, as a percentage of normal onroad brightness."),
         enabled=self._active,
         get_value=lambda: f"{self._value('ScreenGazeDimPercent')}%",
         on_click=lambda: self._show_numeric("ScreenGazeDimPercent"),
@@ -31,7 +38,8 @@ class ScreenGazeSettingsView(AetherSettingsView):
       SettingRow(
         "ScreenGazeDimDelay", "value", tr_noop("Looking Away Delay"),
         tr_noop("Wait before dimming. Looking toward the screen restores brightness immediately."),
-        enabled=self._active,
+        visible=lambda: self._value("ScreenGazeDimmingMode") == 0,
+        enabled=self._delay_active,
         get_value=lambda: tr("{} seconds").format(self._value("ScreenGazeDimDelay")),
         on_click=lambda: self._show_numeric("ScreenGazeDimDelay"),
       ),
@@ -51,7 +59,7 @@ class ScreenGazeSettingsView(AetherSettingsView):
       ),
       SettingRow(
         "ScreenGazeYawThreshold", "value", tr_noop("Screen Look Angle"),
-        tr_noop("Head turn from forward toward the screen. Lower for a smaller glance."),
+        tr_noop("Head turn toward the screen for full brightness. Lower for a smaller glance."),
         visible=lambda: self._advanced_expanded,
         enabled=lambda: self._active() and self._advanced_expanded,
         get_value=lambda: f"{self._value('ScreenGazeYawThreshold')}°",
@@ -74,7 +82,7 @@ class ScreenGazeSettingsView(AetherSettingsView):
       controller, sections,
       header_title=tr_noop("Dim When Looking Away"),
       header_subtitle=tr_noop(
-        "Uses head direction while driving. Touch and alerts restore brightness. Standby and manual screen-off can still turn the display off."
+        "Head direction estimates attention; eye-only glances may be missed. Touch and alerts restore brightness. Standby can still turn the display off."
       ),
       parent_toggle=ParentToggle(
         label=tr_noop("Dim When Looking Away"),
@@ -110,6 +118,9 @@ class ScreenGazeSettingsView(AetherSettingsView):
   def _active(self) -> bool:
     return self._screen_management_enabled() and self._gaze_enabled()
 
+  def _delay_active(self) -> bool:
+    return self._active() and self._value("ScreenGazeDimmingMode") == 0
+
   def _value(self, key: str) -> int:
     default, minimum, maximum = SCREEN_GAZE_RANGES[key]
     try:
@@ -125,7 +136,7 @@ class ScreenGazeSettingsView(AetherSettingsView):
       write_screen_setting(self._params, key, value)
     except UnknownKeyName:
       self._push_dialog(alert_dialog(tr(
-        "This installation needs rebuilt device binaries for screen dimming. Install a build that includes these settings."
+        "Update and restart StarPilot to use these screen dimming settings."
       )))
       return False
     except (OSError, ValueError, KeyError):
@@ -163,13 +174,17 @@ class ScreenGazeSettingsView(AetherSettingsView):
     ))
 
   def _show_screen_side(self):
-    options = [tr("Right"), tr("Left")]
+    self._show_choice("ScreenGazeScreenSide", tr("Screen Side"), [tr("Right"), tr("Left")])
 
+  def _show_dimming_style(self):
+    self._show_choice("ScreenGazeDimmingMode", tr("Dimming Style"), [tr("After Delay"), tr("Follow Head Direction")])
+
+  def _show_choice(self, key: str, title: str, options: list[str]):
     def on_select(result):
       if result == DialogResult.CONFIRM and dialog.selection in options:
-        self._save("ScreenGazeScreenSide", options.index(dialog.selection))
+        self._save(key, options.index(dialog.selection))
 
     dialog = MultiOptionDialog(
-      tr("Screen Side"), options, options[self._value("ScreenGazeScreenSide")], callback=on_select,
+      title, options, options[self._value(key)], callback=on_select,
     )
     self._push_dialog(dialog)

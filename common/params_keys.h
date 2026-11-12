@@ -634,6 +634,7 @@ inline static std::unordered_map<std::string, ParamKeyAttributes> keys = {
     {"ScreenGazeDimDelay", {PERSISTENT, INT, "3", "3", 2, SETTINGS_SIMPLE}},
     {"ScreenGazeScreenSide", {PERSISTENT, INT, "0", "0", 2, SETTINGS_SIMPLE}},
     {"ScreenGazeYawThreshold", {PERSISTENT, INT, "15", "15", 2, SETTINGS_SIMPLE}},
+    {"ScreenGazeDimmingMode", {PERSISTENT, INT, "0", "0", 2, SETTINGS_SIMPLE}},
     {"ScreenManagement", {PERSISTENT, BOOL, "1", "0", 1, SETTINGS_SIMPLE}},
     {"ScreenRecorder", {PERSISTENT, BOOL, "1", "0", 2, SETTINGS_SIMPLE}},
     {"ScreenTimeout", {PERSISTENT, INT, "30", "30", 2, SETTINGS_SIMPLE}},

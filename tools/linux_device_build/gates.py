@@ -372,7 +372,7 @@ def check_registry(module, expected: dict, directory: Path) -> dict:
     for attribute, (actual, wanted) in checks.items():
       if actual != wanted:
         errors.append(f"{key}: native {attribute}={actual!r}, source={wanted!r}")
-  roundtrip = {"ScreenManagement": True, "ScreenGazeDimming": True, "ScreenGazeDimPercent": 35,
+  roundtrip = {"ScreenManagement": True, "ScreenGazeDimming": True, "ScreenGazeDimmingMode": 1, "ScreenGazeDimPercent": 35,
                "ScreenGazeDimDelay": 8, "ScreenGazeScreenSide": 1, "ScreenGazeYawThreshold": 25}
   for key, value in roundtrip.items():
     if key in actual_keys:
@@ -383,6 +383,17 @@ def check_registry(module, expected: dict, directory: Path) -> dict:
   for key, value in roundtrip.items():
     if key in actual_keys and reopened.get(key) != value:
       errors.append(f"Native Params persistence failed: {key}")
+  if "ScreenGazeDimmingMode" in actual_keys:
+    for toggle in ("ScreenManagement", "ScreenGazeDimming"):
+      if toggle not in actual_keys:
+        continue
+      for enabled in (False, True):
+        params.put(toggle, enabled)
+        if module.Params(str(directory)).get("ScreenGazeDimmingMode") != 1:
+          errors.append(f"Native Params mode persistence failed after {toggle}={enabled}")
+    params.put("ScreenGazeDimmingMode", 0)
+    if module.Params(str(directory)).get("ScreenGazeDimmingMode") != 0:
+      errors.append("Native Params mode default restoration failed")
   return {"schema": 1, "verdict": "FAIL" if errors else "PASS", "keys_source": len(expected),
           "keys_native": len(actual_keys), "roundtrip_keys": sorted(roundtrip), "errors": errors}
 

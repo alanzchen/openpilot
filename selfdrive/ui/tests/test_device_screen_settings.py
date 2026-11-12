@@ -1,6 +1,7 @@
 from types import SimpleNamespace
 
 import math
+import numpy as np
 import pytest
 from cereal import log
 
@@ -485,3 +486,84 @@ def test_device_update_reuses_wakefulness_alert_snapshot_for_brightness(monkeypa
   device.update()
   assert len(scans) == 1
   assert calculated_alerts == [{'StandbyWakeInfoAlert'}]
+
+
+@pytest.mark.parametrize('sensor', [-1.0, 0.0, 0.1, 1.0, 8.0, 8.00001, 20.0, 50.0, 100.0, 150.0, math.inf, math.nan])
+def test_scalar_auto_brightness_preserves_interpolation_result(monkeypatch, sensor):
+  device, state = make_device(monkeypatch, ScreenBrightnessOnroad=101)
+  state.started = True
+  state.light_sensor = sensor
+  expected = ui_state_module.BACKLIGHT_OFFROAD
+  if sensor >= 0:
+    light = sensor / 903.3 if sensor <= 8 else ((sensor + 16.0) / 116.0) ** 3.0
+    expected = float(np.interp(light, [0, 1], [30, 100]))
+  assert device._calculate_brightness() == max(5, min(100, round(expected)))
+
+
+def test_visible_alert_skips_gaze_decoding_and_prioritizes_restore(monkeypatch):
+  device, _, _ = make_gaze_device(monkeypatch)
+  device._brightness_urgent = False
+
+  def unexpected_decode(_now):
+    raise AssertionError('An alert already forces normal brightness')
+
+  monkeypatch.setattr(device, '_screen_gaze_yaw', unexpected_decode)
+  assert device._calculate_brightness({'StandbyWakeInfoAlert'}) == 45
+  assert device._brightness_urgent
+  device._brightness_urgent = False
+  assert device._calculate_brightness({'StandbyWakeInfoAlert'}) == 45
+  assert not device._brightness_urgent
+
+
+def test_follow_head_direction_fades_without_waiting_for_delay(monkeypatch):
+  device, state, advance = make_gaze_device(monkeypatch, ScreenGazeDimmingMode=1, ScreenGazeDimDelay=30)
+  assert device._calculate_brightness() == 45
+  values = []
+  for frame in range(1, 28):
+    advance(1 / 60, new_packet=frame % 3 == 0)
+    values.append(device._calculate_brightness())
+  assert values[-1] == 9
+  assert len(set(values)) > 5
+  assert all(0 <= previous - current <= 4 for previous, current in zip([45] + values[:-1], values, strict=True))
+
+  state.sm['driverMonitoringState'].visionPolicyState.pose.yaw = 0.075 + math.radians(15)
+  values = []
+  for frame in range(1, 28):
+    advance(1 / 60, new_packet=frame == 1 or frame % 3 == 0)
+    values.append(device._calculate_brightness())
+  assert values[-1] == 45
+  assert len(set(values)) > 5
+  assert all(0 <= current - previous <= 4 for previous, current in zip([9] + values[:-1], values, strict=True))
+
+
+@pytest.mark.parametrize('reason', ['touch', 'alert', 'invalid'])
+def test_follow_curve_restore_uses_urgent_writer_request(monkeypatch, reason):
+  device, state, advance = make_gaze_device(monkeypatch, ScreenGazeDimmingMode=1)
+  writes = []
+  device._brightness_writer = SimpleNamespace(submit=lambda value, *, urgent=False: writes.append((value, urgent)))
+  device._update_brightness(set())
+  for _ in range(27):
+    advance(1 / 60)
+    device._update_brightness(set())
+  assert writes[-1][0] == 9
+  if reason == 'touch':
+    device.reset_interactive_timeout()
+  elif reason == 'invalid':
+    state.sm.valid['driverMonitoringState'] = False
+  device._update_brightness({'StandbyWakeCriticalAlert'} if reason == 'alert' else set())
+  assert writes[-1] == (45, True)
+
+
+def test_brightness_dispatch_coalesces_unchanged_values_and_marks_blanking_urgent(monkeypatch):
+  device, state = make_device(monkeypatch)
+  writes = []
+  device._brightness_writer = SimpleNamespace(submit=lambda value, *, urgent=False: writes.append((value, urgent)))
+  device._update_brightness(set())
+  assert writes == [(35, True)]
+  device._update_brightness(set())
+  assert writes == [(35, True)]
+  device._screen_off = True
+  device._update_brightness(set())
+  assert writes[-1] == (0, True)
+  device._update_brightness(set())
+  assert len(writes) == 2

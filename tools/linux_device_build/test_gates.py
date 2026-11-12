@@ -233,9 +233,11 @@ def test_source_registry_parser_handles_json_and_schema_derived_default(tmp_path
 def test_real_source_registry_and_shipping_inventory_are_parseable():
   root = Path(__file__).resolve().parents[2]
   registry = gates.registry_source(root / 'common/params_keys.h')
-  assert len(registry) == 807
+  assert len(registry) == 808
   assert 'RecordFrontLock' in registry
   assert registry['ScreenGazeDimming']['default'] == '0'
+  assert registry['ScreenGazeDimmingMode']['type'] == 'INT'
+  assert registry['ScreenGazeDimmingMode']['default'] == '0'
   assert len(gates.artifact_paths(root)) == 168
 
 
@@ -249,7 +251,9 @@ def test_params_command_fails_closed_on_host_and_writes_report(tmp_path, monkeyp
   assert report['errors'][0] in capsys.readouterr().err
 
 
-@pytest.mark.parametrize('defect', [None, 'missing_gaze_key', 'wrong_default', 'wrong_type', 'wrong_flags', 'not_persistent',
+@pytest.mark.parametrize('defect', [None, 'missing_gaze_key', 'missing_mode_key', 'wrong_mode_default', 'wrong_mode_type',
+                                  'mode_cleared_on_toggle', 'mode_restore_failed',
+                                  'wrong_default', 'wrong_type', 'wrong_flags', 'not_persistent',
                                   'legacy_bool_stock', 'legacy_string_stock', 'legacy_int_stock', 'legacy_float_stock',
                                   'explicit_empty_stock', 'explicit_false_stock', 'missing_stock_and_default'])
 def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_path, defect):
@@ -257,7 +261,8 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
     'ScreenManagement': {'flags': ['PERSISTENT'], 'type': 'BOOL', 'default': '1', 'stock': '0', 'tuning': 1, 'tier': 'SETTINGS_SIMPLE'},
     'ScreenGazeDimming': {'flags': ['PERSISTENT'], 'type': 'BOOL', 'default': '0', 'stock': '0', 'tuning': 1, 'tier': 'SETTINGS_SIMPLE'},
     **{key: {'flags': ['PERSISTENT'], 'type': 'INT', 'default': default, 'stock': default, 'tuning': 2, 'tier': 'SETTINGS_SIMPLE'}
-       for key, default in [('ScreenGazeDimPercent', '20'), ('ScreenGazeDimDelay', '3'), ('ScreenGazeScreenSide', '0'), ('ScreenGazeYawThreshold', '15')]},
+       for key, default in [('ScreenGazeDimmingMode', '0'), ('ScreenGazeDimPercent', '20'), ('ScreenGazeDimDelay', '3'),
+                            ('ScreenGazeScreenSide', '0'), ('ScreenGazeYawThreshold', '15')]},
   }
   # Legacy stock values are optional: the C++ API falls back to the default
   # only for a missing optional, including when that default is false/empty/0.
@@ -275,6 +280,12 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
   native = copy.deepcopy(source)
   if defect == 'missing_gaze_key':
     del native['ScreenGazeDimming']
+  elif defect == 'missing_mode_key':
+    del native['ScreenGazeDimmingMode']
+  elif defect == 'wrong_mode_default':
+    native['ScreenGazeDimmingMode']['default'] = '1'
+  elif defect == 'wrong_mode_type':
+    native['ScreenGazeDimmingMode']['type'] = 'BOOL'
   elif defect == 'wrong_default':
     native['ScreenGazeDimPercent']['default'] = '100'
   elif defect == 'wrong_type':
@@ -325,7 +336,11 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
       return 0
 
     def put(self, key, value):
+      if defect == 'mode_restore_failed' and key == 'ScreenGazeDimmingMode' and value == 0:
+        return
       self.values[key] = value
+      if defect == 'mode_cleared_on_toggle' and key in ('ScreenManagement', 'ScreenGazeDimming'):
+        self.values.pop('ScreenGazeDimmingMode', None)
 
     def get(self, key):
       return self.values.get(key)
@@ -335,6 +350,12 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
   assert result['verdict'] == ('PASS' if defect is None else 'FAIL')
   if defect == 'missing_gaze_key':
     assert any('ScreenGazeDimming' in error for error in result['errors'])
+  if defect in ('missing_mode_key', 'wrong_mode_default', 'wrong_mode_type'):
+    assert any('ScreenGazeDimmingMode' in error for error in result['errors'])
+  if defect == 'mode_cleared_on_toggle':
+    assert any('mode persistence failed after' in error for error in result['errors'])
+  if defect == 'mode_restore_failed':
+    assert 'Native Params mode default restoration failed' in result['errors']
   if defect in stock_defects:
     key, _ = stock_defects[defect]
     assert any(f'{key}: native stock=' in error for error in result['errors'])

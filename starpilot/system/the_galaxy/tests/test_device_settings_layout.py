@@ -94,6 +94,7 @@ def test_gaze_dimming_defaults_and_controls_are_available_in_basic_settings():
   expected = {
     'ScreenGazeDimming': ('0', False), 'ScreenGazeDimPercent': ('20', 20),
     'ScreenGazeDimDelay': ('3', 3), 'ScreenGazeScreenSide': ('0', 0), 'ScreenGazeYawThreshold': ('15', 15),
+    'ScreenGazeDimmingMode': ('0', 0),
   }
   for key, (stored, displayed) in expected.items():
     assert _declared_default(key) == stored
@@ -104,6 +105,13 @@ def test_gaze_dimming_defaults_and_controls_are_available_in_basic_settings():
       assert params[key]['visible_when_all_true'] == ['ScreenManagement', 'ScreenGazeDimming']
   assert params['ScreenGazeDimming']['parent_key'] == 'ScreenManagement'
   assert params['ScreenGazeScreenSide']['options'] == [{'value': 0, 'label': 'Right'}, {'value': 1, 'label': 'Left'}]
+  assert params['ScreenGazeDimmingMode']['options'] == [
+    {'value': 0, 'label': 'After Delay'}, {'value': 1, 'label': 'Follow Head Direction'},
+  ]
+  delay = params['ScreenGazeDimDelay']
+  assert delay['visible_when_key'] == 'ScreenGazeDimmingMode'
+  assert delay['visible_when_values'] == [0]
+  assert delay['visible_when_default'] == 0
 
 
 def test_driving_personality_controls_are_not_parked_only():
