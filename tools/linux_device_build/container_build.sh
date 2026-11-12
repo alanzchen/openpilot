@@ -28,7 +28,7 @@ import json
 from pathlib import Path
 import subprocess
 allowed = set(Path('/control/artifacts.txt').read_text().splitlines())
-changed = set(subprocess.check_output(['git', 'diff', '--name-only', '-z']).decode().split('\0')) - {''}
+changed = set(subprocess.check_output(['git', 'diff', 'HEAD', '--no-renames', '--name-only', '-z', '--']).decode().split('\0')) - {''}
 unexpected = sorted(changed - allowed)
 report = {'verdict': 'FAIL' if unexpected else 'PASS', 'unexpected_source_changes': unexpected,
           'changed_artifact_count': len(changed & allowed)}
