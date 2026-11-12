@@ -239,16 +239,19 @@ def test_real_source_registry_and_shipping_inventory_are_parseable():
   assert len(gates.artifact_paths(root)) == 168
 
 
-def test_params_command_fails_closed_on_host_and_writes_report(tmp_path, monkeypatch):
+def test_params_command_fails_closed_on_host_and_writes_report(tmp_path, monkeypatch, capsys):
   monkeypatch.setattr(gates.platform, 'machine', lambda: 'x86_64')
   output = tmp_path / 'params.json'
   assert gates.main(['params', '--root', str(tmp_path), '--output', str(output)]) == 1
   report = json.loads(output.read_text())
   assert report['verdict'] == 'FAIL'
   assert 'native ARM64' in report['errors'][0]
+  assert report['errors'][0] in capsys.readouterr().err
 
 
-@pytest.mark.parametrize('defect', [None, 'missing_gaze_key', 'wrong_default', 'wrong_type', 'wrong_flags', 'not_persistent'])
+@pytest.mark.parametrize('defect', [None, 'missing_gaze_key', 'wrong_default', 'wrong_type', 'wrong_flags', 'not_persistent',
+                                  'legacy_bool_stock', 'legacy_string_stock', 'legacy_int_stock', 'legacy_float_stock',
+                                  'explicit_empty_stock', 'explicit_false_stock', 'missing_stock_and_default'])
 def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_path, defect):
   source = {
     'ScreenManagement': {'flags': ['PERSISTENT'], 'type': 'BOOL', 'default': '1', 'stock': '0', 'tuning': 1, 'tier': 'SETTINGS_SIMPLE'},
@@ -256,6 +259,19 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
     **{key: {'flags': ['PERSISTENT'], 'type': 'INT', 'default': default, 'stock': default, 'tuning': 2, 'tier': 'SETTINGS_SIMPLE'}
        for key, default in [('ScreenGazeDimPercent', '20'), ('ScreenGazeDimDelay', '3'), ('ScreenGazeScreenSide', '0'), ('ScreenGazeYawThreshold', '15')]},
   }
+  # Legacy stock values are optional: the C++ API falls back to the default
+  # only for a missing optional, including when that default is false/empty/0.
+  for key, kind, default, stock in [
+    ('LegacyBool', 'BOOL', '0', None),
+    ('LegacyString', 'STRING', 'main_en', None),
+    ('LegacyInt', 'INT', '0', None),
+    ('LegacyFloat', 'FLOAT', '0.0', None),
+    ('ExplicitEmptyStock', 'STRING', 'fallback', ''),
+    ('ExplicitFalseStock', 'BOOL', '1', '0'),
+    ('MissingStockAndDefault', 'STRING', None, None),
+    ('EmptyDefault', 'STRING', '', None),
+  ]:
+    source[key] = {'flags': ['PERSISTENT'], 'type': kind, 'default': default, 'stock': stock, 'tuning': 0, 'tier': 'SETTINGS_SIMPLE'}
   native = copy.deepcopy(source)
   if defect == 'missing_gaze_key':
     del native['ScreenGazeDimming']
@@ -265,8 +281,20 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
     native['ScreenGazeDimPercent']['type'] = 'BOOL'
   elif defect == 'wrong_flags':
     native['ScreenGazeDimDelay']['flags'] = ['CLEAR_ON_MANAGER_START']
+  stock_defects = {
+    'legacy_bool_stock': ('LegacyBool', '1'),
+    'legacy_string_stock': ('LegacyString', 'outdated_language'),
+    'legacy_int_stock': ('LegacyInt', '17'),
+    'legacy_float_stock': ('LegacyFloat', '2.5'),
+    'explicit_empty_stock': ('ExplicitEmptyStock', None),
+    'explicit_false_stock': ('ExplicitFalseStock', None),
+    'missing_stock_and_default': ('MissingStockAndDefault', 'unexpected'),
+  }
+  if defect in stock_defects:
+    key, value = stock_defects[defect]
+    native[key]['stock'] = value
   persistent = {}
-  types = SimpleNamespace(BOOL=1, INT=2)
+  types = SimpleNamespace(STRING=0, BOOL=1, INT=2, FLOAT=3)
   flags = SimpleNamespace(PERSISTENT=2, CLEAR_ON_MANAGER_START=4)
 
   class NativeParams:
@@ -286,7 +314,9 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
       return gates.registry_value(native[key]['default'], native[key]['type'])
 
     def get_stock_value(self, key):
-      return gates.registry_value(native[key]['stock'], native[key]['type'])
+      entry = native[key]
+      effective_stock = entry['stock'] if entry['stock'] is not None else entry['default']
+      return gates.registry_value(effective_stock, entry['type'])
 
     def get_tuning_level(self, key):
       return native[key]['tuning']
@@ -305,3 +335,6 @@ def test_native_registry_gate_catches_stale_registry_and_storage_failure(tmp_pat
   assert result['verdict'] == ('PASS' if defect is None else 'FAIL')
   if defect == 'missing_gaze_key':
     assert any('ScreenGazeDimming' in error for error in result['errors'])
+  if defect in stock_defects:
+    key, _ = stock_defects[defect]
+    assert any(f'{key}: native stock=' in error for error in result['errors'])

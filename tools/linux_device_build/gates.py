@@ -358,11 +358,14 @@ def check_registry(module, expected: dict, directory: Path) -> dict:
   for key in sorted(expected.keys() & actual_keys):
     entry = expected[key]
     flags = sum(int(getattr(module.ParamKeyFlag, flag.strip())) for flag in entry["flags"])
+    # getStockValue() falls back only when the optional stock field is absent.
+    # An explicitly empty stock string is present and must stay empty.
+    effective_stock = entry["stock"] if entry["stock"] is not None else entry["default"]
     checks = {
       "type": (int(params.get_type(key)), int(getattr(module.ParamKeyType, entry["type"]))),
       "flags": (int(params.get_key_flag(key)), flags),
       "default": (params.get_default_value(key), registry_value(entry["default"], entry["type"])),
-      "stock": (params.get_stock_value(key), registry_value(entry["stock"], entry["type"])),
+      "stock": (params.get_stock_value(key), registry_value(effective_stock, entry["type"])),
       "tuning": (params.get_tuning_level(key), entry["tuning"]),
       "tier": (params.get_settings_tier(key), 0 if entry["tier"] == "SETTINGS_SIMPLE" else 1),
     }
@@ -434,6 +437,12 @@ def main(argv=None) -> int:
     result = {"schema": 1, "verdict": "FAIL", "errors": [f"{type(error).__name__}: {error}"]}
   args.output.parent.mkdir(parents=True, exist_ok=True)
   args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+  if result["verdict"] != "PASS":
+    for error in result.get("errors", []):
+      print(f"{args.command}: {error}", file=sys.stderr)
+    for category in ("changed", "added", "removed"):
+      if result.get(category):
+        print(f"{args.command}: {category}: {', '.join(result[category])}", file=sys.stderr)
   print(f"{args.command}: {result['verdict']} ({args.output})")
   return 0 if result["verdict"] == "PASS" else 1
 
