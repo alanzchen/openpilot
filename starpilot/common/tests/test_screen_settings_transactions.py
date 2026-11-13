@@ -32,11 +32,50 @@ class SilentOnceParams(Params):
     super().put_bool(key, value)
 
 
+class FaultyStyleParams(Params):
+  def __init__(self, values, failure):
+    super().__init__(values)
+    self.failure = failure
+    self.fail_once = True
+
+  def put_int(self, key, value):
+    if key == 'ScreenGazeDimmingMode' and self.fail_once:
+      self.fail_once = False
+      if self.failure == 'wrong_value':
+        self.values[key] = 2
+      return
+    super().put_int(key, value)
+
+
+@pytest.mark.parametrize('failure', ['silent', 'wrong_value'])
+@pytest.mark.parametrize('wrapper', ['native', 'galaxy'])
+def test_failed_style_write_rolls_back_and_preserves_saved_delay(failure, wrapper):
+  saved = {'ScreenGazeDimmingMode': 0, 'ScreenGazeDimDelay': 12, 'ScreenGazeDimming': True}
+  params = FaultyStyleParams(saved, failure)
+  wrapped = UIParamCache(params, ttl=60) if wrapper == 'native' else galaxy_params(params)
+  assert int(wrapped.get('ScreenGazeDimmingMode')) == 0
+  with pytest.raises(OSError):
+    write_screen_setting(wrapped, 'ScreenGazeDimmingMode', 1)
+  assert params.values == saved
+  assert int(wrapped.get('ScreenGazeDimmingMode')) == 0
+
+
 def test_galaxy_failed_wake_write_preserves_enabled_selection():
   params = SilentOnceParams({'StandbyWakeCriticalAlert': True})
   with pytest.raises(OSError):
     write_screen_setting(galaxy_params(params), 'StandbyWakeCriticalAlert', False)
   assert params.values == {'StandbyWakeCriticalAlert': True}
+
+
+@pytest.mark.parametrize('saved', [False, True])
+def test_native_screen_management_write_failure_restores_saved_master_and_invalidates_cache(saved):
+  params = SilentOnceParams({'ScreenManagement': saved, 'ScreenGazeDimming': True})
+  cache = UIParamCache(params, ttl=60)
+  assert cache.get('ScreenManagement') is saved
+  with pytest.raises(OSError):
+    write_screen_setting(cache, 'ScreenManagement', not saved)
+  assert params.values == {'ScreenManagement': saved, 'ScreenGazeDimming': True}
+  assert cache.get('ScreenManagement') is saved
 
 
 def test_cached_native_mode_change_preserves_a_newer_galaxy_manual_value():

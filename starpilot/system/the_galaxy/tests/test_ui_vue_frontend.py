@@ -85,7 +85,6 @@ def test_ui_device_picker_uses_gateway_directory_and_preserves_local_galaxy():
 
 def test_ui_uses_same_backend_endpoints():
   settings = _read("js/views/Settings.js")
-  params = _read("js/params.js")
   api = _read("js/api.js")
 
   # Settings fetches the exact same layout JSON + params API the original UI used.
@@ -259,7 +258,6 @@ def test_ui_speed_units_follow_the_vehicle():
 
 
 def test_ui_centralizes_api_and_uses_composables():
-  api = _read("js/api.js")
   composables = _read("js/composables.js")
   for view in ["Recordings", "Logs", "Tuning", "Navigation", "Vehicle", "SystemTools"]:
     src = _read(f"js/views/{view}.js")
@@ -805,6 +803,45 @@ console.log("params.js logic OK")
 
   result = subprocess.run([node, str(script)], capture_output=True, text=True)
   assert result.returncode == 0, f"node failed:\n{result.stdout}\n{result.stderr}"
+
+
+@pytest.mark.skipif(_node_exe() is None, reason="no node.js runtime available")
+def test_gaze_style_hides_delay_and_keeps_missing_key_defaults_in_both_frontends(tmp_path):
+  params = {
+    param['key']: param
+    for section in json.loads((REPO_ROOT / 'starpilot/common/assets/device_settings_layout.json').read_text())
+    for param in section.get('params', [])
+  }
+  (tmp_path / 'params.mjs').write_text(_read('js/params.js'), encoding='utf-8')
+  old_source = (REPO_ROOT / 'starpilot/system/the_galaxy/assets/components/tools/device_settings.js').read_text()
+
+  def function(name):
+    start = old_source.index('function ' + name + '(')
+    return old_source[start:old_source.index('\n}', start) + 2]
+
+  script = '''
+import * as P from './params.mjs';
+const state = {values: {}};
+''' + function('toSelectValue') + '\n' + function('matchesSettingValueCondition') + '''
+const delay = ''' + json.dumps(params['ScreenGazeDimDelay']) + ''';
+for (const [values, expected] of [[{}, true], [{ScreenGazeDimmingMode: null}, true],
+  [{ScreenGazeDimmingMode: 0}, true], [{ScreenGazeDimmingMode: '0'}, true],
+  [{ScreenGazeDimmingMode: 1}, false], [{ScreenGazeDimmingMode: '1'}, false]]) {
+  state.values = {...values};
+  const before = JSON.stringify(state.values);
+  if (matchesSettingValueCondition(delay) !== expected || P.matchesSettingValueCondition(delay, values) !== expected)
+    throw new Error('Incorrect style-dependent delay visibility');
+  if (JSON.stringify(state.values) !== before) throw new Error('Visibility must not write default values');
+}
+const values = {ScreenManagement: true, ScreenGazeDimming: true, ScreenGazeDimmingMode: 1};
+if (P.isSettingVisible({name:'Device & Data'}, delay, values)) throw new Error('Continuous style exposed delay');
+if (P.matchesSettingValueCondition({visible_when_key:'OtherSetting', visible_when_values:[1]}, {}))
+  throw new Error('Existing conditions without defaults changed');
+'''
+  path = tmp_path / 'gaze-style.mjs'
+  path.write_text(script, encoding='utf-8')
+  result = subprocess.run([_node_exe(), str(path)], capture_output=True, text=True)
+  assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.mark.skipif(_node_exe() is None, reason="no node.js runtime available")

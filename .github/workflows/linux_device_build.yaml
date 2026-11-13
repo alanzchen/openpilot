@@ -1,0 +1,133 @@
+name: Linux device build
+run-name: Linux AGNOS build ${{ github.event.pull_request.number || github.ref_name }}
+
+on:
+  push:
+    branches: [codex/gaze-screen-dimming]
+  pull_request:
+    branches: [mazda-starpilot-ti]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linux-device-build-${{ github.event.pull_request.head.repo.full_name || github.repository }}-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and verify AGNOS ARM64 artifacts
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 240
+    outputs:
+      source_sha: ${{ steps.source.outputs.sha }}
+      source_branch: ${{ steps.source.outputs.branch }}
+    steps:
+      - name: Check out the exact source commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Record source identity
+        id: source
+        shell: bash
+        env:
+          SOURCE_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+        run: |
+          set -euo pipefail
+          git check-ref-format "refs/heads/${SOURCE_BRANCH}"
+          git fetch --no-tags --depth=1 origin 967cc94dc9634ae5bb170fd3ea415318e234713a
+          printf 'sha=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          printf 'branch=%s\n' "$SOURCE_BRANCH" >> "$GITHUB_OUTPUT"
+      - name: Prepare native runner tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = aarch64
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends e2fsprogs android-sdk-libsparse-utils
+          docker version
+          df -h /
+      - name: Independently rebuild, verify and test device artifacts
+        shell: bash
+        env:
+          LINUX_DEVICE_WORK_ROOT: ${{ runner.temp }}/linux-device-build
+          LINUX_DEVICE_JOBS: "4"
+        run: bash tools/linux_device_build/run.sh
+      - name: Upload verified device artifact bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: linux-device-artifacts-${{ github.run_id }}
+          path: ${{ runner.temp }}/linux-device-build/device-artifacts.tar
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 1
+      - name: Upload build and gate evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: linux-device-reports-${{ github.run_id }}
+          path: ${{ runner.temp }}/linux-device-build/reports
+          if-no-files-found: warn
+          retention-days: 14
+
+  publish:
+    name: Publish verified device artifacts
+    needs: build
+    # Publishing is limited to source branches in this repository.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      statuses: write
+    steps:
+      - name: Check out the tested source commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.build.outputs.source_sha }}
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Download the verified artifact bundle
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: linux-device-artifacts-${{ github.run_id }}
+          path: ${{ runner.temp }}/verified-device-artifacts
+      - name: Apply, verify and publish generated outputs only
+        id: publish
+        shell: bash
+        env:
+          EXPECTED_SOURCE: ${{ needs.build.outputs.source_sha }}
+          SOURCE_BRANCH: ${{ needs.build.outputs.source_branch }}
+          BUNDLE: ${{ runner.temp }}/verified-device-artifacts/device-artifacts.tar
+        run: |
+          set -euo pipefail
+          git check-ref-format "refs/heads/${SOURCE_BRANCH}"
+          git fetch --no-tags --depth=1 origin 967cc94dc9634ae5bb170fd3ea415318e234713a
+          remote_head="$(git ls-remote --exit-code origin "refs/heads/${SOURCE_BRANCH}" | cut -f1)"
+          test "$remote_head" = "$EXPECTED_SOURCE"
+          python3 tools/linux_device_build/package.py apply \
+            --root "$GITHUB_WORKSPACE" --archive "$BUNDLE" --expected-source "$EXPECTED_SOURCE"
+          git add -u
+          git add build_stamps/linux-device-build.json
+          python3 tools/linux_device_build/package.py verify-index \
+            --root "$GITHUB_WORKSPACE" --expected-source "$EXPECTED_SOURCE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Linux AGNOS device build of ${EXPECTED_SOURCE:0:12} [skip actions]"
+          # Ordinary push rejects concurrent source updates; never force.
+          git push origin "HEAD:refs/heads/${SOURCE_BRANCH}"
+          printf 'sha=%s\n' "$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Record successful verification on the published head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLISHED_SHA: ${{ steps.publish.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/statuses/${PUBLISHED_SHA}" \
+            -f state=success -f context=linux-device-build \
+            -f description='Pinned AGNOS ARM64: rebuilds, ABI, native registry and acceptance passed' \
+            -f target_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"

@@ -216,7 +216,7 @@ function isVehicleSettingVisible(section, param) {
 function matchesSettingValueCondition(param) {
   if (!param.visible_when_key) return true
   const allowedValues = Array.isArray(param.visible_when_values) ? param.visible_when_values : []
-  const currentValue = toSelectValue(state.values[param.visible_when_key])
+  const currentValue = toSelectValue(state.values[param.visible_when_key] ?? param.visible_when_default)
   return allowedValues.some(value => toSelectValue(value) === currentValue)
 }
 
@@ -365,7 +365,7 @@ function applySelectOptions(el, options) {
 }
 
 function syncSelectValue(el, key) {
-  const targetValue = toSelectValue(state.values[key])
+  const targetValue = toSelectValue(state.values[key] ?? state.paramMetaByKey[key]?.default)
   if (!targetValue) {
     el.value = ""
     return
