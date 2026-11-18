@@ -140,11 +140,16 @@ try:
   ffmpeg = importlib.import_module("ffmpeg")
 except ModuleNotFoundError:
   ffmpeg = None
+try:
+  eigen = importlib.import_module("eigen")
+except ModuleNotFoundError:
+  eigen = None
 
 capnproto_include_dirs = [capnproto.INCLUDE_DIR] if capnproto is not None else []
 capnproto_lib_dirs = [capnproto.LIB_DIR] if capnproto is not None else []
 ffmpeg_include_dirs = [ffmpeg.INCLUDE_DIR] if ffmpeg is not None else []
 ffmpeg_lib_dirs = [ffmpeg.LIB_DIR] if ffmpeg is not None else []
+eigen_include_dirs = [eigen.INCLUDE_DIR] if eigen is not None else []
 
 # Cross-builds install managed dependencies in /work/.venv-linux-arm64, but
 # comma devices expose the same packages from /usr/local/venv. Never embed the
@@ -173,19 +178,20 @@ ranlib = '/usr/bin/ranlib' if arch == "Darwin" else 'ranlib'
 
 lenv = {
   "PATH": os.environ['PATH'],
-  "PYTHONPATH": ":".join([
+  "PYTHONPATH": os.pathsep.join(filter(None, [
     Dir("#").abspath,
     Dir("#third_party/acados").abspath,
     Dir("#opendbc_repo").abspath,
-  ]),
+    os.environ.get("PYTHONPATH", ""),
+  ])),
 
   "ACADOS_SOURCE_DIR": Dir("#third_party/acados").abspath,
   "ACADOS_PYTHON_INTERFACE_PATH": Dir("#third_party/acados/acados_template").abspath,
   "TERA_PATH": Dir("#").abspath + f"/third_party/acados/{arch}/t_renderer"
 }
 
-# Allow callers to override cache/temp dirs used by subprocesses (e.g. tinygrad model compilation).
-for key in ("HOME", "TMPDIR", "XDG_CACHE_HOME", "CACHEDB", "PARAMS_ROOT"):
+# Preserve caller cache paths and reproducibility settings in build subprocesses.
+for key in ("HOME", "TMPDIR", "XDG_CACHE_HOME", "CACHEDB", "PARAMS_ROOT", "SOURCE_DATE_EPOCH", "PYTHONHASHSEED", "TZ"):
   if key in os.environ:
     lenv[key] = os.environ[key]
 
@@ -308,7 +314,7 @@ env = Environment(
   # Managed dependencies must precede the compatibility sysroot. The sysroot
   # can intentionally retain legacy libraries for C3 support, but new release
   # binaries must link against the versions shipped in the managed venv.
-  CPPPATH=capnproto_include_dirs + ffmpeg_include_dirs + cpppath + [
+  CPPPATH=capnproto_include_dirs + ffmpeg_include_dirs + eigen_include_dirs + cpppath + [
     "#",
     "#third_party/acados/include",
     "#third_party/acados/include/blasfeo/include",

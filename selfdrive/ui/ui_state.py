@@ -1,8 +1,6 @@
 import json
 import pyray as rl
-import numpy as np
 import time
-import threading
 from collections.abc import Callable
 from enum import Enum
 from cereal import messaging, car, log
@@ -18,7 +16,10 @@ from openpilot.system.hardware import HARDWARE, PC
 from openpilot.starpilot.common.screen_settings import (
   alert_wake_key, brightness_preferences, calculate_screen_brightness, enabled_wake_keys, standby_button_press_time,
   screen_off_toggle_counter,
+  GazeDimmingPreferences, gaze_dimming_preferences,
 )
+from openpilot.starpilot.common.screen_gaze import ScreenGazeDimmer, screen_yaw
+from openpilot.starpilot.common.screen_brightness import ScreenBrightnessWriter
 
 BACKLIGHT_OFFROAD = 65 if HARDWARE.get_device_type() == "mici" else 50
 
@@ -322,6 +323,8 @@ class Device:
     self._interactive_timeout_callbacks: list[Callable] = []
     self._prev_timed_out = False
     self._awake: bool = True
+    self._brightness_urgent = True
+    self._gaze_restore_active = False
     self._params = ui_state.ui_params
 
     self._screen_settings_refresh_time: float = 0.0
@@ -334,12 +337,16 @@ class Device:
     self._last_status = ui_state.status
     self._screen_offset = self._screen_offset_onroad = 0
     self._wake_keys = frozenset()
+    self._gaze_preferences = GazeDimmingPreferences()
+    self._gaze_dimmer = ScreenGazeDimmer()
+    self._gaze_frame = -1
+    self._gaze_yaw: float | None = None
     self._refresh_screen_settings(force=True)
 
     self._offroad_brightness: int = BACKLIGHT_OFFROAD
     self._last_brightness: int = 0
     self._brightness_filter = FirstOrderFilter(BACKLIGHT_OFFROAD, 10.00, 1 / gui_app.target_fps)
-    self._brightness_thread: threading.Thread | None = None
+    self._brightness_writer = ScreenBrightnessWriter(HARDWARE.set_screen_brightness)
 
   @property
   def awake(self) -> bool:
@@ -367,6 +374,8 @@ class Device:
 
   def _reset_interactive_timeout(self) -> None:
     self._interaction_time = time.monotonic() + self.interactive_timeout
+    self._gaze_dimmer.reset()
+    self._brightness_urgent = True
 
   def reset_interactive_timeout(self) -> None:
     self._reset_interactive_timeout()
@@ -381,8 +390,8 @@ class Device:
     if self._interaction_time <= 0:
       self._reset_interactive_timeout()
 
-    self._update_wakefulness()
-    self._update_brightness()
+    active_alerts = self._update_wakefulness()
+    self._update_brightness(active_alerts)
 
   def _refresh_screen_settings(self, force: bool = False) -> None:
     now = time.monotonic()
@@ -399,6 +408,7 @@ class Device:
       self._screen_offset,
       self._screen_offset_onroad,
       self._wake_keys,
+      self._gaze_preferences,
     )
 
     self._screen_management = self._params.get_bool("ScreenManagement")
@@ -411,6 +421,7 @@ class Device:
       self._screen_offset = brightness_preferences(self._params, "ScreenBrightness")["offset"]
       self._screen_offset_onroad = brightness_preferences(self._params, "ScreenBrightnessOnroad")["offset"]
       self._wake_keys = frozenset(enabled_wake_keys(self._params))
+      self._gaze_preferences = gaze_dimming_preferences(self._params)
     else:
       self._screen_brightness = 101
       self._screen_brightness_onroad = 101
@@ -419,6 +430,7 @@ class Device:
       self._standby_mode = False
       self._screen_offset = self._screen_offset_onroad = 0
       self._wake_keys = frozenset()
+      self._gaze_preferences = GazeDimmingPreferences()
 
     self._screen_settings_refresh_time = now
     current = (
@@ -431,25 +443,31 @@ class Device:
       self._screen_offset,
       self._screen_offset_onroad,
       self._wake_keys,
+      self._gaze_preferences,
     )
-    if previous != current and self._interaction_time > 0:
-      self._reset_interactive_timeout()
+    if previous != current:
+      self._gaze_dimmer.reset()
+      self._gaze_frame = -1
+      self._gaze_restore_active = False
+      self._brightness_urgent = True
+      if self._interaction_time > 0:
+        self._reset_interactive_timeout()
 
   def set_offroad_brightness(self, brightness: int | None):
     if brightness is None:
       brightness = BACKLIGHT_OFFROAD
     self._offroad_brightness = min(max(brightness, 0), 100)
 
-  def _update_brightness(self):
-    brightness = self._calculate_brightness()
+  def _update_brightness(self, active_alerts=None):
+    brightness = self._calculate_brightness(active_alerts)
+    if brightness != self._last_brightness or self._brightness_urgent:
+      # Keep one latest target while hardware is busy. Curve steps share a
+      # bounded writer; restore/blank events bypass its normal rate limit.
+      self._brightness_writer.submit(brightness, urgent=self._brightness_urgent or brightness == 0)
+      self._last_brightness = brightness
+    self._brightness_urgent = False
 
-    if brightness != self._last_brightness:
-      if self._brightness_thread is None or not self._brightness_thread.is_alive():
-        self._brightness_thread = threading.Thread(target=HARDWARE.set_screen_brightness, args=(brightness,))
-        self._brightness_thread.start()
-        self._last_brightness = brightness
-
-  def _calculate_brightness(self) -> int:
+  def _calculate_brightness(self, active_alerts=None) -> int:
     if self._screen_off:
       return 0
     clipped_brightness = self._offroad_brightness
@@ -463,11 +481,12 @@ class Device:
       else:
         clipped_brightness = ((clipped_brightness + 16.0) / 116.0) ** 3.0
 
-      clipped_brightness = float(np.interp(clipped_brightness, [0, 1], [30, 100]))
+      clipped_brightness = 30.0 + 70.0 * min(max(clipped_brightness, 0.0), 1.0)
 
     automatic = self._brightness_filter.update(clipped_brightness)
-    interactive = time.monotonic() <= self._interaction_time
-    return calculate_screen_brightness(
+    now = time.monotonic()
+    interactive = now <= self._interaction_time
+    brightness = calculate_screen_brightness(
       automatic,
       self._screen_brightness_onroad if ui_state.started else self._screen_brightness,
       self._screen_offset_onroad if ui_state.started else self._screen_offset,
@@ -475,6 +494,49 @@ class Device:
       awake=self._awake,
       standby_timed_out=ui_state.started and self._standby_mode and not interactive,
     )
+    # With the feature off, add no DM reads or alert scans to the frame loop.
+    if not self._gaze_preferences.enabled:
+      return brightness
+    if not ui_state.started or brightness == 0:
+      self._gaze_dimmer.reset()
+      return brightness
+    if active_alerts is None:
+      active_alerts = self._active_standby_alerts()
+    if active_alerts:
+      self._restore_gaze_brightness()
+      return brightness
+    yaw = self._screen_gaze_yaw(now)
+    if yaw is None:
+      self._restore_gaze_brightness()
+      return brightness
+    self._gaze_restore_active = False
+    return self._gaze_dimmer.brightness(
+      brightness, now, self._gaze_preferences, yaw,
+    )
+
+  def _restore_gaze_brightness(self):
+    if not self._gaze_restore_active:
+      self._brightness_urgent = True
+    self._gaze_restore_active = True
+    self._gaze_dimmer.reset()
+
+  def _screen_gaze_yaw(self, now: float) -> float | None:
+    sm = ui_state.sm
+    service = "driverMonitoringState"
+    if not sm.alive[service] or not sm.valid[service]:
+      return None
+    # Also check source age: replay/simulation can mark an old packet alive.
+    frame = sm.recv_frame[service]
+    if frame <= ui_state.started_frame or not 0 <= now - sm.logMonoTime[service] / 1e9 < 0.5:
+      return None
+    # Piggyback on the same SubMaster as the DM icon. Pose packets arrive at
+    # 20 Hz; don't decode/convert the same pose at the faster UI refresh rate.
+    # Keep freshness and the dimming deadline checks above/below frame-rate.
+    if frame != self._gaze_frame:
+      dm = sm[service]
+      self._gaze_yaw = screen_yaw(dm, self._gaze_preferences.screen_side) if str(dm.alertLevel) in ("none", "0") else None
+      self._gaze_frame = frame
+    return self._gaze_yaw
 
   def _update_wakefulness(self):
     # Handle interactive timeout
@@ -484,13 +546,14 @@ class Device:
     status_changed = ui_state.status != self._last_status and ui_state.status != UIStatus.OVERRIDE
     self._last_status = ui_state.status
     status_key = "StandbyWakeEngage" if ui_state.status == UIStatus.ENGAGED else "StandbyWakeDisengage"
+    active_alerts = self._active_standby_alerts()
     input_events = self._wake_input_events()
     selected_status_change = status_changed and status_key in self._wake_keys
     selected_turn_signal = bool(input_events & self._wake_keys)
     button_pressed = (self._standby_mode and (ui_state.started or ui_state.ignition) and
                       "StandbyWakeButton" in self._wake_keys and "button" in input_events)
     wake_for_onroad_event = (ui_state.started and self._standby_mode and self._screen_brightness_onroad != 0 and
-                             (selected_status_change or self._visible_onroad_alert() or selected_turn_signal))
+                             (selected_status_change or bool(active_alerts & self._wake_keys) or selected_turn_signal))
 
     counter = screen_off_toggle_counter(ui_state.params_memory)
     presses = counter - self._screen_off_counter
@@ -504,7 +567,7 @@ class Device:
     elif presses > 0:
       if presses % 2:
         self._screen_off = not self._screen_off
-    elif touched or wake_for_onroad_event or "StandbyWakeCriticalAlert" in self._active_standby_alerts():
+    elif touched or wake_for_onroad_event or "StandbyWakeCriticalAlert" in active_alerts:
       self._screen_off = False
 
     if ignition_state_changed or touched or button_pressed or wake_for_onroad_event or presses > 0 or (was_screen_off and not self._screen_off):
@@ -520,6 +583,7 @@ class Device:
     keep_display_awake = not interaction_timeout or PC
     keep_display_awake |= ui_state.ignition and not standby_active
     self._set_awake(keep_display_awake and not self._screen_off)
+    return active_alerts
 
   @staticmethod
   def _fresh_message(name):
@@ -570,9 +634,6 @@ class Device:
     except Exception:
       pass
     return set()
-
-  def _visible_onroad_alert(self):
-    return bool(self._active_standby_alerts() & self._wake_keys)
 
   def _set_awake(self, on: bool):
     if on != self._awake:

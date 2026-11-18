@@ -68,6 +68,7 @@ export const GalaxyToggleCard = {
     isFavorites() { return this.param.ui_type === "favorites" },
     isText() { return this.param.ui_type === "text" },
     isSelect() { return this.param.ui_type === "dropdown" },
+    selectValue() { return this.value ?? this.param.default ?? "" },
     isSwitch() { return !this.isNumeric && !this.isColor && !this.isAction && !this.isFavorites && !this.isGroup && !this.isReadout && !this.isSelect && !this.isText },
     selectOptions() {
       return this.param.options || this.endpointOptions || []
@@ -114,7 +115,7 @@ export const GalaxyToggleCard = {
       e.target.checked = !!this.value
     },
     onSelect(e) {
-      if (this.locked) { e.target.value = String(this.value ?? "") ; return }
+      if (this.locked) { e.target.value = String(this.selectValue) ; return }
       this.lastLabel = e.target.options?.[e.target.selectedIndex]?.textContent || ""
       this.commit(this.coerce(e.target.value))
     },
@@ -315,7 +316,7 @@ export const GalaxyToggleCard = {
           </div>
         </div>
 
-        <GalaxySelect v-else-if="isSelect" class="gx-field" :disabled="locked || updating" :value="String(value ?? '')" @change="onSelect">
+        <GalaxySelect v-else-if="isSelect" class="gx-field" :disabled="locked || updating" :value="String(selectValue)" @change="onSelect">
           <option v-if="optionsLoading" value="">{{ tr("Loading...") }}</option>
           <option v-else-if="!selectOptions.length" value="">{{ tr("No options available") }}</option>
           <option v-for="opt in selectOptions" :key="String(opt.value)" :value="String(opt.value)">{{ tr(opt.label, opt.label) }}</option>

@@ -1,5 +1,4 @@
 from __future__ import annotations
-from dataclasses import replace
 import os
 import re
 import shutil
@@ -33,12 +32,8 @@ from openpilot.selfdrive.ui.layouts.settings.starpilot.aethergrid import (
   PanelManagerView,
   TileGrid,
   draw_list_group_shell,
-  draw_selection_list_row,
-  draw_settings_panel_header,
+  draw_settings_list_row,
   draw_soft_card,
-  GROUP_HEADER_GAP,
-  GROUP_HEADER_LINE_GAP,
-  GROUP_HEADER_HEIGHT,
   GROUP_HEADER_TOTAL_HEIGHT,
   GROUP_TOP_INSET,
   draw_group_header,
@@ -49,9 +44,7 @@ from openpilot.selfdrive.ui.layouts.settings.starpilot.aethergrid import (
   draw_rounded_stroke,
   point_hits,
   draw_text_fit_common,
-  wrap_text,
   SECTION_GAP,
-  ROW_HEIGHT,
   SPACING,
   TOGGLE_MIN_HEIGHT,
   TOGGLE_ROW_HEIGHT,
@@ -117,7 +110,9 @@ class SystemSettingsManagerView(PanelManagerView):
 
   @property
   def vertical_scrolling_disabled(self) -> bool:
-    return True
+    # Keep the fitted two-column layout fixed; allow short/narrow displays to
+    # scroll rather than clipping the Display settings or their navigation row.
+    return self._scroll_rect is None or self._content_height <= self._scroll_rect.height
 
   @property
   def _hit_rect(self) -> rl.Rectangle:
@@ -325,7 +320,7 @@ class SystemSettingsManagerView(PanelManagerView):
   def _tab_subtitle(self, tab_id: str) -> str:
     if tab_id == "basics":
       return tr("{} controls + {} toggles").format(
-        len(self._display_slider_keys) + len(self._power_slider_keys),
+        len(self._display_slider_keys) + len(self._power_slider_keys) + 1,
         len(self._toggle_defs))
     return self._controller.backup_status_text()
 
@@ -431,6 +426,8 @@ class SystemSettingsManagerView(PanelManagerView):
       return
     if target_id == "static:first_aid":
       gui_app.push_widget(AetherBackupsCareDialog(self._controller))
+    elif target_id == "screen_gaze":
+      self._controller.open_screen_gaze_settings()
 
   def _on_frame_created(self, frame) -> None:
     pass
@@ -489,22 +486,22 @@ class SystemSettingsManagerView(PanelManagerView):
     draw_custom_icon("first_aid", icon_x, icon_y, s, icon_color)
 
   def _measure_content_height(self, width: float) -> float:
-    display_h = self._slider_section_height(self._display_slider_keys, width) + GROUP_TOP_INSET + GROUP_HEADER_TOTAL_HEIGHT
+    for key in self._display_slider_keys + self._power_slider_keys:
+      self._adjustor_rows[key].custom_row_height = None
+
+    display_h = (self._slider_section_height(self._display_slider_keys, width) + self._screen_gaze_row_height(width) +
+                 GROUP_TOP_INSET + GROUP_HEADER_TOTAL_HEIGHT)
     power_h = self._slider_section_height(self._power_slider_keys, width) + GROUP_TOP_INSET + GROUP_HEADER_TOTAL_HEIGHT
 
     if self._uses_two_columns(width):
       column_w = self._column_width(width)
-      
-      # Reset custom heights to calculate natural measurements first
-      for key in self._display_slider_keys + self._power_slider_keys:
-        self._adjustor_rows[key].custom_row_height = None
 
-      display_container_h = self._slider_section_height(self._display_slider_keys, column_w)
+      display_container_h = self._slider_section_height(self._display_slider_keys, column_w) + self._screen_gaze_row_height(column_w)
       power_container_h = self._slider_section_height(self._power_slider_keys, column_w)
 
       left_overhead = GROUP_TOP_INSET + 2 * GROUP_HEADER_TOTAL_HEIGHT + SECTION_GAP
       left_natural_content_h = left_overhead + display_container_h + power_container_h
-      
+
       tiles_content_h = self.measure_page_grid_height(self._connectivity_tile_grid, column_w - 24)
       right_natural_container_h = tiles_content_h + 24
 
@@ -515,13 +512,14 @@ class SystemSettingsManagerView(PanelManagerView):
       else:
         available_container_h = max_natural_h
 
-      # Always stretch container to fill available height, preventing empty space at bottom
-      max_container_h = available_container_h
+      row_count = len(self._display_slider_keys) + len(self._power_slider_keys) + 1
+      # Reserve the fixed group headers before fitting all rows, including the
+      # dimming entry. At the minimum touch height, let the panel scroll.
+      max_container_h = max(available_container_h, left_overhead + row_count * 80.0)
 
       # Scale adjustors if needed
       if max_container_h < max_natural_h:
-        scale_f = max_container_h / left_natural_content_h
-        row_h = max(80.0, float(AETHER_LIST_METRICS.adjustor_row_height) * scale_f)
+        row_h = max(80.0, (max_container_h - left_overhead) / row_count)
         for key in self._display_slider_keys + self._power_slider_keys:
           self._adjustor_rows[key].custom_row_height = row_h
 
@@ -529,9 +527,6 @@ class SystemSettingsManagerView(PanelManagerView):
 
       return self._compute_two_column_height(max_container_h)
     else:
-      # Ensure defaults are restored in single column mode
-      for key in self._display_slider_keys + self._power_slider_keys:
-        self._adjustor_rows[key].custom_row_height = None
       tiles_content_h = self.measure_page_grid_height(self._connectivity_tile_grid, width - 24)
       return self._stacked_section_height([display_h, power_h, tiles_content_h + 24])
 
@@ -555,11 +550,12 @@ class SystemSettingsManagerView(PanelManagerView):
 
       current_y = y + GROUP_TOP_INSET
       current_y = draw_group_header(x + 24, current_y, column_w - 48, tr("Display"))
-      for index, key in enumerate(self._display_slider_keys):
-        current_y = self._draw_slider_row(rl.Rectangle(x, current_y, column_w, 0), key, is_last=index == len(self._display_slider_keys) - 1)
-        
+      for key in self._display_slider_keys:
+        current_y = self._draw_slider_row(rl.Rectangle(x, current_y, column_w, 0), key, is_last=False)
+      current_y = self._draw_screen_gaze_row(rl.Rectangle(x, current_y, column_w, self._screen_gaze_row_height(column_w)))
+
       current_y += SECTION_GAP
-      
+
       current_y = draw_group_header(x + 24, current_y, column_w - 48, tr("Power"))
       for index, key in enumerate(self._power_slider_keys):
         current_y = self._draw_slider_row(rl.Rectangle(x, current_y, column_w, 0), key, is_last=index == len(self._power_slider_keys) - 1)
@@ -570,7 +566,7 @@ class SystemSettingsManagerView(PanelManagerView):
         self._system_max_container_h, columns=tg_cols)
       return
 
-    y = self._draw_slider_section(y, x, width, tr("Display"), self._display_slider_keys)
+    y = self._draw_slider_section(y, x, width, tr("Display"), self._display_slider_keys, include_screen_gaze=True)
     y += SECTION_GAP
     y = self._draw_slider_section(y, x, width, tr("Power"), self._power_slider_keys)
     y += SECTION_GAP
@@ -582,15 +578,34 @@ class SystemSettingsManagerView(PanelManagerView):
     draw_list_group_shell(rl.Rectangle(x, y, width, tiles_content_h + 24), style=PANEL_STYLE)
     self._render_page_grid(self._connectivity_tile_grid, rl.Rectangle(x + 12, y + 12, width - 24, tiles_content_h))
 
-  def _draw_slider_section(self, y: float, x: float, width: float, title: str, keys: list[str]) -> float:
+  def _draw_slider_section(self, y: float, x: float, width: float, title: str, keys: list[str], *, include_screen_gaze=False) -> float:
     group_h = self._slider_section_height(keys, width) + GROUP_TOP_INSET + GROUP_HEADER_TOTAL_HEIGHT
+    if include_screen_gaze:
+      group_h += self._screen_gaze_row_height(width)
     group_rect = rl.Rectangle(x, y, width, group_h)
     draw_list_group_shell(group_rect, style=PANEL_STYLE)
     current_y = group_rect.y + GROUP_TOP_INSET
     current_y = draw_group_header(x + 24, current_y, width - 48, title)
     for index, key in enumerate(keys):
-      current_y = self._draw_slider_row(rl.Rectangle(group_rect.x, current_y, group_rect.width, 0), key, is_last=index == len(keys) - 1)
+      current_y = self._draw_slider_row(rl.Rectangle(group_rect.x, current_y, group_rect.width, 0), key,
+                                      is_last=index == len(keys) - 1 and not include_screen_gaze)
+    if include_screen_gaze:
+      self._draw_screen_gaze_row(rl.Rectangle(x, current_y, width, self._screen_gaze_row_height(width)))
     return y + group_h
+
+  def _screen_gaze_row_height(self, width: float) -> float:
+    return self._adjustor_rows["ScreenBrightnessOnroad"].measure_height(width)
+
+  def _draw_screen_gaze_row(self, rect: rl.Rectangle) -> float:
+    params = self._controller._params
+    enabled = params.get_bool("ScreenManagement") and params.get_bool("ScreenGazeDimming")
+    hovered, pressed = self._interactive_state("screen_gaze", rect)
+    draw_settings_list_row(
+      rect, title=tr("Dim When Looking Away"), value=tr("On") if enabled else tr("Off"),
+      hovered=hovered, pressed=pressed, is_last=True, show_chevron=True,
+      title_size=32, value_size=28, style=PANEL_STYLE,
+    )
+    return rect.y + rect.height
 
   def _draw_slider_row(self, rect: rl.Rectangle, key: str, is_last: bool) -> float:
     adjustor = self._adjustor_rows[key]
@@ -824,6 +839,15 @@ class StarPilotSystemLayout(_SettingsPage):
     self._pending_storage_text: tuple[int, str] | None = None
     self._manager_view = SystemSettingsManagerView(self)
     self._refresh_storage_cache(force=True)
+
+  def open_screen_gaze_settings(self):
+    # Build this page only when opened; normal driving and startup don't need
+    # its controls, dialogs or preference reads.
+    if "screen_gaze" not in self._sub_panels:
+      from openpilot.selfdrive.ui.layouts.settings.starpilot.screen_gaze_settings import ScreenGazeSettingsView
+      self._sub_panels["screen_gaze"] = ScreenGazeSettingsView(self)
+    self._sub_panels["screen_gaze"].show_event()
+    self._navigate_to("screen_gaze")
 
   def show_event(self):
     self._refresh_storage_cache(force=True)

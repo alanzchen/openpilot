@@ -93,7 +93,7 @@ function toSelectValue(value) {
 export function matchesSettingValueCondition(param, values) {
   if (!param.visible_when_key) return true
   const allowedValues = Array.isArray(param.visible_when_values) ? param.visible_when_values : []
-  const currentValue = toSelectValue(values[param.visible_when_key])
+  const currentValue = toSelectValue(values[param.visible_when_key] ?? param.visible_when_default)
   return allowedValues.some((value) => toSelectValue(value) === currentValue)
 }
 
